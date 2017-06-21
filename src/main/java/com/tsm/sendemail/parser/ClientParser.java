@@ -1,0 +1,50 @@
+package com.tsm.sendemail.parser;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+
+import com.tsm.sendemail.model.Client;
+import com.tsm.sendemail.model.Client.ClientStatus;
+import com.tsm.sendemail.model.ClientHosts;
+import com.tsm.sendemail.resources.ClientResource;
+
+@Component
+public class ClientParser {
+
+	public Client toModel(final ClientResource resource) {
+		Assert.notNull(resource, "The resource must not be null!");
+		Client client = new Client();
+		client.setClientStatus(ClientStatus.valueOf(resource.getStatus()));
+		client.setEmail(resource.getEmail());
+		client.setName(resource.getName());
+		client.setToken(resource.getToken());
+		client.setClientHosts(loadClientHosts(resource.getHosts()));
+		return client;
+	}
+
+	private Set<ClientHosts> loadClientHosts(final Set<String> hosts) {
+		Set<ClientHosts> clientHosts = new HashSet<>();
+		hosts.forEach(h -> {
+			ClientHosts host = new ClientHosts();
+			host.setHost(h);
+			clientHosts.add(host);
+		});
+		return clientHosts;
+	}
+
+	public ClientResource toResource(final Client client) {
+		Assert.notNull(client, "The client must not be null!");
+		ClientResource resource = new ClientResource();
+		resource.setEmail(client.getEmail());
+		resource.setName(client.getName());
+		resource.setToken(resource.getToken());
+		resource.setStatus(client.getStatus().toString());
+		resource.setId(client.getId());
+		return resource;
+
+	}
+
+}
