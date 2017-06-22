@@ -8,7 +8,6 @@ import static com.tsm.sendemail.util.ErrorCodes.INVALID_TOKEN_SIZE;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -39,12 +38,12 @@ public class ClientResource extends BaseResource {
 	@Getter
 	@Setter
 	@NotNull(message = FIELD_REQUIRED)
-	@Size(min = 2, max = 30, message = INVALID_TOKEN_SIZE)
+	@Size(min = 2, max = 50, message = INVALID_TOKEN_SIZE)
 	private String token;
 
 	@Getter
 	@Setter
-	@Pattern(regexp = "", message = INVALID_TOKEN_SIZE)
+	//@Pattern(regexp = "", message = INVALID_TOKEN_SIZE)
 	private String status;
 
 	@Getter

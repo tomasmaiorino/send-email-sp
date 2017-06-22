@@ -2,12 +2,15 @@ package com.tsm.sendemail.model;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -19,77 +22,82 @@ import lombok.Getter;
 @Table(name = "client")
 public class Client extends BaseModel {
 
-    public enum ClientStatus {
-        ACTIVE, INACTIVE;
-    }
+	@Id
+	@GeneratedValue
+	@Getter
+	private Integer id;
 
-    @JoinColumn(name = "client_hosts")
-    @ManyToOne
-    @Getter
-    private Set<ClientHosts> clientHosts;
+	public enum ClientStatus {
+		ACTIVE, INACTIVE;
+	}
 
-    @Getter
-    private String name;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "client")
+	private Set<ClientHosts> clientHosts;
 
-    @Getter
-    private String token;
+	@Getter
+	private String name;
 
-    @Getter
-    private String email;
+	@Getter
+	private String token;
 
-    @Getter
-    @Column(nullable = false, length = 10)
-    @Enumerated(EnumType.STRING)
-    private ClientStatus status;
+	@Getter
+	private String email;
 
-    public void setClientHosts(final Set<ClientHosts> clientHosts) {
-        Assert.notNull(clientHosts, "The clientHosts must not be null!");
-        Assert.isTrue(!clientHosts.isEmpty(), "The clientHosts must not be empty!");
-        this.clientHosts = clientHosts;
-    }
+	@Getter
+	@Column(nullable = false, length = 10)
+	@Enumerated(EnumType.STRING)
+	private ClientStatus status;
 
-    public void setName(final String name) {
-        Assert.hasText(name, "The name must not be null or empty!");
-        this.name = name;
-    }
+	public void setClientHosts(final Set<ClientHosts> clientHosts) {
+		Assert.notNull(clientHosts, "The clientHosts must not be null!");
+		Assert.isTrue(!clientHosts.isEmpty(), "The clientHosts must not be empty!");
+		this.clientHosts = clientHosts;
+	}
 
-    public void setEmail(final String email) {
-        Assert.hasText(email, "The email must not be null or empty!");
-        this.email = email;
-    }
+	public void setName(final String name) {
+		Assert.hasText(name, "The name must not be null or empty!");
+		this.name = name;
+	}
 
-    public void setToken(final String token) {
-        Assert.hasText(token, "The token must not be null or empty!");
-        this.token = token;
-    }
+	public void setEmail(final String email) {
+		Assert.hasText(email, "The email must not be null or empty!");
+		this.email = email;
+	}
 
-    public void setClientStatus(final ClientStatus status) {
-        Assert.notNull(status, "The status must not be null!");
-        this.status = status;
-    }
+	public void setToken(final String token) {
+		Assert.hasText(token, "The token must not be null or empty!");
+		this.token = token;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        Client other = (Client) obj;
-        if (getId() == null || other.getId() == null) {
-            return false;
-        }
-        return getId().equals(other.getId());
-    }
+	public void setClientStatus(final ClientStatus status) {
+		Assert.notNull(status, "The status must not be null!");
+		this.status = status;
+	}
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .append(getId())
-            .toHashCode();
-    }
+	public Set<ClientHosts> getClientHosts() {
+		return clientHosts;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		Client other = (Client) obj;
+		if (getId() == null || other.getId() == null) {
+			return false;
+		}
+		return getId().equals(other.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(getId()).toHashCode();
+	}
 }

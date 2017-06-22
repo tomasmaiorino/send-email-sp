@@ -2,6 +2,7 @@ package com.tsm.sendemail.parser;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -40,11 +41,16 @@ public class ClientParser {
 		ClientResource resource = new ClientResource();
 		resource.setEmail(client.getEmail());
 		resource.setName(client.getName());
-		resource.setToken(resource.getToken());
+		resource.setToken(client.getToken());
 		resource.setStatus(client.getStatus().toString());
 		resource.setId(client.getId());
+		resource.setHosts(loadHosts(client));
 		return resource;
 
+	}
+
+	private Set<String> loadHosts(final Client client) {
+		return client.getClientHosts().stream().map(ClientHosts::getHost).collect(Collectors.toSet());
 	}
 
 }

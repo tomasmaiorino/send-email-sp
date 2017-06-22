@@ -13,6 +13,15 @@ import com.tsm.sendemail.resources.ClientResource;
 
 public class ClientTestBuilder {
 
+	
+	public static final String LARGE_NAME = random(31, true, true);
+	public static final String SMALL_NAME = random(1, true, true);
+
+	public static final String LARGE_TOKEN = random(51, true, true);
+	public static final String SMALL_TOKEN = random(1, true, true);
+	public static final String RESOURCE_INVALID_EMAIL = random(31, true, true);
+	public static final String INVALID_STATUS = "INVD";
+
 	public static final String[] HOSTS = new String[] { "http://mysite.com.br", "mysite.com.br" };
 	public static final String CLIENT_NAME = random(30, true, true);
 	public static final String CLIENT_TOKEN = random(30, true, true);
@@ -62,11 +71,12 @@ public class ClientTestBuilder {
 		resource.setEmail(email);
 		resource.setHosts(hosts);
 		resource.setToken(token);
+		resource.setStatus(status);
 		return resource;
 	}
 
 	public static ClientResource buildResoure() {
 		return buildResource(CLIENT_NAME, CLIENT_TOKEN, CLIENT_EMAIL, buildClientHost(CLIENT_HOSTS),
-				CLIENT_EMAIL.toString());
+		    STATUS.toString());
 	}
 }

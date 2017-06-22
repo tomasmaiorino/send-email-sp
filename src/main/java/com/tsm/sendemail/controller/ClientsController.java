@@ -1,7 +1,9 @@
 package com.tsm.sendemail.controller;
 
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import javax.validation.groups.Default;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,11 +30,11 @@ public class ClientsController extends BaseController {
 	private ClientParser parser;
 
 	@RequestMapping(method = POST)
-	@ResponseStatus(OK)
+	@ResponseStatus(CREATED)
 	public ClientResource save(@RequestBody final ClientResource resource) {
 		log.debug("Recieved a request to create a client [{}].", resource);
 
-		validate(resource, ClientResource.class);
+		validate(resource, Default.class);
 
 		Client client = parser.toModel(resource);
 

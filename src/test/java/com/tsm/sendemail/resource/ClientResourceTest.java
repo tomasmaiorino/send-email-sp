@@ -1,10 +1,14 @@
 package com.tsm.sendemail.resource;
 
+import static com.tsm.sendemail.util.ClientTestBuilder.LARGE_NAME;
+import static com.tsm.sendemail.util.ClientTestBuilder.LARGE_TOKEN;
+import static com.tsm.sendemail.util.ClientTestBuilder.RESOURCE_INVALID_EMAIL;
+import static com.tsm.sendemail.util.ClientTestBuilder.SMALL_NAME;
+import static com.tsm.sendemail.util.ClientTestBuilder.SMALL_TOKEN;
 import static com.tsm.sendemail.util.ErrorCodes.FIELD_REQUIRED;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_EMAIL;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_NAME_SIZE;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_TOKEN_SIZE;
-import static org.apache.commons.lang3.RandomStringUtils.random;
 
 import java.util.Collections;
 import java.util.function.Supplier;
@@ -20,12 +24,6 @@ import com.tsm.sendemail.util.ClientTestBuilder;
 
 public class ClientResourceTest extends BaseResourceTest {
 
-	private static final String LARGE_NAME = random(31, true, true);
-	private static final String SMALL_NAME = random(1, true, true);
-
-	private static final String LARGE_TOKEN = random(31, true, true);
-	private static final String SMALL_TOKEN = random(1, true, true);
-	private static final String RESOURCE_INVALID_EMAIL = random(31, true, true);
 
 	private Supplier<? extends BaseResource> buildResourceFunction = ClientTestBuilder::buildResoure;
 
@@ -119,6 +117,6 @@ public class ClientResourceTest extends BaseResourceTest {
 		// Set up
 		checkResource(buildResourceFunction, "hosts", Collections.emptySet(), FIELD_REQUIRED);
 	}
-	
-	//TODO validate hosts content
+
+	// TODO validate hosts content
 }
