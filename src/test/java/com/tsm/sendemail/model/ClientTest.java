@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
 import com.tsm.sendemail.model.Client.ClientStatus;
 
 @FixMethodOrder(MethodSorters.JVM)
@@ -100,6 +101,22 @@ public class ClientTest {
         client.setClientStatus(status);
     }
 
+//    @Test
+//    public void build_AllValuesGiven_AllValuesShouldSet() {
+//        // Set up
+//        AddOn addon = AddOnTestBuilder.buildModel(false, ADD_ON_ID);
+//        Supplier supplier = SupplierTestBuilder.buildSupplier(false, SUPPLIER_ID);
+//
+//        // Do Test
+//        AddOnSupplier result = AddOnSupplierBuilder.AddOnSupplier(addon, supplier).build();
+//
+//        // Assertions
+//        assertThat(result,
+//            allOf(hasProperty("addOn", is(addon)),
+//                hasProperty("supplier", is(supplier)),
+//                hasProperty("created", is(nullValue())),
+//                hasProperty("lastUpdated", is(nullValue()))));
+//    }
     private ClientHosts bluildClientHost() {
         // TODO Auto-generated method stub
         return null;

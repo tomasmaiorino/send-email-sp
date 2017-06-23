@@ -2,14 +2,27 @@ package com.tsm.sendemail.util;
 
 public interface ErrorCodes {
 
-	public static final String FIELD_REQUIRED = "field.required";
+    // GENERAL
+    public static final String FIELD_REQUIRED = "field.required";
 
-	public static final String INVALID_EMAIL = "invalid.email";
+    public static final String INVALID_EMAIL = "invalid.email";
 
-	public static final String INVALID_NAME_SIZE = "invalidNameSize";
+    public static final String INVALID_STATUS = "invalidStatus";
 
-	public static final String INVALID_TOKEN_SIZE = "invalidTokenSize";
+    // CLIENT
 
-	public static final String INVALID_STATUS = "invalidStatus";
+    public static final String INVALID_NAME_SIZE = "invalidNameSize";
+
+    public static final String INVALID_TOKEN_SIZE = "invalidTokenSize";
+
+    // MESSAGE
+
+    public static final String INVALID_MESSAGE_SIZE = "invalidMessageSize";
+
+    public static final String INVALID_SUBJECT_SIZE = "invalidSubjectSize";
+
+    public static final String INVALID_SENDER_NAME_SIZE = "invalidSenderSize";
+
+    public static final String INVALID_SENDER_EMAIL_SIZE = "invalidSenderEmailSize";
 
 }

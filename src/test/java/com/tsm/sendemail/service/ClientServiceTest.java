@@ -8,12 +8,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.tsm.sendemail.exceptions.ResourceNotFoundException;
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.repository.ClientRepository;
 import com.tsm.sendemail.util.ClientTestBuilder;
@@ -63,4 +66,75 @@ public class ClientServiceTest {
 		assertNotNull(result);
 		assertThat(result, is(client));
 	}
+
+	@Test
+	public void findByToken_NullClientTokenGiven_ShouldThrowException() {
+		// Set up
+		String token = null;
+
+		// Do test
+		try {
+			service.findByToken(token);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
+
+		// Assertions
+		verifyZeroInteractions(mockRepository);
+	}
+
+	@Test
+	public void findByToken_EmptyClientTokenGiven_ShouldThrowException() {
+		// Set up
+		String token = "";
+
+		// Do test
+		try {
+			service.findByToken(token);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
+
+		// Assertions
+		verifyZeroInteractions(mockRepository);
+	}
+
+	@Test
+	public void findByToken_ClientNotFound_ShouldThrowException() {
+		// Set up
+		String token = ClientTestBuilder.CLIENT_TOKEN;
+
+		// Expectations
+		when(mockRepository.findByToken(token)).thenReturn(Optional.empty());
+
+		// Do test
+		try {
+			service.findByToken(token);
+			fail();
+		} catch (ResourceNotFoundException e) {
+		}
+
+		// Assertions
+		verify(mockRepository).findByToken(token);
+	}
+
+	@Test
+	public void findByToken_ClientFound_ShouldReturnClient() {
+		// Set up
+		String token = ClientTestBuilder.CLIENT_TOKEN;
+		Client client = ClientTestBuilder.buildModel();
+
+		// Expectations
+		when(mockRepository.findByToken(token)).thenReturn(Optional.of(client));
+
+		// Do test
+		Client result = service.findByToken(token);
+
+		// Assertions
+		verify(mockRepository).findByToken(token);
+
+		assertNotNull(result);
+		assertThat(result, is(client));
+	}
+
 }

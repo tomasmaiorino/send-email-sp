@@ -1,5 +1,6 @@
 package com.tsm.sendemail.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,44 +18,45 @@ import lombok.Getter;
 @Table(name = "client_hosts")
 public class ClientHosts extends BaseModel {
 
-	@Id
-	@GeneratedValue
-	@Getter
-	private Integer id;
+    @Id
+    @GeneratedValue
+    @Getter
+    private Integer id;
 
-	@Getter
-	private String host;
+    @Getter
+    @Column(nullable = false, length = 30)
+    private String host;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "client_id")
-	private Client client;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id")
+    private Client client;
 
-	public void setHost(final String host) {
-		Assert.hasText(host, "The host must not be null!");
-		this.host = host;
-	}
+    public void setHost(final String host) {
+        Assert.hasText(host, "The host must not be null!");
+        this.host = host;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (obj == this) {
-			return true;
-		}
-		if (obj.getClass() != getClass()) {
-			return false;
-		}
-		ClientHosts other = (ClientHosts) obj;
-		if (getId() == null || other.getId() == null) {
-			return false;
-		}
-		return getId().equals(other.getId());
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        ClientHosts other = (ClientHosts) obj;
+        if (getId() == null || other.getId() == null) {
+            return false;
+        }
+        return getId().equals(other.getId());
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(getId()).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getId()).toHashCode();
+    }
 
 }

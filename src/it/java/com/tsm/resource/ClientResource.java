@@ -1,5 +1,6 @@
 package com.tsm.resource;
 
+import static com.jayway.restassured.RestAssured.given;
 import static org.apache.commons.lang3.RandomStringUtils.random;
 
 import java.util.HashSet;
@@ -8,6 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.RandomUtils;
 
+import com.jayway.restassured.response.Response;
 import com.tsm.sendemail.model.Client.ClientStatus;
 
 import lombok.Getter;
@@ -38,6 +40,12 @@ public class ClientResource {
 		return this;
 	}
 
+	public Response create() {
+		assertFields();
+		Response r = given().contentType("application/json").body(this).when().post("/api/v1/clients");
+		return r;
+	}
+
 	private ClientResource() {
 	}
 
@@ -66,7 +74,7 @@ public class ClientResource {
 	}
 
 	public ClientResource email() {
-		return email(random(30, true, true) + "@" + random(2, true, false) + ".com");
+		return email(random(20, true, true) + "@" + random(2, true, false) + ".com");
 	}
 
 	public ClientResource token(final String token) {

@@ -1,14 +1,18 @@
 package com.tsm.sendemail.controller;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,19 +23,23 @@ import exception.FieldError;
 @ControllerAdvice
 public class CustomControllerAdvice {
 
-	private Function<ConstraintViolation<?>, FieldError> generateFieldErrorFunction = (c) -> {
-		return new FieldError(c.getPropertyPath().toString(), c.getMessageTemplate());
-	};
+    @Autowired
+    private MessageSource messageSource;
 
-	@ExceptionHandler(ConstraintViolationException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ResponseBody
-	public List<FieldError> handleConstraintViolationException(ConstraintViolationException ex) {
-		return ex.getConstraintViolations().stream().map(generateFieldErrorFunction).collect(Collectors.toList());
-	}
+    private Function<ConstraintViolation<?>, FieldError> generateFieldErrorFunction = (c) -> {
+        String errorMessage = resolveLocalizedMessage(c.getMessageTemplate());
+        return new FieldError(errorMessage, c.getPropertyPath().toString());
+    };
 
-	public static FieldError of(ConstraintViolation<?> constraintViolation) {
-		String field = StringUtils.substringAfter(constraintViolation.getPropertyPath().toString(), ".");
-		return new FieldError(field, constraintViolation.getMessageTemplate());
-	}
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody ResponseEntity<List<FieldError>> handleConstraintViolationException(ConstraintViolationException ex) {
+        List<FieldError> response = ex.getConstraintViolations().stream().map(generateFieldErrorFunction).collect(Collectors.toList());
+        return new ResponseEntity<List<FieldError>>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    private String resolveLocalizedMessage(final String key, final Object... args) {
+        Locale currentLocale = LocaleContextHolder.getLocale();
+        return messageSource.getMessage(key, args, "General Error", currentLocale);
+    }
 }

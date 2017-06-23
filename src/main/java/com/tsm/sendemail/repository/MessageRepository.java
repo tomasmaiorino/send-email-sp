@@ -1,18 +1,14 @@
 package com.tsm.sendemail.repository;
 
-import java.util.Optional;
-
 import org.springframework.data.repository.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tsm.sendemail.model.Client;
+import com.tsm.sendemail.model.Message;
 
 @Transactional(propagation = Propagation.MANDATORY)
-public interface ClientRepository extends Repository<Client, Integer> {
+public interface MessageRepository extends Repository<Message, Long> {
 
-    Client save(Client client);
-    
-    Optional<Client> findByToken(final String token);
+    Message save(final Message message);
 
 }
