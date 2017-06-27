@@ -52,4 +52,10 @@ public class ClientResource extends BaseResource {
     @NotEmpty(message = FIELD_REQUIRED)
     private Set<String> hosts;
 
+    @Getter
+    @Setter
+    @NotEmpty(message = FIELD_REQUIRED)
+    @Email(message = INVALID_EMAIL)
+    private String emailRecipient;
+
 }

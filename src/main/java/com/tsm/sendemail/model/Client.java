@@ -51,6 +51,10 @@ public class Client extends BaseModel {
     @Enumerated(EnumType.STRING)
     private ClientStatus status;
 
+    @Getter
+    @Column(nullable = false, length = 30)
+    private String emailRecipient;
+
     public void setClientHosts(final Set<ClientHosts> clientHosts) {
         Assert.notNull(clientHosts, "The clientHosts must not be null!");
         Assert.isTrue(!clientHosts.isEmpty(), "The clientHosts must not be empty!");
@@ -65,6 +69,11 @@ public class Client extends BaseModel {
     public void setEmail(final String email) {
         Assert.hasText(email, "The email must not be null or empty!");
         this.email = email;
+    }
+    
+    public void setEmailRecipient(final String emailRecipient) {
+        Assert.hasText(emailRecipient, "The emailRecipient must not be null or empty!");
+        this.emailRecipient = emailRecipient;
     }
 
     public void setToken(final String token) {

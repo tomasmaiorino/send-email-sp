@@ -29,4 +29,15 @@ public class MessageService {
         log.info("Saved message [{}].", message);
         return message;
     }
+
+    @Transactional
+    public Message update(final Message message) {
+        Assert.notNull(message, "The message must not be null.");
+        log.info("Updating message [{}] .", message);
+
+        repository.save(message);
+
+        log.info("Updated message [{}].", message);
+        return message;
+    }
 }

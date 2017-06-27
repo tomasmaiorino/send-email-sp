@@ -17,6 +17,7 @@ import com.tsm.sendemail.model.Client.ClientStatus;
 import com.tsm.sendemail.resources.ClientResource;
 import com.tsm.sendemail.util.ClientTestBuilder;
 
+@SuppressWarnings("unchecked")
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientParserTest {
 
@@ -46,6 +47,7 @@ public class ClientParserTest {
             hasProperty("name", is(resource.getName())),
             hasProperty("token", is(resource.getToken())),
             hasProperty("status", is(resource.getStatus())),
+            hasProperty("emailRecipient", is(resource.getEmailRecipient())),
             hasProperty("hosts", notNullValue()),
             hasProperty("status", is(ClientStatus.ACTIVE.name()))));
 
@@ -76,6 +78,7 @@ public class ClientParserTest {
             hasProperty("name", is(result.getName())),
             hasProperty("token", is(result.getToken())),
             hasProperty("status", is(result.getStatus())),
+            hasProperty("emailRecipient", is(result.getEmailRecipient())),
             hasProperty("hosts", notNullValue()),
             hasProperty("status", is(ClientStatus.ACTIVE.name()))));
 

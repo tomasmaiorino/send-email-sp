@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings(value = {"rawtypes" })
 public class BaseController {
+    
+    public static final String JSON_VALUE = "application/json";
 
     @Autowired
     private Validator validator;

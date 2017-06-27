@@ -11,7 +11,9 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -21,6 +23,7 @@ import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.repository.ClientRepository;
 import com.tsm.sendemail.util.ClientTestBuilder;
 
+@FixMethodOrder(MethodSorters.JVM)
 public class ClientServiceTest {
 
 	@InjectMocks

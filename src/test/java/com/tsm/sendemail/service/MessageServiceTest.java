@@ -9,7 +9,9 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,6 +20,7 @@ import com.tsm.sendemail.model.Message;
 import com.tsm.sendemail.repository.MessageRepository;
 import com.tsm.sendemail.util.MessageTestBuilder;
 
+@FixMethodOrder(MethodSorters.JVM)
 public class MessageServiceTest {
 
     @InjectMocks

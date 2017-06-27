@@ -1,3 +1,9 @@
+sendemail:
+  service:
+    mailgun:
+      serviceEndpoint: ${MAILGUN_URI}
+      mailgunKey: ${MAILGUN_KEY}
+      mailgunDomain: ${MAILGUN_DOMAIN}
 spring:
   datasource:
     url: ${POSTGRES_URI}

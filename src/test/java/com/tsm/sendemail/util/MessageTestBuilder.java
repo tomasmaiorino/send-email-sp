@@ -42,7 +42,7 @@ public class MessageTestBuilder {
 		message.setSenderEmail(senderEmail);
 		message.setSenderName(senderName);
 		message.setSubject(subject);
-		message.setMessageStatus(status);
+		message.setStatus(status);
 
 		return message;
 	}

@@ -25,4 +25,8 @@ public interface ErrorCodes {
 
     public static final String INVALID_SENDER_EMAIL_SIZE = "invalidSenderEmailSize";
 
+    public static final String INVALID_HOST = "invalidHost";
+    
+    public static final String ERROR_SENDING_EMAIL = "errorSendingEmail";
+
 }

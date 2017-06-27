@@ -23,28 +23,30 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ClientsController extends BaseController {
 
-	@Autowired
-	private ClientService service;
+    @Autowired
+    private ClientService service;
 
-	@Autowired
-	private ClientParser parser;
+    @Autowired
+    private ClientParser parser;
 
-	@RequestMapping(method = POST)
-	@ResponseStatus(CREATED)
-	public ClientResource save(@RequestBody final ClientResource resource) {
-		log.debug("Recieved a request to create a client [{}].", resource);
+    @RequestMapping(method = POST,
+        consumes = JSON_VALUE,
+        produces = JSON_VALUE)
+    @ResponseStatus(CREATED)
+    public ClientResource save(@RequestBody final ClientResource resource) {
+        log.debug("Recieved a request to create a client [{}].", resource);
 
-		validate(resource, Default.class);
+        validate(resource, Default.class);
 
-		Client client = parser.toModel(resource);
+        Client client = parser.toModel(resource);
 
-		client = service.save(client);
+        client = service.save(client);
 
-		ClientResource result = parser.toResource(client);
+        ClientResource result = parser.toResource(client);
 
-		log.debug("returnig resource [{}].", result);
+        log.debug("returnig resource [{}].", result);
 
-		return result;
-	}
+        return result;
+    }
 
 }

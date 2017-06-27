@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.Set;
 
 import javax.validation.ValidationException;
 import javax.validation.Validator;
@@ -28,14 +29,17 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.tsm.sendemail.exceptions.MessageException;
 import com.tsm.sendemail.exceptions.ResourceNotFoundException;
 import com.tsm.sendemail.model.Client;
+import com.tsm.sendemail.model.ClientHosts;
 import com.tsm.sendemail.model.Message;
 import com.tsm.sendemail.model.Message.MessageStatus;
 import com.tsm.sendemail.parser.MessageParser;
 import com.tsm.sendemail.resources.MessageResource;
 import com.tsm.sendemail.service.ClientService;
 import com.tsm.sendemail.service.MessageService;
+import com.tsm.sendemail.service.SendEmailService;
 import com.tsm.sendemail.util.ClientTestBuilder;
 import com.tsm.sendemail.util.MessageTestBuilder;
 
@@ -43,6 +47,9 @@ import com.tsm.sendemail.util.MessageTestBuilder;
 public class MessageControllerTest {
 
 	private static final String CLIENT_TOKEN = ClientTestBuilder.CLIENT_TOKEN;
+
+	private static final StringBuffer VALID_HOST = new StringBuffer(
+			"http://localhost:8080/api/v1/messages/" + CLIENT_TOKEN);
 
 	@Mock
 	private MessageService mockService;
@@ -59,10 +66,17 @@ public class MessageControllerTest {
 	@Mock
 	private Validator validator;
 
+	@Mock
+	private MockHttpServletRequest request;
+
+	@Mock
+	private SendEmailService mockSendEmailService;
+
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		MockHttpServletRequest request = new MockHttpServletRequest();
+		when(request.getRequestURL()).thenReturn(VALID_HOST);
+		when(request.getRequestURI()).thenReturn("/api/v1/messages/" + CLIENT_TOKEN);
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 	}
 
@@ -76,14 +90,14 @@ public class MessageControllerTest {
 
 		// Do test
 		try {
-			controller.save(CLIENT_TOKEN, resource);
+			controller.save(CLIENT_TOKEN, resource, request);
 			fail();
 		} catch (ValidationException e) {
 		}
 
 		// Assertions
 		verify(validator).validate(resource, Default.class);
-		verifyZeroInteractions(mockService, mockClientService, mockParser);
+		verifyZeroInteractions(mockService, mockClientService, mockParser, mockSendEmailService);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -98,7 +112,7 @@ public class MessageControllerTest {
 
 		// Do test
 		try {
-			controller.save(CLIENT_TOKEN, resource);
+			controller.save(CLIENT_TOKEN, resource, request);
 			fail();
 		} catch (ResourceNotFoundException e) {
 		}
@@ -106,6 +120,33 @@ public class MessageControllerTest {
 		// Assertions
 		verify(validator).validate(resource, Default.class);
 		verify(mockClientService).findByToken(CLIENT_TOKEN);
+		verifyZeroInteractions(mockService, mockParser, mockSendEmailService);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void save_ErrorSendingMessage_ShouldThrowException() {
+		// Set up
+		Message message = MessageTestBuilder.buildModel();
+		Client client = ClientTestBuilder.buildModel();
+		MessageResource resource = MessageTestBuilder.buildResoure();
+
+		// Expectations
+		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
+		when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+		when(mockSendEmailService.sendTextEmail(message)).thenThrow(MessageException.class);
+
+		// Do test
+		try {
+			controller.save(CLIENT_TOKEN, resource, request);
+			fail();
+		} catch (MessageException e) {
+		}
+
+		// Assertions
+		verify(validator).validate(resource, Default.class);
+		verify(mockClientService).findByToken(CLIENT_TOKEN);
+		verify(mockSendEmailService).sendTextEmail(message);
 		verifyZeroInteractions(mockService, mockParser);
 	}
 
@@ -115,6 +156,8 @@ public class MessageControllerTest {
 		MessageResource resource = MessageTestBuilder.buildResoure();
 		Message message = MessageTestBuilder.buildModel();
 		Client client = ClientTestBuilder.buildModel();
+		Set<ClientHosts> clientHosts = ClientTestBuilder.buildClientHost("http://localhost:8080");
+		client.setClientHosts(clientHosts);
 
 		// Expectations
 		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
@@ -124,7 +167,7 @@ public class MessageControllerTest {
 		when(mockParser.toResource(message)).thenReturn(resource);
 
 		// Do test
-		MessageResource result = controller.save(CLIENT_TOKEN, resource);
+		MessageResource result = controller.save(CLIENT_TOKEN, resource, request);
 
 		// Assertions
 		verify(validator).validate(resource, Default.class);

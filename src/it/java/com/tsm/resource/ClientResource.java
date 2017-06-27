@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.RandomUtils;
 
-import com.jayway.restassured.response.Response;
 import com.tsm.sendemail.model.Client.ClientStatus;
 
 import lombok.Getter;
@@ -17,102 +16,113 @@ import lombok.Setter;
 
 public class ClientResource {
 
-	public static ClientResource build() {
-		return new ClientResource();
-	}
+    public static ClientResource build() {
+        return new ClientResource();
+    }
 
-	public ClientResource assertFields() {
-		if (Objects.isNull(name)) {
-			name();
-		}
-		if (Objects.isNull(hosts)) {
-			hosts();
-		}
-		if (Objects.isNull(token)) {
-			token();
-		}
-		if (Objects.isNull(email)) {
-			email();
-		}
-		if (Objects.isNull(status)) {
-			status();
-		}
-		return this;
-	}
+    public ClientResource assertFields() {
+        if (Objects.isNull(name)) {
+            name();
+        }
+        if (Objects.isNull(hosts)) {
+            hosts();
+        }
+        if (Objects.isNull(token)) {
+            token();
+        }
+        if (Objects.isNull(email)) {
+            email();
+        }
+        if (Objects.isNull(status)) {
+            status();
+        }
+        return this;
+    }
 
-	public Response create() {
-		assertFields();
-		Response r = given().contentType("application/json").body(this).when().post("/api/v1/clients");
-		return r;
-	}
+    public ClientResource create() {
+        assertFields();
+        return given().contentType("application/json").body(this).when().post("/api/v1/clients").as(ClientResource.class);
+    }
 
-	private ClientResource() {
-	}
+    private ClientResource() {
+    }
 
-	@Getter
-	@Setter
-	private Integer id;
+    @Getter
+    @Setter
+    private Integer id;
 
-	@Getter
-	private String name;
+    @Getter
+    private String name;
 
-	@Getter
-	private String email;
+    @Getter
+    private String email;
 
-	@Getter
-	private String token;
+    @Getter
+    private String token;
 
-	@Getter
-	private String status;
+    @Getter
+    private String status;
 
-	@Getter
-	private Set<String> hosts;
+    @Getter
+    private Set<String> hosts;
 
-	public ClientResource email(final String email) {
-		this.email = email;
-		return this;
-	}
+    @Getter
+    private String emailRecipient;
 
-	public ClientResource email() {
-		return email(random(20, true, true) + "@" + random(2, true, false) + ".com");
-	}
+    public ClientResource emailRecipient(final String emailRecipient) {
+        this.emailRecipient = emailRecipient;
+        return this;
+    }
 
-	public ClientResource token(final String token) {
-		this.token = token;
-		return this;
-	}
+    public ClientResource emailRecipient() {
+        return emailRecipient(random(20, true, true) + "@" + random(2, true, false) + ".com");
+    }
 
-	public ClientResource token() {
-		return token(random(30, true, true));
-	}
+    public ClientResource email(final String email) {
+        this.email = email;
+        return this;
+    }
 
-	public ClientResource status() {
-		return status(ClientStatus.values()[RandomUtils.nextInt(0, ClientStatus.values().length - 1)].name());
-	}
+    public ClientResource email() {
+        return email(random(20, true, true) + "@" + random(2, true, false) + ".com");
+    }
 
-	public ClientResource status(final String status) {
-		this.status = status;
-		return this;
-	}
+    public ClientResource token(final String token) {
+        this.token = token;
+        return this;
+    }
 
-	public ClientResource hosts() {
-		Set<String> hosts = new HashSet<>();
-		hosts.add("http://" + random(5, true, false) + ".com");
-		hosts.add(random(5, true, false) + ".com");
-		return hosts(hosts);
-	}
+    public ClientResource token() {
+        return token(random(30, true, true));
+    }
 
-	public ClientResource hosts(final Set<String> hosts) {
-		this.hosts = hosts;
-		return this;
-	}
+    public ClientResource status() {
+        return status(ClientStatus.values()[RandomUtils.nextInt(0, ClientStatus.values().length - 1)].name());
+    }
 
-	public ClientResource name() {
-		return name(random(30, true, true));
-	}
+    public ClientResource status(final String status) {
+        this.status = status;
+        return this;
+    }
 
-	public ClientResource name(final String name) {
-		this.name = name;
-		return this;
-	}
+    public ClientResource hosts() {
+        Set<String> hosts = new HashSet<>();
+        hosts.add("http://" + random(5, true, false) + ".com");
+        hosts.add(random(5, true, false) + ".com");
+        return hosts(hosts);
+    }
+
+    public ClientResource hosts(final Set<String> hosts) {
+        this.hosts = hosts;
+        return this;
+    }
+
+    public ClientResource name() {
+        return name(random(30, true, true));
+    }
+
+    public ClientResource name(final String name) {
+        this.name = name;
+        return this;
+    }
 }

@@ -154,7 +154,38 @@ public class ClientsControllerIT {
 
     //
     @Test
-    public void save_InvalidStatusEmailGiven_ShouldReturnError() {
+    public void save_NullEmailRecipientGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().emailRecipient(null);
+
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+    }
+
+    @Test
+    public void save_EmptyEmailRecipientGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().emailRecipient("");
+
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+    }
+
+    @Test
+    public void save_InvalidEmailRecipientGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().emailRecipient(RESOURCE_INVALID_EMAIL);
+
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("Invalid email."));
+    }
+
+    //
+    @Test
+    public void save_InvalidStatusGiven_ShouldReturnError() {
         // Set Up
         ClientResource resource = ClientResource.build().assertFields().status(INVALID_STATUS);
 

@@ -1,6 +1,13 @@
 package com.tsm.sendemail.model;
 
 import static org.apache.commons.lang3.RandomStringUtils.random;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +18,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.tsm.sendemail.model.Client.ClientStatus;
+import com.tsm.sendemail.util.ClientTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientTest {
@@ -19,6 +27,8 @@ public class ClientTest {
     private String token;
     private Set<ClientHosts> clientHosts;
     private ClientStatus status;
+    private String emailRecipient;
+    private String email;
 
     @Before
     public void setUp() {
@@ -27,6 +37,8 @@ public class ClientTest {
         clientHosts = new HashSet<>();
         clientHosts.add(bluildClientHost());
         status = ClientStatus.ACTIVE;
+        emailRecipient = ClientTestBuilder.CLIENT_EMAIL_RECEIPIENT;
+        email = ClientTestBuilder.CLIENT_EMAIL;
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -89,34 +101,70 @@ public class ClientTest {
         buildClient();
     }
 
-    private void buildClient() {
-        buildClient(name, token, clientHosts, status);
+    //
+
+    @Test(expected = IllegalArgumentException.class)
+    public void build_NullEmailGiven_ShouldThrowException() {
+
+        // Set up
+        email = null;
+
+        // Do test
+        buildClient();
     }
 
-    private void buildClient(final String name, final String token, final Set<ClientHosts> clientHosts, final ClientStatus status) {
-        Client client = new Client();
-        client.setName(name);
-        client.setToken(token);
-        client.setClientHosts(clientHosts);
-        client.setClientStatus(status);
+    @Test(expected = IllegalArgumentException.class)
+    public void build_EmptyEmailGiven_ShouldThrowException() {
+
+        // Set up
+        email = "";
+
+        // Do test
+        buildClient();
     }
 
-//    @Test
-//    public void build_AllValuesGiven_AllValuesShouldSet() {
-//        // Set up
-//        AddOn addon = AddOnTestBuilder.buildModel(false, ADD_ON_ID);
-//        Supplier supplier = SupplierTestBuilder.buildSupplier(false, SUPPLIER_ID);
-//
-//        // Do Test
-//        AddOnSupplier result = AddOnSupplierBuilder.AddOnSupplier(addon, supplier).build();
-//
-//        // Assertions
-//        assertThat(result,
-//            allOf(hasProperty("addOn", is(addon)),
-//                hasProperty("supplier", is(supplier)),
-//                hasProperty("created", is(nullValue())),
-//                hasProperty("lastUpdated", is(nullValue()))));
-//    }
+    @Test(expected = IllegalArgumentException.class)
+    public void build_NullEmailRecipientGiven_ShouldThrowException() {
+
+        // Set up
+        emailRecipient = null;
+
+        // Do test
+        buildClient();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void build_EmptyEmailRecipientGiven_ShouldThrowException() {
+
+        // Set up
+        emailRecipient = "";
+
+        // Do test
+        buildClient();
+    }
+
+    private Client buildClient() {
+        return ClientTestBuilder.buildModel(name, token, clientHosts, status, email, emailRecipient);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void build_AllValuesGiven_AllValuesShouldSet() {
+        // Set up
+        Client result = buildClient();
+
+        // Assertions
+        assertNotNull(result);
+        assertThat(result, allOf(
+            hasProperty("id", nullValue()),
+            hasProperty("name", is(name)),
+            hasProperty("token", is(token)),
+            hasProperty("emailRecipient", is(emailRecipient)),
+            hasProperty("email", is(email)),
+            hasProperty("clientHosts", notNullValue()),
+            hasProperty("status", is(status))));
+    }
+
     private ClientHosts bluildClientHost() {
         // TODO Auto-generated method stub
         return null;
