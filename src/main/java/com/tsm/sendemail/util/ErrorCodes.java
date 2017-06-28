@@ -21,7 +21,7 @@ public interface ErrorCodes {
 
     public static final String INVALID_SUBJECT_SIZE = "invalidSubjectSize";
 
-    public static final String INVALID_SENDER_NAME_SIZE = "invalidSenderSize";
+    public static final String INVALID_SENDER_NAME_SIZE = "invalidSenderNameSize";
 
     public static final String INVALID_SENDER_EMAIL_SIZE = "invalidSenderEmailSize";
 

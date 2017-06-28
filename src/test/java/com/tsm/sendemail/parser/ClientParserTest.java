@@ -17,7 +17,6 @@ import com.tsm.sendemail.model.Client.ClientStatus;
 import com.tsm.sendemail.resources.ClientResource;
 import com.tsm.sendemail.util.ClientTestBuilder;
 
-@SuppressWarnings("unchecked")
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientParserTest {
 
@@ -42,14 +41,13 @@ public class ClientParserTest {
 
         // Assertions
         assertNotNull(result);
-        assertThat(resource, allOf(
+        assertThat(result, allOf(
             hasProperty("id", nullValue()),
             hasProperty("name", is(resource.getName())),
             hasProperty("token", is(resource.getToken())),
-            hasProperty("status", is(resource.getStatus())),
             hasProperty("emailRecipient", is(resource.getEmailRecipient())),
-            hasProperty("hosts", notNullValue()),
-            hasProperty("status", is(ClientStatus.ACTIVE.name()))));
+            hasProperty("clientHosts", notNullValue()),
+            hasProperty("status", is(ClientStatus.ACTIVE))));
 
         assertThat(result.getClientHosts().size(), is(resource.getHosts().size()));
     }
@@ -75,10 +73,9 @@ public class ClientParserTest {
         assertNotNull(result);
         assertThat(result, allOf(
             hasProperty("id", is(client.getId())),
-            hasProperty("name", is(result.getName())),
-            hasProperty("token", is(result.getToken())),
-            hasProperty("status", is(result.getStatus())),
-            hasProperty("emailRecipient", is(result.getEmailRecipient())),
+            hasProperty("name", is(client.getName())),
+            hasProperty("token", is(client.getToken())),
+            hasProperty("emailRecipient", is(client.getEmailRecipient())),
             hasProperty("hosts", notNullValue()),
             hasProperty("status", is(ClientStatus.ACTIVE.name()))));
 

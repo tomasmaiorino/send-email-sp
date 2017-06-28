@@ -60,7 +60,7 @@ public class SendEmailServiceTest {
 		Message message = MessageTestBuilder.buildModel();
 
 		// Expectations
-		when(mockSendEmailService.sendTextEmail(message)).thenThrow(Exception.class);
+		when(mockSendEmailService.sendTextEmail(message)).thenThrow(MessageException.class);
 
 		// Do test
 		try {

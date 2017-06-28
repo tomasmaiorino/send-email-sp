@@ -1,5 +1,7 @@
 package com.tsm.sendemail.service;
 
+import static com.tsm.sendemail.util.ErrorCodes.ERROR_SENDING_EMAIL;
+
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -55,7 +57,7 @@ public class MailgunSendEmailService extends BaseSendEmailService {
 
 		} catch (Exception e) {
 			log.error("Error sending message [{}]", message.getId(), e);
-			throw new MessageException("");
+			throw new MessageException(ERROR_SENDING_EMAIL);
 		}
 		log.debug("sending text email <- [{}]", "message sent");
 		return message;

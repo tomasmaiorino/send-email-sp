@@ -65,7 +65,7 @@ public class MessageResource extends BaseResource {
     }
 
     public MessageResource subject() {
-        return message(random(20, true, true));
+        return subject(random(20, true, true));
     }
 
     public MessageResource subject(final String subject) {

@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +28,7 @@ public class MessageResource extends BaseResource {
 
     @Getter
     @Setter
-    @NotEmpty(message = FIELD_REQUIRED)
+    @NotNull(message = FIELD_REQUIRED)
     @Size(min = 2, max = 30, message = INVALID_SUBJECT_SIZE)
     private String subject;
 

@@ -3,12 +3,11 @@ package com.tsm.sendemail.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.tsm.sendemail.exceptions.MessageException;
 import com.tsm.sendemail.model.Message;
 import com.tsm.sendemail.model.Message.MessageStatus;
-import org.springframework.util.Assert;
-import static com.tsm.sendemail.util.ErrorCodes.ERROR_SENDING_EMAIL;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,9 +31,9 @@ public class SendEmailService {
 		try {
 			message = sendEmailService.sendTextEmail(message);
 			message.setStatus(MessageStatus.SENT);
-		} catch (Exception e) {
+		} catch (MessageException e) {
 			message.setStatus(MessageStatus.ERROR);
-			throw new MessageException(ERROR_SENDING_EMAIL);
+			throw e;
 		} finally {
 			messageService.update(message);
 		}

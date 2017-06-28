@@ -129,12 +129,17 @@ public class MessageControllerTest {
 		// Set up
 		Message message = MessageTestBuilder.buildModel();
 		Client client = ClientTestBuilder.buildModel();
+		Set<ClientHosts> clientHosts = ClientTestBuilder.buildClientHost("http://localhost:8080");
+		client.setClientHosts(clientHosts);
 		MessageResource resource = MessageTestBuilder.buildResoure();
 
 		// Expectations
 		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
 		when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+		when(mockParser.toModel(resource, client)).thenReturn(message);
+		when(mockService.save(message)).thenReturn(message);
 		when(mockSendEmailService.sendTextEmail(message)).thenThrow(MessageException.class);
+		when(mockService.update(message)).thenReturn(message);
 
 		// Do test
 		try {
@@ -147,7 +152,8 @@ public class MessageControllerTest {
 		verify(validator).validate(resource, Default.class);
 		verify(mockClientService).findByToken(CLIENT_TOKEN);
 		verify(mockSendEmailService).sendTextEmail(message);
-		verifyZeroInteractions(mockService, mockParser);
+		verify(mockService).save(message);
+		verify(mockParser).toModel(resource, client);
 	}
 
 	@Test
@@ -163,6 +169,7 @@ public class MessageControllerTest {
 		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
 		when(mockParser.toModel(resource, client)).thenReturn(message);
 		when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+		when(mockSendEmailService.sendTextEmail(message)).thenReturn(message);
 		when(mockService.save(message)).thenReturn(message);
 		when(mockParser.toResource(message)).thenReturn(resource);
 

@@ -55,7 +55,7 @@ public class Message extends BaseModel {
 	@Column(nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
 	private MessageStatus status = MessageStatus.CREATED;
-
+	
 	public void setMessage(final String message) {
 		Assert.hasText(message, "The message must not be null or empty!");
 		this.message = message;
