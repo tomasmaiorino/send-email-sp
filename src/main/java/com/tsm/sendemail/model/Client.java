@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.springframework.util.Assert;
 
 import lombok.Getter;
@@ -70,7 +71,7 @@ public class Client extends BaseModel {
         Assert.hasText(email, "The email must not be null or empty!");
         this.email = email;
     }
-    
+
     public void setEmailRecipient(final String emailRecipient) {
         Assert.hasText(emailRecipient, "The emailRecipient must not be null or empty!");
         this.emailRecipient = emailRecipient;
@@ -112,4 +113,11 @@ public class Client extends BaseModel {
     public int hashCode() {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    }
+
 }

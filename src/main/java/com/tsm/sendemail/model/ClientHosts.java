@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.springframework.util.Assert;
 
 import lombok.Getter;
@@ -30,6 +31,11 @@ public class ClientHosts extends BaseModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client client;
+
+    public void setClient(final Client client) {
+        Assert.notNull(client, "The client must not be null!");
+        this.client = client;
+    }
 
     public void setHost(final String host) {
         Assert.hasText(host, "The host must not be null!");
@@ -57,6 +63,12 @@ public class ClientHosts extends BaseModel {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getId()).toHashCode();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 
 }

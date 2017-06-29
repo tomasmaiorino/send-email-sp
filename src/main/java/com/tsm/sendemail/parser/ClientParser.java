@@ -15,45 +15,46 @@ import com.tsm.sendemail.resources.ClientResource;
 @Component
 public class ClientParser {
 
-	public Client toModel(final ClientResource resource) {
-		Assert.notNull(resource, "The resource must not be null!");
-		Client client = new Client();
-		client.setClientStatus(ClientStatus.valueOf(resource.getStatus()));
-		client.setEmail(resource.getEmail());
-		client.setName(resource.getName());
-		client.setToken(resource.getToken());
-		client.setClientHosts(loadClientHosts(resource.getHosts()));
-		client.setEmailRecipient(resource.getEmailRecipient());
-		return client;
-	}
+    public Client toModel(final ClientResource resource) {
+        Assert.notNull(resource, "The resource must not be null!");
+        Client client = new Client();
+        client.setClientStatus(ClientStatus.valueOf(resource.getStatus()));
+        client.setEmail(resource.getEmail());
+        client.setName(resource.getName());
+        client.setToken(resource.getToken());
+        client.setClientHosts(loadClientHosts(client, resource.getHosts()));
+        client.setEmailRecipient(resource.getEmailRecipient());
+        return client;
+    }
 
-	private Set<ClientHosts> loadClientHosts(final Set<String> hosts) {
-		Set<ClientHosts> clientHosts = new HashSet<>();
-		hosts.forEach(h -> {
-			ClientHosts host = new ClientHosts();
-			host.setHost(h);
-			clientHosts.add(host);
-		});
-		return clientHosts;
-	}
+    private Set<ClientHosts> loadClientHosts(final Client client, final Set<String> hosts) {
+        Set<ClientHosts> clientHosts = new HashSet<>();
+        hosts.forEach(h -> {
+            ClientHosts host = new ClientHosts();
+            host.setHost(h);
+            host.setClient(client);
+            clientHosts.add(host);
+        });
+        return clientHosts;
+    }
 
-	public ClientResource toResource(final Client client) {
-		Assert.notNull(client, "The client must not be null!");
-		ClientResource resource = new ClientResource();
-		resource.setId(client.getId());
-		resource.setEmail(client.getEmail());
-		resource.setName(client.getName());
-		resource.setToken(client.getToken());
-		resource.setStatus(client.getStatus().toString());
-		resource.setId(client.getId());
-		resource.setHosts(loadHosts(client));
-		resource.setEmailRecipient(client.getEmailRecipient());
-		return resource;
+    public ClientResource toResource(final Client client) {
+        Assert.notNull(client, "The client must not be null!");
+        ClientResource resource = new ClientResource();
+        resource.setId(client.getId());
+        resource.setEmail(client.getEmail());
+        resource.setName(client.getName());
+        resource.setToken(client.getToken());
+        resource.setStatus(client.getStatus().toString());
+        resource.setId(client.getId());
+        resource.setHosts(loadHosts(client));
+        resource.setEmailRecipient(client.getEmailRecipient());
+        return resource;
 
-	}
+    }
 
-	private Set<String> loadHosts(final Client client) {
-		return client.getClientHosts().stream().map(ClientHosts::getHost).collect(Collectors.toSet());
-	}
+    private Set<String> loadHosts(final Client client) {
+        return client.getClientHosts().stream().map(ClientHosts::getHost).collect(Collectors.toSet());
+    }
 
 }

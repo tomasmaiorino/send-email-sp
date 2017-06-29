@@ -7,14 +7,15 @@ import static com.tsm.sendemail.util.ErrorCodes.INVALID_SENDER_NAME_SIZE;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_SUBJECT_SIZE;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Email;
 
 import lombok.Getter;
 import lombok.Setter;
 
 public class MessageResource extends BaseResource {
+
+    public static final String EMAIL = "^\\w+([-+._]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
 
     @Getter
     @Setter
@@ -41,7 +42,7 @@ public class MessageResource extends BaseResource {
     @Getter
     @Setter
     @NotNull(message = FIELD_REQUIRED)
-    @Email(message = INVALID_EMAIL)
+    @Pattern(regexp = EMAIL, message = INVALID_EMAIL)
     private String senderEmail;
 
     @Getter

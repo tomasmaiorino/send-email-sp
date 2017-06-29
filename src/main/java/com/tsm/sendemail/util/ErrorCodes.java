@@ -5,7 +5,7 @@ public interface ErrorCodes {
     // GENERAL
     public static final String FIELD_REQUIRED = "field.required";
 
-    public static final String INVALID_EMAIL = "invalid.email";
+    public static final String INVALID_EMAIL = "invalidEmail";
 
     public static final String INVALID_STATUS = "invalidStatus";
 
@@ -17,6 +17,8 @@ public interface ErrorCodes {
 
     // MESSAGE
 
+    public static final String CLIENT_NOT_FOUND = "clientNotFound";
+
     public static final String INVALID_MESSAGE_SIZE = "invalidMessageSize";
 
     public static final String INVALID_SUBJECT_SIZE = "invalidSubjectSize";
@@ -26,7 +28,7 @@ public interface ErrorCodes {
     public static final String INVALID_SENDER_EMAIL_SIZE = "invalidSenderEmailSize";
 
     public static final String INVALID_HOST = "invalidHost";
-    
+
     public static final String ERROR_SENDING_EMAIL = "errorSendingEmail";
 
 }

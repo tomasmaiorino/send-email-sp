@@ -30,53 +30,55 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MessagesController extends BaseController {
 
-	@Autowired
-	private MessageService service;
+    @Autowired
+    private MessageService service;
 
-	@Autowired
-	private ClientService clientService;
+    @Autowired
+    private ClientService clientService;
 
-	@Autowired
-	private SendEmailService sendEmailService;
+    @Autowired
+    private SendEmailService sendEmailService;
 
-	@Autowired
-	private MessageParser parser;
+    @Autowired
+    private MessageParser parser;
 
-	@RequestMapping(method = POST, path = "/{clientToken}", consumes = JSON_VALUE, produces = JSON_VALUE)
-	@ResponseStatus(CREATED)
-	public MessageResource save(@PathVariable String clientToken, @RequestBody final MessageResource resource,
-			HttpServletRequest request) {
-		log.debug("Recieved a request to create a message [{}] for the client token [{}].", resource, clientToken);
+    @RequestMapping(method = POST, path = "/{clientToken}", consumes = JSON_VALUE, produces = JSON_VALUE)
+    @ResponseStatus(CREATED)
+    public MessageResource save(@PathVariable String clientToken, @RequestBody final MessageResource resource,
+        HttpServletRequest request) {
+        log.debug("Recieved a request to create a message [{}] for the client token [{}].", resource, clientToken);
 
-		validate(resource, Default.class);
+        validate(resource, Default.class);
 
-		Client client = clientService.findByToken(clientToken);
+        Client client = clientService.findByToken(clientToken);
 
-		assertClientHost(client, request);
+        assertClientHost(client, request);
 
-		Message message = parser.toModel(resource, client);
+        Message message = parser.toModel(resource, client);
 
-		message = service.save(message);
+        message = service.save(message);
 
-		message = sendEmailService.sendTextEmail(message);
+        message = sendEmailService.sendTextEmail(message);
 
-		MessageResource result = parser.toResource(message);
+        MessageResource result = parser.toResource(message);
 
-		log.debug("returnig resource [{}].", result);
+        log.debug("returnig resource [{}].", result);
 
-		return result;
-	}
+        return result;
+    }
 
-	private void assertClientHost(final Client client, HttpServletRequest request) {
-		String host = recoverHost(request);
-		if (client.getClientHosts().stream().filter(h -> h.getHost().equals(host)).count() == 0) {
-			throw new BadRequestException(INVALID_HOST);
-		}
-	}
+    private void assertClientHost(final Client client, HttpServletRequest request) {
+        String host = recoverHost(request);
+        log.info("checking host request [{}]", host);
+        if (client.getClientHosts().stream().filter(h -> h.getHost().equals(host)).count() == 0) {
+            throw new BadRequestException(INVALID_HOST);
+        }
+    }
 
-	private String recoverHost(HttpServletRequest request) {
-		StringBuffer requestURL = request.getRequestURL();
-		return requestURL.toString().replace(request.getRequestURI(), "");
-	}
+    private String recoverHost(HttpServletRequest request) {
+        log.debug("recovering url [{}] and uri [{}]", request.getRequestURL(), request.getRequestURI());
+        StringBuffer requestURL = request.getRequestURL();
+        return requestURL.toString().replace(request.getRequestURI(), "");
+    }
 
 }

@@ -29,6 +29,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.tsm.sendemail.exceptions.BadRequestException;
 import com.tsm.sendemail.exceptions.MessageException;
 import com.tsm.sendemail.exceptions.ResourceNotFoundException;
 import com.tsm.sendemail.model.Client;
@@ -46,149 +47,172 @@ import com.tsm.sendemail.util.MessageTestBuilder;
 @FixMethodOrder(MethodSorters.JVM)
 public class MessageControllerTest {
 
-	private static final String CLIENT_TOKEN = ClientTestBuilder.CLIENT_TOKEN;
+    private static final String CLIENT_TOKEN = ClientTestBuilder.CLIENT_TOKEN;
 
-	private static final StringBuffer VALID_HOST = new StringBuffer(
-			"http://localhost:8080/api/v1/messages/" + CLIENT_TOKEN);
+    private static final StringBuffer VALID_HOST = new StringBuffer(
+        "http://localhost:8080/api/v1/messages/" + CLIENT_TOKEN);
 
-	@Mock
-	private MessageService mockService;
+    @Mock
+    private MessageService mockService;
 
-	@Mock
-	private ClientService mockClientService;
+    @Mock
+    private ClientService mockClientService;
 
-	@Mock
-	private MessageParser mockParser;
+    @Mock
+    private MessageParser mockParser;
 
-	@InjectMocks
-	private MessagesController controller;
+    @InjectMocks
+    private MessagesController controller;
 
-	@Mock
-	private Validator validator;
+    @Mock
+    private Validator validator;
 
-	@Mock
-	private MockHttpServletRequest request;
+    @Mock
+    private MockHttpServletRequest request;
 
-	@Mock
-	private SendEmailService mockSendEmailService;
+    @Mock
+    private SendEmailService mockSendEmailService;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-		when(request.getRequestURL()).thenReturn(VALID_HOST);
-		when(request.getRequestURI()).thenReturn("/api/v1/messages/" + CLIENT_TOKEN);
-		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-	}
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        when(request.getRequestURL()).thenReturn(VALID_HOST);
+        when(request.getRequestURI()).thenReturn("/api/v1/messages/" + CLIENT_TOKEN);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+    }
 
-	@Test
-	public void save_InvalidMessageResourceGiven_ShouldThrowException() {
-		// Set up
-		MessageResource resource = MessageTestBuilder.buildResoure();
+    @Test
+    public void save_InvalidMessageResourceGiven_ShouldThrowException() {
+        // Set up
+        MessageResource resource = MessageTestBuilder.buildResoure();
 
-		// Expectations
-		when(validator.validate(resource, Default.class)).thenThrow(new ValidationException());
+        // Expectations
+        when(validator.validate(resource, Default.class)).thenThrow(new ValidationException());
 
-		// Do test
-		try {
-			controller.save(CLIENT_TOKEN, resource, request);
-			fail();
-		} catch (ValidationException e) {
-		}
+        // Do test
+        try {
+            controller.save(CLIENT_TOKEN, resource, request);
+            fail();
+        } catch (ValidationException e) {
+        }
 
-		// Assertions
-		verify(validator).validate(resource, Default.class);
-		verifyZeroInteractions(mockService, mockClientService, mockParser, mockSendEmailService);
-	}
+        // Assertions
+        verify(validator).validate(resource, Default.class);
+        verifyZeroInteractions(mockService, mockClientService, mockParser, mockSendEmailService);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void save_InvalidClientGiven_ShouldThrowException() {
-		// Set up
-		MessageResource resource = MessageTestBuilder.buildResoure();
+    @SuppressWarnings("unchecked")
+    @Test
+    public void save_InvalidClientGiven_ShouldThrowException() {
+        // Set up
+        MessageResource resource = MessageTestBuilder.buildResoure();
 
-		// Expectations
-		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
-		when(mockClientService.findByToken(CLIENT_TOKEN)).thenThrow(ResourceNotFoundException.class);
+        // Expectations
+        when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
+        when(mockClientService.findByToken(CLIENT_TOKEN)).thenThrow(ResourceNotFoundException.class);
 
-		// Do test
-		try {
-			controller.save(CLIENT_TOKEN, resource, request);
-			fail();
-		} catch (ResourceNotFoundException e) {
-		}
+        // Do test
+        try {
+            controller.save(CLIENT_TOKEN, resource, request);
+            fail();
+        } catch (ResourceNotFoundException e) {
+        }
 
-		// Assertions
-		verify(validator).validate(resource, Default.class);
-		verify(mockClientService).findByToken(CLIENT_TOKEN);
-		verifyZeroInteractions(mockService, mockParser, mockSendEmailService);
-	}
+        // Assertions
+        verify(validator).validate(resource, Default.class);
+        verify(mockClientService).findByToken(CLIENT_TOKEN);
+        verifyZeroInteractions(mockService, mockParser, mockSendEmailService);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void save_ErrorSendingMessage_ShouldThrowException() {
-		// Set up
-		Message message = MessageTestBuilder.buildModel();
-		Client client = ClientTestBuilder.buildModel();
-		Set<ClientHosts> clientHosts = ClientTestBuilder.buildClientHost("http://localhost:8080");
-		client.setClientHosts(clientHosts);
-		MessageResource resource = MessageTestBuilder.buildResoure();
+    @Test
+    public void save_InvalidHostGiven_ShouldThrowException() {
+        // Set up
+        MessageResource resource = MessageTestBuilder.buildResoure();
+        Client client = ClientTestBuilder.buildModel();
 
-		// Expectations
-		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
-		when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
-		when(mockParser.toModel(resource, client)).thenReturn(message);
-		when(mockService.save(message)).thenReturn(message);
-		when(mockSendEmailService.sendTextEmail(message)).thenThrow(MessageException.class);
-		when(mockService.update(message)).thenReturn(message);
+        // Expectations
+        when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
+        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
 
-		// Do test
-		try {
-			controller.save(CLIENT_TOKEN, resource, request);
-			fail();
-		} catch (MessageException e) {
-		}
+        // Do test
+        try {
+            controller.save(CLIENT_TOKEN, resource, request);
+            fail();
+        } catch (BadRequestException e) {
+        }
 
-		// Assertions
-		verify(validator).validate(resource, Default.class);
-		verify(mockClientService).findByToken(CLIENT_TOKEN);
-		verify(mockSendEmailService).sendTextEmail(message);
-		verify(mockService).save(message);
-		verify(mockParser).toModel(resource, client);
-	}
+        // Assertions
+        verify(validator).validate(resource, Default.class);
+        verify(mockClientService).findByToken(CLIENT_TOKEN);
+        verifyZeroInteractions(mockService, mockParser, mockSendEmailService);
+    }
 
-	@Test
-	public void save_ValidMessageResourceGiven_ShouldSaveMessage() {
-		// Set up
-		MessageResource resource = MessageTestBuilder.buildResoure();
-		Message message = MessageTestBuilder.buildModel();
-		Client client = ClientTestBuilder.buildModel();
-		Set<ClientHosts> clientHosts = ClientTestBuilder.buildClientHost("http://localhost:8080");
-		client.setClientHosts(clientHosts);
+    @SuppressWarnings("unchecked")
+    @Test
+    public void save_ErrorSendingMessage_ShouldThrowException() {
+        // Set up
+        Message message = MessageTestBuilder.buildModel();
+        Client client = ClientTestBuilder.buildModel();
+        Set<ClientHosts> clientHosts = ClientTestBuilder.buildClientHost("http://localhost:8080");
+        client.setClientHosts(clientHosts);
+        MessageResource resource = MessageTestBuilder.buildResoure();
 
-		// Expectations
-		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
-		when(mockParser.toModel(resource, client)).thenReturn(message);
-		when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
-		when(mockSendEmailService.sendTextEmail(message)).thenReturn(message);
-		when(mockService.save(message)).thenReturn(message);
-		when(mockParser.toResource(message)).thenReturn(resource);
+        // Expectations
+        when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
+        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(mockParser.toModel(resource, client)).thenReturn(message);
+        when(mockService.save(message)).thenReturn(message);
+        when(mockSendEmailService.sendTextEmail(message)).thenThrow(MessageException.class);
+        when(mockService.update(message)).thenReturn(message);
 
-		// Do test
-		MessageResource result = controller.save(CLIENT_TOKEN, resource, request);
+        // Do test
+        try {
+            controller.save(CLIENT_TOKEN, resource, request);
+            fail();
+        } catch (MessageException e) {
+        }
 
-		// Assertions
-		verify(validator).validate(resource, Default.class);
-		verify(mockService).save(message);
-		verify(mockParser).toModel(resource, client);
-		verify(mockService).save(message);
-		verify(mockParser).toResource(message);
+        // Assertions
+        verify(validator).validate(resource, Default.class);
+        verify(mockClientService).findByToken(CLIENT_TOKEN);
+        verify(mockSendEmailService).sendTextEmail(message);
+        verify(mockService).save(message);
+        verify(mockParser).toModel(resource, client);
+    }
 
-		assertNotNull(result);
-		assertThat(result,
-				allOf(hasProperty("id", notNullValue()), hasProperty("message", is(resource.getMessage())),
-						hasProperty("subject", is(resource.getSubject())),
-						hasProperty("senderName", is(resource.getSenderName())),
-						hasProperty("senderEmail", is(resource.getSenderEmail())),
-						hasProperty("status", is(MessageStatus.CREATED.name()))));
-	}
+    @Test
+    public void save_ValidMessageResourceGiven_ShouldSaveMessage() {
+        // Set up
+        MessageResource resource = MessageTestBuilder.buildResoure();
+        Message message = MessageTestBuilder.buildModel();
+        Client client = ClientTestBuilder.buildModel();
+        Set<ClientHosts> clientHosts = ClientTestBuilder.buildClientHost("http://localhost:8080");
+        client.setClientHosts(clientHosts);
+
+        // Expectations
+        when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
+        when(mockParser.toModel(resource, client)).thenReturn(message);
+        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(mockSendEmailService.sendTextEmail(message)).thenReturn(message);
+        when(mockService.save(message)).thenReturn(message);
+        when(mockParser.toResource(message)).thenReturn(resource);
+
+        // Do test
+        MessageResource result = controller.save(CLIENT_TOKEN, resource, request);
+
+        // Assertions
+        verify(validator).validate(resource, Default.class);
+        verify(mockService).save(message);
+        verify(mockParser).toModel(resource, client);
+        verify(mockService).save(message);
+        verify(mockParser).toResource(message);
+
+        assertNotNull(result);
+        assertThat(result,
+            allOf(hasProperty("id", notNullValue()), hasProperty("message", is(resource.getMessage())),
+                hasProperty("subject", is(resource.getSubject())),
+                hasProperty("senderName", is(resource.getSenderName())),
+                hasProperty("senderEmail", is(resource.getSenderEmail())),
+                hasProperty("status", is(MessageStatus.CREATED.name()))));
+    }
 }
