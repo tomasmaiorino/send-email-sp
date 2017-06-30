@@ -243,12 +243,14 @@ public class MessagesControllerIT {
     @Test
     public void save_SendEmailClientGiven_ShouldSendEmail() {
         // Set Up
+        Set<String> hosts = new HashSet();
+        hosts.add(host);
+        ClientResource client = ClientResource.build().hosts(hosts).create();
         MessageResource resource = MessageResource.build().assertFields();
-        ClientResource client = ClientResource.build().create();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when()
-            .post("/api/v1/messages/{clientToken}", client.getId()).then()
+            .post("/api/v1/messages/{clientToken}", client.getToken()).then()
             .statusCode(HttpStatus.OK.value())
             .body("message", is(resource.getMessage()))
             .body("status", is(MessageStatus.SENT))

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -21,97 +22,108 @@ import lombok.Getter;
 @Table(name = "message")
 public class Message extends BaseModel {
 
-	@Id
-	@GeneratedValue
-	@Getter
-	private Long id;
+    @Id
+    @GeneratedValue
+    @Getter
+    private Long id;
 
-	public enum MessageStatus {
-		CREATED, SENT, NOT_SENT, ERROR;
-	}
+    public enum MessageStatus {
+        CREATED, SENT, NOT_SENT, ERROR;
+    }
 
-	@Getter
-	@Column(nullable = false, length = 300)
-	private String message;
+    @Getter
+    @Column(nullable = false, length = 300)
+    private String message;
 
-	@Getter
-	@Column(nullable = false, length = 30)
-	private String subject;
+    @Getter
+    @Column(nullable = false, length = 30)
+    private String subject;
 
-	@Getter
-	@Column(nullable = false, length = 20)
-	private String senderName;
+    @Getter
+    @Column(nullable = false, length = 20)
+    private String senderName;
 
-	@Getter
-	@Column(nullable = false, length = 30)
-	private String senderEmail;
+    @Getter
+    @Column(nullable = false, length = 30)
+    private String senderEmail;
 
-	@Getter
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "client_id")
-	private Client client;
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id")
+    private Client client;
 
-	@Getter
-	@Column(nullable = false, length = 10)
-	@Enumerated(EnumType.STRING)
-	private MessageStatus status = MessageStatus.CREATED;
-	
-	public void setMessage(final String message) {
-		Assert.hasText(message, "The message must not be null or empty!");
-		this.message = message;
-	}
+    @Getter
+    @Column(nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    private MessageStatus status = MessageStatus.CREATED;
 
-	public void setSubject(final String subject) {
-		Assert.hasText(subject, "The subject must not be null or empty!");
-		this.subject = subject;
-	}
+    @Transient
+    private Integer responseCode;
 
-	public void setSenderName(final String senderName) {
-		Assert.hasText(senderName, "The senderName must not be null or empty!");
-		this.senderName = senderName;
-	}
+    public void setMessage(final String message) {
+        Assert.hasText(message, "The message must not be null or empty!");
+        this.message = message;
+    }
 
-	public void setSenderEmail(final String senderEmail) {
-		Assert.hasText(senderEmail, "The senderEmail must not be null or empty!");
-		this.senderEmail = senderEmail;
-	}
+    public void setSubject(final String subject) {
+        Assert.hasText(subject, "The subject must not be null or empty!");
+        this.subject = subject;
+    }
 
-	public void setClient(Client client) {
-		Assert.notNull(client, "The client must not be null!");
-		this.client = client;
-	}
+    public void setSenderName(final String senderName) {
+        Assert.hasText(senderName, "The senderName must not be null or empty!");
+        this.senderName = senderName;
+    }
 
-	public void setStatus(final MessageStatus status) {
-		Assert.notNull(status, "The status must not be null!");
-		this.status = status;
-	}
+    public void setSenderEmail(final String senderEmail) {
+        Assert.hasText(senderEmail, "The senderEmail must not be null or empty!");
+        this.senderEmail = senderEmail;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (obj == this) {
-			return true;
-		}
-		if (obj.getClass() != getClass()) {
-			return false;
-		}
-		ClientHosts other = (ClientHosts) obj;
-		if (getId() == null || other.getId() == null) {
-			return false;
-		}
-		return getId().equals(other.getId());
-	}
+    public void setClient(Client client) {
+        Assert.notNull(client, "The client must not be null!");
+        this.client = client;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(getId()).toHashCode();
-	}
+    public void setStatus(final MessageStatus status) {
+        Assert.notNull(status, "The status must not be null!");
+        this.status = status;
+    }
 
-	@Override
-	public String toString() {
-		return ReflectionToStringBuilder.toString(this);
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        ClientHosts other = (ClientHosts) obj;
+        if (getId() == null || other.getId() == null) {
+            return false;
+        }
+        return getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getId()).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    }
+
+    public Integer getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(Integer responseCode) {
+        this.responseCode = responseCode;
+    }
 
 }
