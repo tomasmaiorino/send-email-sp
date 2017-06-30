@@ -1,7 +1,7 @@
 package com.tsm.sendemail.controller;
 
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_HOST;
-import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +43,7 @@ public class MessagesController extends BaseController {
     private MessageParser parser;
 
     @RequestMapping(method = POST, path = "/{clientToken}", consumes = JSON_VALUE, produces = JSON_VALUE)
-    @ResponseStatus(CREATED)
+    @ResponseStatus(OK)
     public MessageResource save(@PathVariable String clientToken, @RequestBody final MessageResource resource,
         HttpServletRequest request) {
         log.debug("Recieved a request to create a message [{}] for the client token [{}].", resource, clientToken);

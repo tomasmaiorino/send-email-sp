@@ -9,3 +9,5 @@ spring:
     driverClassName: org.hsqldb.jdbcDriver
     url: jdbc:hsqldb:mem:auth
     username: sa
+    
+    

@@ -16,33 +16,33 @@ import lombok.Setter;
 @Service
 public class SendEmailService {
 
-    @Autowired
-    @Getter
-    @Setter
-    private MessageService messageService;
+	@Autowired
+	@Getter
+	@Setter
+	private MessageService messageService;
 
-    @Autowired
-    @Getter
-    @Setter
-    @Qualifier("mailgunService")
-    private BaseSendEmailService sendEmailService;
+	@Autowired
+	@Getter
+	@Setter
+	@Qualifier("mailgunService")
+	private BaseSendEmailService sendEmailService;
 
-    public Message sendTextEmail(Message message) {
-        Assert.notNull(message, "The message must not be null!");
-        try {
-            message = sendEmailService.sendTextEmail(message);
-            if (message.getResponseCode() != HttpStatus.CREATED.ordinal()) {
-                message.setStatus(MessageStatus.NOT_SENT);
-            } else {
-                message.setStatus(MessageStatus.SENT);
-            }
-        } catch (MessageException e) {
-            message.setStatus(MessageStatus.ERROR);
-            throw e;
-        } finally {
-            messageService.update(message);
-        }
-        return message;
-    }
+	public Message sendTextEmail(Message message) {
+		Assert.notNull(message, "The message must not be null!");
+		try {
+			message = sendEmailService.sendTextEmail(message);
+			if (message.getResponseCode() != HttpStatus.OK.value()) {
+				message.setStatus(MessageStatus.NOT_SENT);
+			} else {
+				message.setStatus(MessageStatus.SENT);
+			}
+		} catch (MessageException e) {
+			message.setStatus(MessageStatus.ERROR);
+			throw e;
+		} finally {
+			messageService.update(message);
+		}
+		return message;
+	}
 
 }
