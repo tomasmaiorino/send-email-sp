@@ -40,115 +40,119 @@ import lombok.extern.slf4j.Slf4j;
 @Qualifier("mailgunService")
 public class MailgunSendEmailService extends BaseSendEmailService {
 
-	@Getter
-	@Setter
-	@Value("${sendemail.service.mailgun.serviceEndpoint}")
-	private String serviceEndpoint;
+    private static final String MAILGUN_USER = "api";
 
-	@Getter
-	@Setter
-	@Value("${sendemail.service.mailgun.mailgunKey}")
-	private String mailgunKey;
+    private static final String MAILGUN_DOMAIN_NAME_KEY = "#domain_name";
 
-	@Getter
-	@Setter
-	@Value("${sendemail.service.mailgun.mailgunDomain}")
-	private String mailgunDomain;
+    @Getter
+    @Setter
+    @Value("${sendemail.service.mailgun.serviceEndpoint}")
+    private String serviceEndpoint;
 
-	@Override
-	public Message sendTextEmail(final Message message) throws MessageException {
-		Assert.notNull(message, "The message must not be null!");
-		log.debug("sending text email -> [{}]", message);
+    @Getter
+    @Setter
+    @Value("${sendemail.service.mailgun.mailgunKey}")
+    private String mailgunKey;
 
-		try {
+    @Getter
+    @Setter
+    @Value("${sendemail.service.mailgun.mailgunDomain}")
+    private String mailgunDomain;
 
-			log.debug("Endpoint [{}].", getUrl());
+    @Override
+    public Message sendTextEmail(final Message message) throws MessageException {
+        Assert.notNull(message, "The message must not be null!");
+        log.debug("sending text email -> [{}]", message);
 
-			HttpResponse response = doesPostRequest(message);
+        try {
 
-			log.info("sendTextEmail respons status [{}]", response.getStatusLine().getStatusCode());
+            log.info("Endpoint [{}].", getUrl());
 
-			message.setResponseCode(response.getStatusLine().getStatusCode());
+            HttpResponse response = doesPostRequest(message);
 
-			if (response.getStatusLine().getStatusCode() != HttpStatus.OK.value()) {
-				log.info("Response message [{}]", getMessageResponse(response.getEntity().getContent()));
-			}
+            log.info("sendTextEmail respons status [{}]", response.getStatusLine().getStatusCode());
 
-		} catch (Exception e) {
-			log.error("Error sending message [{}]", message.getId(), e);
-			throw new MessageException(ERROR_SENDING_EMAIL);
-		}
+            message.setResponseCode(response.getStatusLine().getStatusCode());
 
-		log.debug("sending text email <- [{}]", "message sent");
+            if (response.getStatusLine().getStatusCode() != HttpStatus.OK.value()) {
+                log.info("Response message [{}]", getMessageResponse(response.getEntity().getContent()));
+            }
 
-		return message;
-	}
+        } catch (Exception e) {
+            log.error("Error sending message [{}]", message.getId(), e);
+            throw new MessageException(ERROR_SENDING_EMAIL);
+        }
 
-	@SuppressWarnings("deprecation")
-	private HttpResponse doesPostRequest(final Message message)
-			throws AuthenticationException, UnsupportedEncodingException, IOException, ClientProtocolException {
+        log.debug("sending text email <- [{}]", "message sent");
 
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials("api", getMailgunKey());
-		HttpPost httpPost = new HttpPost(getUrl());
+        return message;
+    }
 
-		httpPost.addHeader(new BasicScheme().authenticate(creds, httpPost));
-		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+    @SuppressWarnings("deprecation")
+    private HttpResponse doesPostRequest(final Message message)
+        throws AuthenticationException, UnsupportedEncodingException, IOException, ClientProtocolException {
 
-		Map<String, String> params = buildMailgunTextMessage(message);
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(MAILGUN_USER, getMailgunKey());
+        HttpPost httpPost = new HttpPost(getUrl());
 
-		params.forEach((k, v) -> {
-			nvps.add(new BasicNameValuePair(k, v));
-		});
+        httpPost.addHeader(new BasicScheme().authenticate(creds, httpPost));
+        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 
-		httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+        Map<String, String> params = buildMailgunTextMessage(message);
 
-		return httpclient.execute(httpPost);
-	}
+        params.forEach((k, v) -> {
+            nvps.add(new BasicNameValuePair(k, v));
+        });
 
-	@SuppressWarnings("resource")
-	private String getMessageResponse(InputStream inputStream) {
-		Scanner s = new Scanner(inputStream).useDelimiter("\\A");
-		return s.hasNext() ? s.next() : "";
-	}
+        httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 
-	private Map<String, String> buildMailgunTextMessage(final Message message) {
-		MailgunTextMessage mailgunTextMessage = new MailgunTextMessage(message.getSenderEmail(), message.getSubject(),
-				message.getClient().getEmailRecipient(), message.getMessage());
-		return mailgunTextMessage.getParams();
-	}
+        return httpclient.execute(httpPost);
+    }
 
-	private String getUrl() {
-		return getServiceEndpoint().replaceAll("#domain_name", getMailgunDomain());
-	}
+    @SuppressWarnings("resource")
+    private String getMessageResponse(InputStream inputStream) {
+        Scanner s = new Scanner(inputStream).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
 
-	private class MailgunTextMessage {
+    private Map<String, String> buildMailgunTextMessage(final Message message) {
+        MailgunTextMessage mailgunTextMessage = new MailgunTextMessage(message.getSenderEmail(), message.getSubject(),
+            message.getClient().getEmailRecipient(), message.getMessage());
+        return mailgunTextMessage.getParams();
+    }
 
-		public MailgunTextMessage(final String from, final String subject, final String to, final String text) {
-			this.from = from;
-			this.subject = subject;
-			this.text = text;
-			this.to = to;
-		}
+    private String getUrl() {
+        return getServiceEndpoint().replaceAll(MAILGUN_DOMAIN_NAME_KEY, getMailgunDomain());
+    }
 
-		private Map<String, String> params = new HashMap<>();
+    private class MailgunTextMessage {
 
-		public Map<String, String> getParams() {
-			params.put("from", from);
-			params.put("subject", subject);
-			params.put("text", text);
-			params.put("to", to);
-			return params;
-		}
+        public MailgunTextMessage(final String from, final String subject, final String to, final String text) {
+            this.from = from;
+            this.subject = subject;
+            this.text = text;
+            this.to = to;
+        }
 
-		@Getter
-		private String from;
-		@Getter
-		private String to;
-		@Getter
-		private String subject;
-		@Getter
-		private String text;
-	}
+        private Map<String, String> params = new HashMap<>();
+
+        public Map<String, String> getParams() {
+            params.put("from", from);
+            params.put("subject", subject);
+            params.put("text", text);
+            params.put("to", to);
+            return params;
+        }
+
+        @Getter
+        private String from;
+        @Getter
+        private String to;
+        @Getter
+        private String subject;
+        @Getter
+        private String text;
+    }
 
 }

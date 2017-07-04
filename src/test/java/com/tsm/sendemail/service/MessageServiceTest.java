@@ -1,12 +1,18 @@
 package com.tsm.sendemail.service;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -16,8 +22,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.tsm.sendemail.exceptions.ResourceNotFoundException;
+import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Message;
+import com.tsm.sendemail.model.Message.MessageStatus;
 import com.tsm.sendemail.repository.MessageRepository;
+import com.tsm.sendemail.util.ClientTestBuilder;
 import com.tsm.sendemail.util.MessageTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
@@ -65,5 +75,84 @@ public class MessageServiceTest {
         verify(mockRepository).save(message);
         assertNotNull(result);
         assertThat(result, is(message));
+    }
+
+    @Test
+    public void findByIdAndClient_NullIdGiven_ShouldThrowException() {
+        // Set up
+        Long id = null;
+        Client client = ClientTestBuilder.buildModel();
+
+        // Do test
+        try {
+            service.findByIdAndClient(id, client);
+            fail();
+        } catch (IllegalArgumentException e) {
+        }
+
+        // Assertions
+        verifyNoMoreInteractions(mockRepository);
+    }
+
+    @Test
+    public void findByIdAndClient_NullClientGiven_ShouldThrowException() {
+        // Set up
+        Long id = 1l;
+        Client client = null;
+
+        // Do test
+        try {
+            service.findByIdAndClient(id, client);
+            fail();
+        } catch (IllegalArgumentException e) {
+        }
+
+        // Assertions
+        verifyNoMoreInteractions(mockRepository);
+    }
+
+    @Test
+    public void findByIdAndClient_NotFoundMessageGiven_ShouldThrowException() {
+        // Set up
+        Long id = 1l;
+        Client client = ClientTestBuilder.buildModel();
+
+        // Expectations
+        when(mockRepository.findByIdAndClient(id, client)).thenReturn(Optional.empty());
+
+        // Do test
+        try {
+            service.findByIdAndClient(id, client);
+            fail();
+        } catch (ResourceNotFoundException e) {
+        }
+
+        // Assertions
+        verify(mockRepository).findByIdAndClient(id, client);
+    }
+
+    @Test
+    public void findByIdAndClient_FoundMessageGiven_ShouldReturnMessage() {
+        // Set up
+        Long id = 1l;
+        Client client = ClientTestBuilder.buildModel();
+        Message message = MessageTestBuilder.buildModel();
+
+        // Expectations
+        when(mockRepository.findByIdAndClient(id, client)).thenReturn(Optional.of(message));
+
+        // Do test
+        Message result = service.findByIdAndClient(id, client);
+
+        // Assertions
+        verify(mockRepository).findByIdAndClient(id, client);
+
+        assertNotNull(result);
+        assertThat(result,
+            allOf(hasProperty("id", nullValue()), hasProperty("message", is(message.getMessage())),
+                hasProperty("subject", is(message.getSubject())),
+                hasProperty("senderName", is(message.getSenderName())),
+                hasProperty("senderEmail", is(message.getSenderEmail())),
+                hasProperty("status", is(MessageStatus.CREATED))));
     }
 }

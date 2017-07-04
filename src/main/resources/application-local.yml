@@ -1,13 +1,16 @@
+sendemail:
+  service:
+    mailgun:
+      serviceEndpoint: https://api.mailgun.net/v3/#domain_name/messages
+      mailgunKey: 123
+      mailgunDomain: 123
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/send_email
-    username: postgres
-    password: postgres@123
-    driver-class-name: org.postgresql.Driver
   jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    show-sql: true
+    hibernate.ddl-auto: create
+    properties.hibernate.dialect: org.hibernate.dialect.HSQLDialect
+    database: HSQL
+  datasource:
+    driverClassName: org.hsqldb.jdbcDriver
+    url: jdbc:hsqldb:mem:auth
+    username: sa

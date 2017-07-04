@@ -3,6 +3,7 @@ package com.tsm.sendemail.controller;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_HOST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.groups.Default;
@@ -26,7 +27,7 @@ import com.tsm.sendemail.service.SendEmailService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping(value = "/api/v1/messages")
+@RequestMapping(value = "/api/v1/messages/{clientToken}")
 @Slf4j
 public class MessagesController extends BaseController {
 
@@ -42,7 +43,7 @@ public class MessagesController extends BaseController {
     @Autowired
     private MessageParser parser;
 
-    @RequestMapping(method = POST, path = "/{clientToken}", consumes = JSON_VALUE, produces = JSON_VALUE)
+    @RequestMapping(method = POST, consumes = JSON_VALUE, produces = JSON_VALUE)
     @ResponseStatus(OK)
     public MessageResource save(@PathVariable String clientToken, @RequestBody final MessageResource resource,
         HttpServletRequest request) {
@@ -67,16 +68,35 @@ public class MessagesController extends BaseController {
         return result;
     }
 
-    private void assertClientHost(final Client client, HttpServletRequest request) {
+    @RequestMapping(method = GET, path = "/{id}", consumes = JSON_VALUE, produces = JSON_VALUE)
+    @ResponseStatus(OK)
+    public MessageResource findById(@PathVariable String clientToken, @PathVariable Long id,
+        HttpServletRequest request) {
+        log.debug("Recieved a request to search for a message by id [{}] and client token [{}].", id, clientToken);
+
+        Client client = clientService.findByToken(clientToken);
+
+        assertClientHost(client, request);
+
+        Message message = service.findByIdAndClient(id, client);
+
+        MessageResource result = parser.toResource(message);
+
+        log.debug("returnig resource [{}].", result);
+
+        return result;
+    }
+
+    private void assertClientHost(final Client client, final HttpServletRequest request) {
         String host = recoverHost(request);
-        log.info("checking host request [{}]", host);
+        log.info("checking host request [{}].", host);
         if (client.getClientHosts().stream().filter(h -> h.getHost().equals(host)).count() == 0) {
             throw new BadRequestException(INVALID_HOST);
         }
     }
 
-    private String recoverHost(HttpServletRequest request) {
-        log.debug("recovering url [{}] and uri [{}]", request.getRequestURL(), request.getRequestURI());
+    private String recoverHost(final HttpServletRequest request) {
+        log.debug("checking request received: url [{}] and uri [{}].", request.getRequestURL(), request.getRequestURI());
         StringBuffer requestURL = request.getRequestURL();
         return requestURL.toString().replace(request.getRequestURI(), "");
     }

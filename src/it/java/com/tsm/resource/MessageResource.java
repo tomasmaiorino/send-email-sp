@@ -1,5 +1,6 @@
 package com.tsm.resource;
 
+import static com.jayway.restassured.RestAssured.given;
 import static org.apache.commons.lang3.RandomStringUtils.random;
 
 import java.util.Objects;
@@ -89,6 +90,12 @@ public class MessageResource extends BaseResource {
     public MessageResource senderEmail(final String senderEmail) {
         this.senderEmail = senderEmail;
         return this;
+    }
+
+    public MessageResource create(final String clientToken) {
+        assertFields();
+        return given().contentType("application/json").body(this).when().post("/api/v1/messages/{clientToken}", clientToken)
+            .as(MessageResource.class);
     }
 
 }

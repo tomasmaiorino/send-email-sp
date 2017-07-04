@@ -45,12 +45,14 @@ import com.tsm.sendemail.util.ClientTestBuilder;
 import com.tsm.sendemail.util.MessageTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
-public class MessageControllerTest {
+public class MessagesControllerTest {
 
     private static final String CLIENT_TOKEN = ClientTestBuilder.CLIENT_TOKEN;
 
     private static final StringBuffer VALID_HOST = new StringBuffer(
         "http://localhost:8080/api/v1/messages/" + CLIENT_TOKEN);
+
+    private static final Long MESSAGE_ID = null;
 
     @Mock
     private MessageService mockService;
@@ -215,4 +217,99 @@ public class MessageControllerTest {
                 hasProperty("senderEmail", is(resource.getSenderEmail())),
                 hasProperty("status", is(MessageStatus.CREATED.name()))));
     }
+
+    @Test
+    public void findById_InvalidHostGiven_ShouldThrowException() {
+        // Set up
+        Client client = ClientTestBuilder.buildModel();
+
+        // Expectations
+        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+
+        // Do test
+        try {
+            controller.findById(CLIENT_TOKEN, MESSAGE_ID, request);
+            fail();
+        } catch (BadRequestException e) {
+        }
+
+        // Assertions
+        verify(mockClientService).findByToken(CLIENT_TOKEN);
+        verifyZeroInteractions(mockService, mockParser);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void findById_InvalidClientGiven_ShouldThrowException() {
+        // Expectations
+        when(mockClientService.findByToken(CLIENT_TOKEN)).thenThrow(ResourceNotFoundException.class);
+
+        // Do test
+        try {
+            controller.findById(CLIENT_TOKEN, MESSAGE_ID, request);
+            fail();
+        } catch (ResourceNotFoundException e) {
+        }
+
+        // Assertions
+        verify(mockClientService).findByToken(CLIENT_TOKEN);
+        verifyZeroInteractions(mockService, mockParser);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void findById_NotFoundMessageGiven_ShouldThrowException() {
+        // Set up
+        Client client = ClientTestBuilder.buildModel();
+        Set<ClientHosts> clientHosts = ClientTestBuilder.buildClientHost("http://localhost:8080");
+        client.setClientHosts(clientHosts);
+
+        // Expectations
+        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(mockService.findByIdAndClient(MESSAGE_ID, client)).thenThrow(ResourceNotFoundException.class);
+
+        // Do test
+        try {
+            controller.findById(CLIENT_TOKEN, MESSAGE_ID, request);
+            fail();
+        } catch (ResourceNotFoundException e) {
+        }
+
+        // Assertions
+        verify(mockClientService).findByToken(CLIENT_TOKEN);
+        verify(mockService).findByIdAndClient(MESSAGE_ID, client);
+        verifyZeroInteractions(mockParser);
+    }
+
+    @Test
+    public void findById_ValidMessageResourceGiven_ShouldSaveMessage() {
+        // Set up
+        MessageResource resource = MessageTestBuilder.buildResoure();
+        Message message = MessageTestBuilder.buildModel();
+        Client client = ClientTestBuilder.buildModel();
+        Set<ClientHosts> clientHosts = ClientTestBuilder.buildClientHost("http://localhost:8080");
+        client.setClientHosts(clientHosts);
+
+        // Expectations
+        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(mockService.findByIdAndClient(MESSAGE_ID, client)).thenReturn(message);
+        when(mockParser.toResource(message)).thenReturn(resource);
+
+        // Do test
+        MessageResource result = controller.findById(CLIENT_TOKEN, MESSAGE_ID, request);
+
+        // Assertions
+        verify(mockClientService).findByToken(CLIENT_TOKEN);
+        verify(mockService).findByIdAndClient(MESSAGE_ID, client);
+        verify(mockParser).toResource(message);
+
+        assertNotNull(result);
+        assertThat(result,
+            allOf(hasProperty("id", notNullValue()), hasProperty("message", is(resource.getMessage())),
+                hasProperty("subject", is(resource.getSubject())),
+                hasProperty("senderName", is(resource.getSenderName())),
+                hasProperty("senderEmail", is(resource.getSenderEmail())),
+                hasProperty("status", is(MessageStatus.CREATED.name()))));
+    }
+
 }

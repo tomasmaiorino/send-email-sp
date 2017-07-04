@@ -25,6 +25,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.tsm.sendemail.exceptions.BadRequestException;
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.parser.ClientParser;
 import com.tsm.sendemail.resources.ClientResource;
@@ -73,6 +74,32 @@ public class ClientsControllerTest {
 		verifyZeroInteractions(mockService, mockParser);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void save_DuplicatedClientResourceGiven_ShouldSaveClient() {
+		// Set up
+		ClientResource resource = ClientTestBuilder.buildResoure();
+		Client client = ClientTestBuilder.buildModel();
+
+		// Expectations
+		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
+		when(mockParser.toModel(resource)).thenReturn(client);
+		when(mockService.save(client)).thenThrow(BadRequestException.class);
+
+		// Do test
+		try {
+			controller.save(resource);
+			fail();
+		} catch (BadRequestException e) {
+		}
+
+		// Assertions
+		verify(validator).validate(resource, Default.class);
+		verify(mockService).save(client);
+		verify(mockParser).toModel(resource);
+
+	}
+
 	@Test
 	public void save_ValidClientResourceGiven_ShouldSaveClient() {
 		// Set up
@@ -92,7 +119,6 @@ public class ClientsControllerTest {
 		verify(validator).validate(resource, Default.class);
 		verify(mockService).save(client);
 		verify(mockParser).toModel(resource);
-		verify(mockService).save(client);
 		verify(mockParser).toResource(client);
 
 		assertNotNull(result);

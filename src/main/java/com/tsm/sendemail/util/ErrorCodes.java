@@ -14,6 +14,8 @@ public interface ErrorCodes {
     public static final String INVALID_NAME_SIZE = "invalidNameSize";
 
     public static final String INVALID_TOKEN_SIZE = "invalidTokenSize";
+    
+	public static final String DUPLICATED_TOKEN= "duplicatedToken";
 
     // MESSAGE
 
@@ -30,5 +32,7 @@ public interface ErrorCodes {
     public static final String INVALID_HOST = "invalidHost";
 
     public static final String ERROR_SENDING_EMAIL = "errorSendingEmail";
+    
+    public static final String MESSAGE_NOT_FOUND = "messageNotFound";
 
 }

@@ -6,11 +6,14 @@ import static org.hamcrest.CoreMatchers.is;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -37,6 +40,9 @@ public class MessagesControllerIT {
 
 	private String host;
 
+	@Value(value = "${it.test.email}")
+	private String itTestEmail;
+
 	@Before
 	public void setUp() {
 		RestAssured.port = port;
@@ -52,7 +58,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.body("[0].message", is("A value must be informed."), "[0].field", is("message"));
 	}
 
 	@Test
@@ -64,8 +71,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The message must be between 2 and 300 characters."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
+						is("The message must be between 2 and 300 characters."), "[0].field", is("message"));
 	}
 
 	@Test
@@ -77,8 +84,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The message must be between 2 and 300 characters."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
+						is("The message must be between 2 and 300 characters."), "[0].field", is("message"));
 	}
 
 	@Test
@@ -90,8 +97,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The message must be between 2 and 300 characters."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
+						is("The message must be between 2 and 300 characters."), "[0].field", is("message"));
 	}
 
 	//
@@ -104,7 +111,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.body("[0].message", is("A value must be informed."), "[0].field", is("subject"));
 	}
 
 	@Test
@@ -116,8 +124,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The subject must be between 2 and 30 characters."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
+						is("The subject must be between 2 and 30 characters."), "[0].field", is("subject"));
 	}
 
 	@Test
@@ -129,8 +137,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The subject must be between 2 and 30 characters."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
+						is("The subject must be between 2 and 30 characters."), "[0].field", is("subject"));
 	}
 
 	@Test
@@ -142,8 +150,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The subject must be between 2 and 30 characters."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
+						is("The subject must be between 2 and 30 characters."), "[0].field", is("subject"));
 	}
 
 	//
@@ -157,7 +165,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.body("[0].message", is("A value must be informed."), "[0].field", is("senderName"));
 	}
 
 	@Test
@@ -169,8 +178,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The sender name must be between 2 and 20 characters."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
+						is("The sender name must be between 2 and 20 characters."), "[0].field", is("senderName"));
 	}
 
 	@Test
@@ -183,8 +192,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The sender name must be between 2 and 20 characters."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
+						is("The sender name must be between 2 and 20 characters."), "[0].field", is("senderName"));
 	}
 
 	@Test
@@ -197,8 +206,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The sender name must be between 2 and 20 characters."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
+						is("The sender name must be between 2 and 20 characters."), "[0].field", is("senderName"));
 	}
 
 	//
@@ -212,13 +221,14 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.body("[0].message", is("A value must be informed."), "[0].field", is("senderEmail"));
 	}
 
 	@Test
 	public void save_InvalidSenderEmailGiven_ShouldReturnError() {
 		// Set Up
-		Set<String> hosts = new HashSet();
+		Set<String> hosts = new HashSet<>();
 		hosts.add(host);
 		ClientResource client = ClientResource.build().hosts(hosts).create();
 		MessageResource resource = MessageResource.build().assertFields().senderEmail("");
@@ -226,7 +236,8 @@ public class MessagesControllerIT {
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("Invalid email."));
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.body("[0].message", is("Invalid email."), "[0].field", is("senderEmail"));
 	}
 
 	@Test
@@ -241,11 +252,12 @@ public class MessagesControllerIT {
 	}
 
 	@Test
+	@Ignore
 	public void save_SendEmailClientGiven_ShouldSendEmail() {
 		// Set Up
-		Set<String> hosts = new HashSet();
+		Set<String> hosts = new HashSet<>();
 		hosts.add(host);
-		ClientResource client = ClientResource.build().emailRecipient("tomasmaiorino@gmail.com").hosts(hosts).create();
+		ClientResource client = ClientResource.build().emailRecipient(itTestEmail).hosts(hosts).create();
 		MessageResource resource = MessageResource.build().assertFields();
 
 		// Do Test
@@ -254,6 +266,50 @@ public class MessagesControllerIT {
 				.body("message", is(resource.getMessage())).body("status", is(MessageStatus.SENT.name()))
 				.body("senderName", is(resource.getSenderName())).body("senderEmail", is(resource.getSenderEmail()))
 				.body("subject", is(resource.getSubject()));
+	}
+
+	@Test
+	public void findById_NotFoundClientGiven_ShouldReturnError() {
+		// Set Up
+		Set<String> hosts = new HashSet<>();
+		hosts.add(host);
+		ClientResource client = ClientResource.build().emailRecipient(itTestEmail).hosts(hosts).create();
+		MessageResource resource = MessageResource.build().create(client.getToken());
+
+		// Do Test
+		given().body(resource).contentType(ContentType.JSON).when()
+				.get("/api/v1/messages/{clientToken}/{id}", ClientTestBuilder.CLIENT_TOKEN, resource.getId()).then()
+				.statusCode(HttpStatus.NOT_FOUND.value()).body("message", is("Client not found."));
+	}
+
+	@Test
+	public void findById_NotFoundMessageGiven_ShouldReturnError() {
+		// Set Up
+		Set<String> hosts = new HashSet<>();
+		hosts.add(host);
+		ClientResource client = ClientResource.build().emailRecipient(itTestEmail).hosts(hosts).create();
+		MessageResource resource = MessageResource.build().create(client.getToken());
+
+		// Do Test
+		given().body(resource).contentType(ContentType.JSON).when()
+				.get("/api/v1/messages/{clientToken}/{id}", client.getToken(), RandomUtils.nextLong(1000l, 10000l))
+				.then().statusCode(HttpStatus.NOT_FOUND.value()).body("message", is("Message not found."));
+	}
+
+	@Test
+	public void findById_dMessageFoundGiven_ShouldReturnMessage() {
+		// Set Up
+		Set<String> hosts = new HashSet<>();
+		hosts.add(host);
+		ClientResource client = ClientResource.build().emailRecipient(itTestEmail).hosts(hosts).create();
+		MessageResource resource = MessageResource.build().create(client.getToken());
+
+		// Do Test
+		given().body(resource).contentType(ContentType.JSON).when()
+				.get("/api/v1/messages/{clientToken}/{id}", client.getToken(), resource.getId()).then()
+				.statusCode(HttpStatus.OK.value()).body("message", is(resource.getMessage()))
+				.body("status", is(MessageStatus.SENT.name())).body("senderName", is(resource.getSenderName()))
+				.body("senderEmail", is(resource.getSenderEmail())).body("subject", is(resource.getSubject()));
 	}
 
 }
