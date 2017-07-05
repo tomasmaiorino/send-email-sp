@@ -53,7 +53,7 @@ public class InitialLoad implements ApplicationListener<ApplicationReadyEvent> {
 					});
 
 					String content = hosts.toString();
-					content = content.substring(0, content.length() - 2);
+					content = content.substring(0, content.length() - 1);
 
 					log.info("origins to allowed [{}].", content);
 					registry.addMapping(EMAIL_SERVICE_ENDPOINT).allowedOrigins(content);
