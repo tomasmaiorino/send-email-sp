@@ -1,10 +1,13 @@
 package com.tsm.sendemail.resources;
 
-import static com.tsm.sendemail.util.ErrorCodes.FIELD_REQUIRED;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_EMAIL;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_MESSAGE_SIZE;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_SENDER_NAME_SIZE;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_SUBJECT_SIZE;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_MESSAGE;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_SENDER_EMAIL;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_SENDER_NAME;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_SUBJECT;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -23,25 +26,25 @@ public class MessageResource extends BaseResource {
 
     @Getter
     @Setter
-    @NotNull(message = FIELD_REQUIRED)
+    @NotNull(message = REQUIRED_MESSAGE)
     @Size(min = 2, max = 300, message = INVALID_MESSAGE_SIZE)
     private String message;
 
     @Getter
     @Setter
-    @NotNull(message = FIELD_REQUIRED)
+    @NotNull(message = REQUIRED_SUBJECT)
     @Size(min = 2, max = 30, message = INVALID_SUBJECT_SIZE)
     private String subject;
 
     @Getter
     @Setter
-    @NotNull(message = FIELD_REQUIRED)
+    @NotNull(message = REQUIRED_SENDER_NAME)
     @Size(min = 2, max = 20, message = INVALID_SENDER_NAME_SIZE)
     private String senderName;
 
     @Getter
     @Setter
-    @NotNull(message = FIELD_REQUIRED)
+    @NotNull(message = REQUIRED_SENDER_EMAIL)
     @Pattern(regexp = EMAIL, message = INVALID_EMAIL)
     private String senderEmail;
 

@@ -1,4 +1,10 @@
-it.test.email:
+it.test.email: 
+sendemail:
+  service:
+    mailgun:
+      serviceEndpoint: https://api.mailgun.net/v3/#domain_name/messages
+      mailgunKey: 
+      mailgunDomain: 
 spring:
   jpa:
     show-sql: true
@@ -8,4 +14,4 @@ spring:
   datasource:
     driverClassName: org.hsqldb.jdbcDriver
     url: jdbc:hsqldb:mem:auth
-    username: sa
+    username: sa    

@@ -1,14 +1,16 @@
 sendemail:
   service:
     mailgun:
-      serviceEndpoint: ${MAILGUN_URI}
+      serviceEndpoint: https://api.mailgun.net/v3/#domain_name/messages
       mailgunKey: ${MAILGUN_KEY}
       mailgunDomain: ${MAILGUN_DOMAIN}
 spring:
+  jpa:
+    properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: ${POSTGRE_URI}
-    username: ${POSTGRE_USER}
-    password: ${POSTGRE_PASS}
+    url: ${DATABASE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update    

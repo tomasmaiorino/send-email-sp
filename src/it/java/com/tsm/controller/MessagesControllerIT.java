@@ -59,7 +59,7 @@ public class MessagesControllerIT {
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
 				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("A value must be informed."), "[0].field", is("message"));
+				.body("[0].message", is("The message is required."), "[0].field", is("message"));
 	}
 
 	@Test
@@ -112,7 +112,7 @@ public class MessagesControllerIT {
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
 				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("A value must be informed."), "[0].field", is("subject"));
+				.body("[0].message", is("The subject is required."), "[0].field", is("subject"));
 	}
 
 	@Test
@@ -166,7 +166,7 @@ public class MessagesControllerIT {
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
 				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("A value must be informed."), "[0].field", is("senderName"));
+				.body("[0].message", is("The sender name is required."), "[0].field", is("senderName"));
 	}
 
 	@Test
@@ -222,7 +222,7 @@ public class MessagesControllerIT {
 		given().body(resource).contentType(ContentType.JSON).when()
 				.post("/api/v1/messages/{clientToken}", client.getToken()).then()
 				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("A value must be informed."), "[0].field", is("senderEmail"));
+				.body("[0].message", is("The sender email is required."), "[0].field", is("senderEmail"));
 	}
 
 	@Test

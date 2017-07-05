@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -47,7 +48,7 @@ public class ClientsControllerIT {
 
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The name is required."));
 	}
 
 	@Test
@@ -91,7 +92,7 @@ public class ClientsControllerIT {
 
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The token is required."));
 	}
 
 	@Test
@@ -135,7 +136,7 @@ public class ClientsControllerIT {
 
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email is required."));
 	}
 
 	@Test
@@ -145,7 +146,7 @@ public class ClientsControllerIT {
 
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email is required."));
 	}
 
 	@Test
@@ -166,7 +167,7 @@ public class ClientsControllerIT {
 
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email recipient is required."));
 	}
 
 	@Test
@@ -176,7 +177,7 @@ public class ClientsControllerIT {
 
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("A value must be informed."));
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email recipient is required."));
 	}
 
 	@Test
@@ -202,6 +203,7 @@ public class ClientsControllerIT {
 	}
 
 	@Test
+	@Ignore
 	public void save_DuplicatedTokenGiven_ShouldReturnError() {
 		// Set Up
 		ClientResource resource = ClientResource.build().assertFields().create();

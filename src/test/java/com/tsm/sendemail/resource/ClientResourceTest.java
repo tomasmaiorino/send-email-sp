@@ -5,10 +5,14 @@ import static com.tsm.sendemail.util.ClientTestBuilder.LARGE_TOKEN;
 import static com.tsm.sendemail.util.ClientTestBuilder.RESOURCE_INVALID_EMAIL;
 import static com.tsm.sendemail.util.ClientTestBuilder.SMALL_NAME;
 import static com.tsm.sendemail.util.ClientTestBuilder.SMALL_TOKEN;
-import static com.tsm.sendemail.util.ErrorCodes.FIELD_REQUIRED;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_EMAIL;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_NAME_SIZE;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_TOKEN_SIZE;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_EMAIL;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_EMAIL_RECIPIENT;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_HOSTS;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_NAME;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_TOKEN;
 
 import java.util.Collections;
 import java.util.function.Supplier;
@@ -17,11 +21,14 @@ import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import com.tsm.sendemail.resources.BaseResource;
 import com.tsm.sendemail.util.ClientTestBuilder;
 
+@FixMethodOrder(MethodSorters.JVM)
 public class ClientResourceTest extends BaseResourceTest {
 
     private Supplier<? extends BaseResource> buildResourceFunction = ClientTestBuilder::buildResoure;
@@ -36,7 +43,7 @@ public class ClientResourceTest extends BaseResourceTest {
     @Test
     public void build_NullNameGiven_ShouldThrowException() {
         // Set up
-        checkResource(buildResourceFunction, "name", null, FIELD_REQUIRED);
+        checkResource(buildResourceFunction, "name", null, REQUIRED_NAME);
     }
 
     @Test
@@ -62,7 +69,7 @@ public class ClientResourceTest extends BaseResourceTest {
     @Test
     public void build_NullTokenGiven_ShouldThrowException() {
         // Set up
-        checkResource(buildResourceFunction, "token", null, FIELD_REQUIRED);
+        checkResource(buildResourceFunction, "token", null, REQUIRED_TOKEN);
     }
 
     @Test
@@ -88,7 +95,7 @@ public class ClientResourceTest extends BaseResourceTest {
     @Test
     public void build_NullEmailGiven_ShouldThrowException() {
         // Set up
-        checkResource(buildResourceFunction, "email", null, FIELD_REQUIRED);
+        checkResource(buildResourceFunction, "email", null, REQUIRED_EMAIL);
     }
 
     @Test
@@ -100,13 +107,13 @@ public class ClientResourceTest extends BaseResourceTest {
     @Test
     public void build_EmptyEmailGiven_ShouldThrowException() {
         // Set up
-        checkResource(buildResourceFunction, "email", "", FIELD_REQUIRED);
+        checkResource(buildResourceFunction, "email", "", REQUIRED_EMAIL);
     }
 
     @Test
     public void build_NullEmailRecipientGiven_ShouldThrowException() {
         // Set up
-        checkResource(buildResourceFunction, "emailRecipient", null, FIELD_REQUIRED);
+        checkResource(buildResourceFunction, "emailRecipient", null, REQUIRED_EMAIL_RECIPIENT);
     }
 
     @Test
@@ -118,7 +125,7 @@ public class ClientResourceTest extends BaseResourceTest {
     @Test
     public void build_EmptyEmailRecipientGiven_ShouldThrowException() {
         // Set up
-        checkResource(buildResourceFunction, "emailRecipient", "", FIELD_REQUIRED);
+        checkResource(buildResourceFunction, "emailRecipient", "", REQUIRED_EMAIL_RECIPIENT);
     }
 
     //
@@ -126,13 +133,13 @@ public class ClientResourceTest extends BaseResourceTest {
     @Test
     public void build_NullHostsGiven_ShouldThrowException() {
         // Set up
-        checkResource(buildResourceFunction, "hosts", null, FIELD_REQUIRED);
+        checkResource(buildResourceFunction, "hosts", null, REQUIRED_HOSTS);
     }
 
     @Test
     public void build_EmptyHostsGiven_ShouldThrowException() {
         // Set up
-        checkResource(buildResourceFunction, "hosts", Collections.emptySet(), FIELD_REQUIRED);
+        checkResource(buildResourceFunction, "hosts", Collections.emptySet(), REQUIRED_HOSTS);
     }
 
     // TODO validate hosts content
