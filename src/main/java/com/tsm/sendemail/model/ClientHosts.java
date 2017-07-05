@@ -25,7 +25,7 @@ public class ClientHosts extends BaseModel {
     private Integer id;
 
     @Getter
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 100)
     private String host;
 
     @ManyToOne(fetch = FetchType.LAZY)
