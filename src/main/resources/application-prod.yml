@@ -5,12 +5,13 @@ sendemail:
       mailgunKey: ${MAILGUN_KEY}
       mailgunDomain: ${MAILGUN_DOMAIN}
 spring:
-  jpa:
-    properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     url: ${DATABASE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: create
