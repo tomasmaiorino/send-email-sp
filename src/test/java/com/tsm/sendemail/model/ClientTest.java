@@ -23,151 +23,147 @@ import com.tsm.sendemail.util.ClientTestBuilder;
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientTest {
 
-    private String name;
-    private String token;
-    private Set<ClientHosts> clientHosts;
-    private ClientStatus status;
-    private String emailRecipient;
-    private String email;
+	private String name;
+	private String token;
+	private Set<ClientHosts> clientHosts;
+	private ClientStatus status;
+	private String emailRecipient;
+	private String email;
 
-    @Before
-    public void setUp() {
-        name = random(100, true, true);
-        token = random(100, true, true);
-        clientHosts = new HashSet<>();
-        clientHosts.add(bluildClientHost());
-        status = ClientStatus.ACTIVE;
-        emailRecipient = ClientTestBuilder.CLIENT_EMAIL_RECEIPIENT;
-        email = ClientTestBuilder.CLIENT_EMAIL;
-    }
+	@Before
+	public void setUp() {
+		name = random(100, true, true);
+		token = random(100, true, true);
+		clientHosts = new HashSet<>();
+		clientHosts.add(bluildClientHost());
+		status = ClientStatus.ACTIVE;
+		emailRecipient = ClientTestBuilder.CLIENT_EMAIL_RECEIPIENT;
+		email = ClientTestBuilder.CLIENT_EMAIL;
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_NullNameGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_NullNameGiven_ShouldThrowException() {
 
-        // Set up
-        name = null;
+		// Set up
+		name = null;
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_EmptyNameGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_EmptyNameGiven_ShouldThrowException() {
 
-        // Set up
-        name = "";
+		// Set up
+		name = "";
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_NullTokenGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_NullTokenGiven_ShouldThrowException() {
 
-        // Set up
-        token = null;
+		// Set up
+		token = null;
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_EmptyTokenGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_EmptyTokenGiven_ShouldThrowException() {
 
-        // Set up
-        token = "";
+		// Set up
+		token = "";
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_NullClientHostsGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_NullClientHostsGiven_ShouldThrowException() {
 
-        // Set up
-        clientHosts = null;
+		// Set up
+		clientHosts = null;
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_NullStatusGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_NullStatusGiven_ShouldThrowException() {
 
-        // Set up
-        status = null;
+		// Set up
+		status = null;
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    //
+	//
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_NullEmailGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_NullEmailGiven_ShouldThrowException() {
 
-        // Set up
-        email = null;
+		// Set up
+		email = null;
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_EmptyEmailGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_EmptyEmailGiven_ShouldThrowException() {
 
-        // Set up
-        email = "";
+		// Set up
+		email = "";
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_NullEmailRecipientGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_NullEmailRecipientGiven_ShouldThrowException() {
 
-        // Set up
-        emailRecipient = null;
+		// Set up
+		emailRecipient = null;
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_EmptyEmailRecipientGiven_ShouldThrowException() {
+	@Test(expected = IllegalArgumentException.class)
+	public void build_EmptyEmailRecipientGiven_ShouldThrowException() {
 
-        // Set up
-        emailRecipient = "";
+		// Set up
+		emailRecipient = "";
 
-        // Do test
-        buildClient();
-    }
+		// Do test
+		buildClient();
+	}
 
-    private Client buildClient() {
-        return ClientTestBuilder.buildModel(name, token, clientHosts, status, email, emailRecipient);
-    }
+	private Client buildClient() {
+		return ClientTestBuilder.buildModel(name, token, clientHosts, status, email, emailRecipient);
+	}
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void build_AllValuesGiven_AllValuesShouldSet() {
-        // Set up
-        Client result = buildClient();
+	@SuppressWarnings("unchecked")
+	@Test
+	public void build_AllValuesGiven_AllValuesShouldSet() {
+		// Set up
+		Client result = buildClient();
 
-        // Assertions
-        assertNotNull(result);
-        assertThat(result, allOf(
-            hasProperty("id", nullValue()),
-            hasProperty("name", is(name)),
-            hasProperty("token", is(token)),
-            hasProperty("emailRecipient", is(emailRecipient)),
-            hasProperty("email", is(email)),
-            hasProperty("clientHosts", notNullValue()),
-            hasProperty("status", is(status))));
-    }
+		// Assertions
+		assertNotNull(result);
+		assertThat(result,
+				allOf(hasProperty("id", nullValue()), hasProperty("name", is(name)), hasProperty("token", is(token)),
+						hasProperty("emailRecipient", is(emailRecipient)), hasProperty("email", is(email)),
+						hasProperty("clientHosts", notNullValue()), hasProperty("status", is(status))));
+	}
 
-    private ClientHosts bluildClientHost() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	private ClientHosts bluildClientHost() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
