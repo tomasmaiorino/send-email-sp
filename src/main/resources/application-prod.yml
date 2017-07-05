@@ -5,6 +5,8 @@ sendemail:
       mailgunKey: ${MAILGUN_KEY}
       mailgunDomain: ${MAILGUN_DOMAIN}
 spring:
+  mvc:
+    dispatch-options-request: true
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
