@@ -129,8 +129,8 @@ public class MessagesController extends BaseController {
 				hosts.append(COMMA_SEPARATOR);
 			});
 
-			String content = hosts.toString();
-			content = content.substring(0, content.length() - 1);
+			String content = hosts.toString() + "https://mighty-woodland-49949.herokuapp.com";
+			//content = content.substring(0, content.length() - 1);
 
 			log.info("controller origins to allowed [{}].", content);
 			
