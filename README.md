@@ -42,14 +42,14 @@ $ mvn clean install
 ###### To only test the application execute the maven command:
 $ mvn clean test
 
-###### To run the integrations tests excute the maven command:
-$ mvn integration-test -P it -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN}
+###### To run the integrations tests execute the maven command:
+$ mvn integration-test -DskipItTest=false -P it -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} -Dit.test.email=${IT_TEST_EMAIL}
 
 ###### To run the application the maven command:
-$ mvn spring-boot:run -Dspring.profiles.active=prod -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} -Dit.test.email=${IT_EMAIL}
+$ mvn spring-boot:run -Dspring.profiles.active=local -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} 
 
 ###### To create a client using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/clients -d "{\"hosts\": [\"http://localhost:8080\",\"localhost:8080\"],\"token\": \"qwetyuasdtyuer4rr\",\"email\": \"user@domain.com\",\"name\": \"Jean Gray\",\"emailRecipient\": \"tomasmaiorino@gmail.com\",\"status\":\"ACTIVE\"}
+$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/clients -d "{\"hosts\": [\"http://localhost:8080\",\"localhost:8080\"],\"token\": \"qwetyuasdtyuer4rr\",\"email\": \"user@domain.com\",\"name\": \"Jean Gray\",\"emailRecipient\": \"user@domain.com\",\"status\":\"ACTIVE\"}
 Sample response:
 {
     "id": 1 ,
@@ -74,7 +74,15 @@ Sample response:
     "senderName": "Logan"
 }
 
-###### First client insert (postgre) sample:
-insert into client(id, name, token, email, status, emailRecipient, created) values (1, 'Jean Gray maiorino','qwetyuasdtyu', 'user@site.com', 'ACTIVE', 'user@site.com', current_timestamp);
+## Usage In Production Machine
+JDK - Java version 1.8.
+
+Maven for build and dependencies.
+
+###### To run the application the maven command:
+$ mvn spring-boot:run -Dspring.profiles.active=prod -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN}
+
+###### First client's insert (postgre) sample:
+insert into client(id, name, token, email, status, emailRecipient, created) values (1, 'Jean Gray','qwetyuasdtyu', 'user@site.com', 'ACTIVE', 'user@site.com', current_timestamp);
 
 insert into client_hosts(id, host, client_id, created) values (1, 'http://site.com',1, current_timestamp);

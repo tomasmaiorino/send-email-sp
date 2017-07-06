@@ -22,49 +22,50 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InitialLoad implements ApplicationListener<ApplicationReadyEvent> {
 
-	private static final String EMAIL_SERVICE_ENDPOINT = "/api/v1/messages";
+    private static final String EMAIL_SERVICE_ENDPOINT = "/api/v1/messages/*";
 
-	protected static final String COMMA_SEPARATOR = ",";
+    protected static final String COMMA_SEPARATOR = ",";
 
-	@Autowired
-	private ClientHostsService clientHostsService;
+    @Autowired
+    private ClientHostsService clientHostsService;
 
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent event) {
-	}
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent event) {
+    }
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurerAdapter() {
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
 
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				log.info("Loading allowedOrigins permissions ->");
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                log.info("Loading allowedOrigins permissions ->");
 
-				Set<ClientHosts> clientsHosts = clientHostsService.findByClientStatus(ClientStatus.ACTIVE);
+                Set<ClientHosts> clientsHosts = clientHostsService.findByClientStatus(ClientStatus.ACTIVE);
 
-				if (!clientsHosts.isEmpty()) {
-					StringBuffer hosts = new StringBuffer();
+                if (!clientsHosts.isEmpty()) {
+                    StringBuffer hosts = new StringBuffer();
 
-					clientsHosts.stream().map(ClientHosts::getHost).forEach(h -> {
-						log.info("allowing origin from [{}].", h);
-						hosts.append(h);
-						hosts.append(COMMA_SEPARATOR);
-					});
+                    clientsHosts.stream().map(ClientHosts::getHost).forEach(h -> {
+                        log.info("allowing origin from [{}].", h);
+                        hosts.append(h);
+                        hosts.append(COMMA_SEPARATOR);
+                    });
 
-					String content = hosts.toString();
-					content = content.substring(0, content.length() - 1);
+                    String content = hosts.toString();
+                    content = content.substring(0, content.length() - 1);
 
-					log.info("origins to allowed [{}].", content);
-					registry.addMapping(EMAIL_SERVICE_ENDPOINT).allowedOrigins(content);
+                    log.info("origins to allowed [{}].", content);
 
-				} else {
-					log.info("None active client host found :( .");
-				}
+                    registry.addMapping(EMAIL_SERVICE_ENDPOINT).allowedOrigins(content).allowedMethods("POST", "GET", "OPTIONS");
 
-				log.info("Loading allowedOrigins permissions <-");
-			}
-		};
-	}
+                } else {
+                    log.info("None active client host found :( .");
+                }
+
+                log.info("Loading allowedOrigins permissions <-");
+            }
+        };
+    }
 
 }

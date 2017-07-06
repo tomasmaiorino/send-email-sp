@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -33,199 +32,201 @@ import com.tsm.sendemail.SendEmailApplication;
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientsControllerIT {
 
-	@LocalServerPort
-	private int port;
+    @LocalServerPort
+    private int port;
 
-	@Before
-	public void setUp() {
-		RestAssured.port = port;
-	}
+    @Before
+    public void setUp() {
+        RestAssured.port = port;
+    }
 
-	@Test
-	public void save_NullNameGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().name(null);
+    @Test
+    public void save_NullNameGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().name(null);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The name is required."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The name is required."), "[0].field", is("name"));
+    }
 
-	@Test
-	public void save_EmptyNameGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().name("");
+    @Test
+    public void save_EmptyNameGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().name("");
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The name must be between 2 and 30 characters."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("[0].message", is("The name must be between 2 and 30 characters."), "[0].field", is("name"));
+    }
 
-	@Test
-	public void save_SmallNameGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().name(SMALL_NAME);
+    @Test
+    public void save_SmallNameGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().name(SMALL_NAME);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The name must be between 2 and 30 characters."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("[0].message", is("The name must be between 2 and 30 characters."), "[0].field", is("name"));
+    }
 
-	@Test
-	public void save_LargeNameGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().name(LARGE_NAME);
+    @Test
+    public void save_LargeNameGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().name(LARGE_NAME);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The name must be between 2 and 30 characters."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("[0].message", is("The name must be between 2 and 30 characters."), "[0].field", is("name"));
+    }
 
-	//
-	@Test
-	public void save_NullTokenGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().token(null);
+    //
+    @Test
+    public void save_NullTokenGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().token(null);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The token is required."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The token is required."), "[0].field", is("token"));
+    }
 
-	@Test
-	public void save_EmptyTokenGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().token("");
+    @Test
+    public void save_EmptyTokenGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().token("");
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The token must be between 2 and 50 characters."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("[0].message", is("The token must be between 2 and 50 characters."), "[0].field", is("token"));
+    }
 
-	@Test
-	public void save_SmallTokenGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().token(SMALL_TOKEN);
+    @Test
+    public void save_SmallTokenGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().token(SMALL_TOKEN);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The token must be between 2 and 50 characters."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("[0].message", is("The token must be between 2 and 50 characters."), "[0].field", is("token"));
+    }
 
-	@Test
-	public void save_LargeTokenGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().token(LARGE_TOKEN);
+    @Test
+    public void save_LargeTokenGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().token(LARGE_TOKEN);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The token must be between 2 and 50 characters."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("[0].message", is("The token must be between 2 and 50 characters."), "[0].field", is("token"));
+    }
 
-	//
-	@Test
-	public void save_NullEmailGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().email(null);
+    //
+    @Test
+    public void save_NullEmailGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().email(null);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email is required."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email is required."), "[0].field", is("email"));
+    }
 
-	@Test
-	public void save_EmptyEmailGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().email("");
+    @Test
+    public void save_EmptyEmailGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().email("");
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email is required."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email is required."), "[0].field", is("email"));
+    }
 
-	@Test
-	public void save_InvalidEmailGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().email(RESOURCE_INVALID_EMAIL);
+    @Test
+    public void save_InvalidEmailGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().email(RESOURCE_INVALID_EMAIL);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("Invalid email."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("Invalid email."), "[0].field", is("email"));
+    }
 
-	//
-	@Test
-	public void save_NullEmailRecipientGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().emailRecipient(null);
+    //
+    @Test
+    public void save_NullEmailRecipientGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().emailRecipient(null);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email recipient is required."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("[0].message", is("The email recipient is required."), "[0].field", is("emailRecipient"));
+    }
 
-	@Test
-	public void save_EmptyEmailRecipientGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().emailRecipient("");
+    @Test
+    public void save_EmptyEmailRecipientGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().emailRecipient("");
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("The email recipient is required."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("[0].message", is("The email recipient is required."), "[0].field", is("emailRecipient"));
+    }
 
-	@Test
-	public void save_InvalidEmailRecipientGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().emailRecipient(RESOURCE_INVALID_EMAIL);
+    @Test
+    public void save_InvalidEmailRecipientGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().emailRecipient(RESOURCE_INVALID_EMAIL);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("Invalid email."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("Invalid email."), "[0].field", is("emailRecipient"));
+    }
 
-	//
-	@Test
-	public void save_InvalidStatusGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().status(INVALID_STATUS);
+    //
+    @Test
+    public void save_InvalidStatusGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().status(INVALID_STATUS);
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The status must be either 'INACTIVE' or 'ACTIVE'."));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("[0].message", is("The status must be either 'INACTIVE' or 'ACTIVE'."));
+    }
 
-	@Test
-	@Ignore
-	public void save_DuplicatedTokenGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().create();
-		String token = resource.getToken();
-		ClientResource newResource = ClientResource.build().token(token).assertFields();
+    @Test
+    // @Ignore
+    public void save_DuplicatedTokenGiven_ShouldReturnError() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields().create();
+        String token = resource.getToken();
+        ClientResource newResource = ClientResource.build().token(token).assertFields();
 
-		// Do Test
-		given().body(newResource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message", is("Duplicated token."));
-	}
+        // Do Test
+        given().body(newResource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.BAD_REQUEST.value()).body("message", is("Duplicated token."));
+    }
 
-	@Test
-	public void save_ValidResourceGiven_ShouldSaveClient() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields();
+    @Test
+    public void save_ValidResourceGiven_ShouldSaveClient() {
+        // Set Up
+        ClientResource resource = ClientResource.build().assertFields();
 
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.CREATED.value()).body("name", is(resource.getName()))
-				.body("token", is(resource.getToken())).body("status", is(resource.getStatus()))
-				.body("id", notNullValue()).body("hosts.size()", is(resource.getHosts().size()))
-				.body("email", is(resource.getEmail()));
-	}
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+            .statusCode(HttpStatus.CREATED.value()).body("name", is(resource.getName()))
+            .body("token", is(resource.getToken())).body("status", is(resource.getStatus()))
+            .body("id", notNullValue()).body("hosts.size()", is(resource.getHosts().size()))
+            .body("email", is(resource.getEmail()));
+    }
 
 }

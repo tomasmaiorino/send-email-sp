@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -252,7 +251,6 @@ public class MessagesControllerIT {
 	}
 
 	@Test
-	@Ignore
 	public void save_SendEmailClientGiven_ShouldSendEmail() {
 		// Set Up
 		Set<String> hosts = new HashSet<>();
