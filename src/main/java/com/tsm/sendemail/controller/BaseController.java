@@ -44,6 +44,7 @@ public class BaseController {
 
 	@RequestMapping(value = "/api/**", method = RequestMethod.OPTIONS)
 	public void corsHeaders(HttpServletResponse response) {
+		log.info("checking options call.");
 		if (allowedOrigins == null) {
 			allowedOrigins = loadlAllowedOrigins();
 		}
@@ -65,7 +66,7 @@ public class BaseController {
 			StringBuffer hosts = new StringBuffer();
 
 			clientsHosts.stream().map(ClientHosts::getHost).forEach(h -> {
-				log.info("allowing origin from [{}].", h);
+				log.info("controller allowing origin from [{}].", h);
 				hosts.append(h);
 				hosts.append(COMMA_SEPARATOR);
 			});
@@ -73,7 +74,7 @@ public class BaseController {
 			String content = hosts.toString();
 			content = content.substring(0, content.length() - 1);
 
-			log.info("origins to allowed [{}].", content);
+			log.info("controller origins to allowed [{}].", content);
 			
 			return content;
 
