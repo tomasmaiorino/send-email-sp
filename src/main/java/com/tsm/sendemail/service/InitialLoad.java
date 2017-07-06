@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InitialLoad implements ApplicationListener<ApplicationReadyEvent> {
 
-	private static final String EMAIL_SERVICE_ENDPOINT = "/**";
+	private static final String EMAIL_SERVICE_ENDPOINT = "/api/**";
 
 	protected static final String COMMA_SEPARATOR = ",";
 
