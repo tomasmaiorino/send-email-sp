@@ -13,6 +13,8 @@ import javax.validation.groups.Default;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,11 +49,11 @@ public class MessagesController extends BaseController {
 
     @Autowired
     private SendEmailService sendEmailService;
-    
-	@Autowired
-	private ClientHostsService clientHostsService;
 
-	private String allowedOrigins;
+    @Autowired
+    private ClientHostsService clientHostsService;
+
+    private String allowedOrigins;
 
     @Autowired
     private MessageParser parser;
@@ -100,48 +102,50 @@ public class MessagesController extends BaseController {
         return result;
     }
 
-	@RequestMapping(method = RequestMethod.OPTIONS)
-	public void corsHeaders(HttpServletResponse response) {
-		log.info("checking options call.");
-		if (allowedOrigins == null) {
-			allowedOrigins = loadlAllowedOrigins();
-		}
+    @SuppressWarnings("rawtypes")
+    @RequestMapping(method = RequestMethod.OPTIONS)
+    public ResponseEntity corsHeaders(HttpServletResponse response) {
+        log.info("checking options call.");
+        if (allowedOrigins == null) {
+            allowedOrigins = loadlAllowedOrigins();
+        }
 
-		if (StringUtils.isNoneBlank(allowedOrigins)) {
-			response.addHeader("Access-Control-Allow-Origin", allowedOrigins);
-		}
+        if (StringUtils.isNoneBlank(allowedOrigins)) {
+            response.addHeader("Access-Control-Allow-Origin", allowedOrigins);
+        }
 
-		response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-		response.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with");
-		response.addHeader("Access-Control-Max-Age", "3600");
-	}
+        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with");
+        response.addHeader("Access-Control-Max-Age", "3600");
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
-	private String loadlAllowedOrigins() {
+    private String loadlAllowedOrigins() {
 
-		Set<ClientHosts> clientsHosts = clientHostsService.findByClientStatus(ClientStatus.ACTIVE);
+        Set<ClientHosts> clientsHosts = clientHostsService.findByClientStatus(ClientStatus.ACTIVE);
 
-		if (!clientsHosts.isEmpty()) {
-			StringBuffer hosts = new StringBuffer();
+        if (!clientsHosts.isEmpty()) {
+            StringBuffer hosts = new StringBuffer();
 
-			clientsHosts.stream().map(ClientHosts::getHost).forEach(h -> {
-				log.info("controller allowing origin from [{}].", h);
-				hosts.append(h);
-				hosts.append(COMMA_SEPARATOR);
-			});
+            clientsHosts.stream().map(ClientHosts::getHost).forEach(h -> {
+                log.info("controller allowing origin from [{}].", h);
+                hosts.append(h);
+                hosts.append(COMMA_SEPARATOR);
+            });
 
-			String content = hosts.toString() + "https://mighty-woodland-49949.herokuapp.com";
-			//content = content.substring(0, content.length() - 1);
+            String content = hosts.toString() + "https://mighty-woodland-49949.herokuapp.com";
+            // content = content.substring(0, content.length() - 1);
 
-			log.info("controller origins to allowed [{}].", content);
-			
-			return content;
+            log.info("controller origins to allowed [{}].", content);
 
-		} else {
-			log.info("None active client host found :( .");
-		}
-		return null;
-	}
-    
+            return content;
+
+        } else {
+            log.info("None active client host found :( .");
+        }
+        return null;
+    }
+
     private void assertClientHost(final Client client, final HttpServletRequest request) {
         String host = recoverHost(request);
         log.info("checking host request [{}].", host);
