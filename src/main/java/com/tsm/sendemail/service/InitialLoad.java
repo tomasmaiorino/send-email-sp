@@ -58,7 +58,7 @@ public class InitialLoad implements ApplicationListener<ApplicationReadyEvent> {
                     log.info("origins to allowed [{}].", content);
 
                     registry.addMapping(EMAIL_SERVICE_ENDPOINT).allowedOrigins(content)
-                        .allowedMethods("POST", "GET", "OPTIONS")
+                        .allowedMethods("*")
                         .allowCredentials(true)
                         .exposedHeaders("Access-Control-Allow-Origin")
                         .allowedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "*", "origin", "content-type",
