@@ -98,7 +98,8 @@ public class MessagesController extends BaseController {
 	}
 
 	private String recoverHost(final HttpServletRequest request) {
-		log.info("checking request received: url [{}] and uri [{}].", request.getRequestURL(), request.getRequestURI());
+		log.debug("checking request received: url [{}] and uri [{}].", request.getRequestURL(),
+				request.getRequestURI());
 		StringBuffer requestURL = request.getRequestURL();
 		return requestURL.toString().replace(request.getRequestURI(), "");
 	}
