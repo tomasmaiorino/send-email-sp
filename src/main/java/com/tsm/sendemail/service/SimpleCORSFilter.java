@@ -43,7 +43,7 @@ public class SimpleCORSFilter implements Filter {
 		try {
 			String request = ((HttpServletRequest) req).getRequestURI();
 			log.info("parsing request [{}].", request);
-			token = request.substring(request.lastIndexOf("/"), request.length());
+			token = request.substring(request.lastIndexOf("/") + 1, request.length());
 			log.info("locking for a client with the token [{}].", token);
 			Client client = clientService.findByToken(token);
 			host = client.getClientHosts().iterator().next().getHost();
