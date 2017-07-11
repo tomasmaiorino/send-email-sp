@@ -5,6 +5,9 @@ sendemail:
       mailgunKey: 123
       mailgunDomain: 123
 spring:
+  mvc:
+    dispatchTraceRequest: true
+    dispatchOptionsRequest: true
   jpa:
     show-sql: true
     hibernate.ddl-auto: create
