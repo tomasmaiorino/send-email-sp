@@ -26,28 +26,28 @@ public class InitialLoad implements ApplicationListener<ApplicationReadyEvent> {
     public void onApplicationEvent(ApplicationReadyEvent event) {
     }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
-
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                log.info("Loading allowedOrigins permissions ->");
-
-                String content = allowedHostsService.loadCrossOriginHosts();
-
-                log.info("origins to allowed [{}].", content);
-
-                registry.addMapping(EMAIL_SERVICE_ENDPOINT).allowedOrigins(content)
-                    .allowedMethods("*")
-                    .allowCredentials(true)
-                    .exposedHeaders("Access-Control-Allow-Origin")
-                    .allowedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "*", "origin", "content-type",
-                        "accept", "x-requested-with");
-
-                log.info("Loading allowedOrigins permissions <-");
-            }
-        };
-    }
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurerAdapter() {
+//
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                log.info("Loading allowedOrigins permissions ->");
+//
+//                String content = allowedHostsService.loadCrossOriginHosts();
+//
+//                log.info("origins to allowed [{}].", content);
+//
+//                registry.addMapping(EMAIL_SERVICE_ENDPOINT).allowedOrigins(content)
+//                    .allowedMethods("*")
+//                    .allowCredentials(true)
+//                    .exposedHeaders("Access-Control-Allow-Origin")
+//                    .allowedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "*", "origin", "content-type",
+//                        "accept", "x-requested-with");
+//
+//                log.info("Loading allowedOrigins permissions <-");
+//            }
+//        };
+//    }
 
 }

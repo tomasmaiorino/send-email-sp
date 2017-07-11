@@ -100,23 +100,23 @@ public class MessagesController extends BaseController {
         return result;
     }
 
-    @SuppressWarnings("rawtypes")
-    @RequestMapping(method = RequestMethod.OPTIONS, value = "/**")
-    public ResponseEntity corsHeaders(HttpServletResponse response) {
-        log.info("checking options call.");
-        if (allowedOrigins == null) {
-            allowedOrigins = allowedHostsService.loadCrossOriginHosts();
-        }
-
-        if (StringUtils.isNoneBlank(allowedOrigins)) {
-            log.info(allowedOrigins);
-            response.addHeader("Access-Control-Allow-Origin", allowedOrigins);
-        }
-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        response.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with");
-        response.addHeader("Access-Control-Max-Age", "3600");
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
-    }
+//    @SuppressWarnings("rawtypes")
+//    @RequestMapping(method = RequestMethod.OPTIONS, value = "/**")
+//    public ResponseEntity corsHeaders(HttpServletResponse response) {
+//        log.info("checking options call.");
+//        if (allowedOrigins == null) {
+//            allowedOrigins = allowedHostsService.loadCrossOriginHosts();
+//        }
+//
+//        if (StringUtils.isNoneBlank(allowedOrigins)) {
+//            log.info(allowedOrigins);
+//            response.addHeader("Access-Control-Allow-Origin", allowedOrigins);
+//        }
+//        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//        response.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, x-requested-with");
+//        response.addHeader("Access-Control-Max-Age", "3600");
+//        return new ResponseEntity(HttpStatus.NO_CONTENT);
+//    }
 
     private void assertClientHost(final Client client, final HttpServletRequest request) {
         String host = recoverHost(request);

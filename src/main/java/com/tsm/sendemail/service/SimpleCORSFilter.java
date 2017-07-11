@@ -8,26 +8,50 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.tsm.sendemail.model.Client;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class SimpleCORSFilter implements Filter {
 
 	@Autowired
-	private AllowedHostsService allowedHostsService;
+	private ClientService clientService;
 
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletResponse response = (HttpServletResponse) res;
-		response.setHeader("Access-Control-Allow-Origin", allowedHostsService.loadCrossOriginHosts());
+		String clientToken = getClientToken(req);
+		response.setHeader("Access-Control-Allow-Origin", clientToken);
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE, PATCH");
 		response.setHeader("Access-Control-Max-Age", "3600");
 		response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 		response.setHeader("Access-Control-Expose-Headers", "Location");
 		chain.doFilter(req, res);
+	}
+
+	private String getClientToken(ServletRequest req) {
+		String host = null;
+		String token = "";
+		try {
+			String request = ((HttpServletRequest) req).getRequestURI();
+			log.info("parsing request [{}].", request);
+			token = request.substring(request.lastIndexOf("/"), request.length());
+			log.info("locking for a client with the token [{}].", token);
+			Client client = clientService.findByToken(token);
+			host = client.getClientHosts().iterator().next().getHost();
+
+		} catch (Exception e) {
+			log.info("Client not found [{}].", token);
+		}
+		return host;
 	}
 
 	public void init(FilterConfig filterConfig) {
