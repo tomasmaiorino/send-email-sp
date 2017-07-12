@@ -91,11 +91,9 @@ public class MessagesController extends BaseController {
 	}
 
 	private void assertClientHost(final Client client, final HttpServletRequest request) {
-		String host = request.getHeader("Host");
-		log.info("Host receive [{}].", host);
 		String referer = request.getHeader("Referer");
 		log.info("referer [{}]", referer);
-		String parsedHost = parserHost(host);
+		String parsedHost = parserHost(referer);
 		log.info("Parsed host [{}].", parsedHost);
 		if (client.getClientHosts().stream().filter(h -> parsedHost.equals(parserHost(h.getHost()))).count() == 0) {
 			throw new BadRequestException(INVALID_HOST);
