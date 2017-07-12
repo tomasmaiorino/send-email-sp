@@ -49,7 +49,7 @@ public class MessagesControllerTest {
 
     private static final String CLIENT_TOKEN = ClientTestBuilder.CLIENT_TOKEN;
 
-    private static final String VALID_HEADER_HOST = "localhost";
+    private static final String VALID_HEADER_HOST = "http://localhost";
 
     private static final Long MESSAGE_ID = null;
 
@@ -77,7 +77,7 @@ public class MessagesControllerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        when(request.getHeader("Host")).thenReturn(VALID_HEADER_HOST);
+        when(request.getHeader("Referer")).thenReturn(VALID_HEADER_HOST);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }
 
