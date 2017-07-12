@@ -49,8 +49,7 @@ public class MessagesControllerTest {
 
     private static final String CLIENT_TOKEN = ClientTestBuilder.CLIENT_TOKEN;
 
-    private static final StringBuffer VALID_HOST = new StringBuffer(
-        "http://localhost:8080/api/v1/messages/" + CLIENT_TOKEN);
+    private static final String VALID_HEADER_HOST = "localhost";
 
     private static final Long MESSAGE_ID = null;
 
@@ -78,8 +77,7 @@ public class MessagesControllerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        when(request.getRequestURL()).thenReturn(VALID_HOST);
-        when(request.getRequestURI()).thenReturn("/api/v1/messages/" + CLIENT_TOKEN);
+        when(request.getHeader("Host")).thenReturn(VALID_HEADER_HOST);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }
 

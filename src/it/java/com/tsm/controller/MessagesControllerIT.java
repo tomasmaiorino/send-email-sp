@@ -45,7 +45,7 @@ public class MessagesControllerIT {
 	@Before
 	public void setUp() {
 		RestAssured.port = port;
-		host = "http://localhost:" + port;
+		host = "http://localhost";
 	}
 
 	@Test
