@@ -33,12 +33,12 @@ public class CORSFilter implements Filter {
 		String clientToken = getClientToken(req);
 		if (StringUtils.isNoneBlank(clientToken)) {
 			response.setHeader("Access-Control-Allow-Origin", clientToken);
+			response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+			response.setHeader("Access-Control-Max-Age", "3600");
+			response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+			response.setHeader("Access-Control-Expose-Headers", "Location");
 		}
 
-		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-		response.setHeader("Access-Control-Max-Age", "3600");
-		response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-		response.setHeader("Access-Control-Expose-Headers", "Location");
 		chain.doFilter(req, res);
 	}
 
@@ -57,7 +57,6 @@ public class CORSFilter implements Filter {
 
 		} catch (Exception e) {
 			log.info("Client not found [{}].", token);
-			host = ((HttpServletRequest) req).getRequestURL().toString();
 		}
 		return host;
 	}
