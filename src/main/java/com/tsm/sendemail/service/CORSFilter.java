@@ -57,6 +57,7 @@ public class CORSFilter implements Filter {
 
 		} catch (Exception e) {
 			log.info("Client not found [{}].", token);
+			host = ((HttpServletRequest) req).getRequestURL().toString();
 		}
 		return host;
 	}
