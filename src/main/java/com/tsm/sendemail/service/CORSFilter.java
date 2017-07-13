@@ -11,6 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,44 +23,48 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CORSFilter implements Filter {
 
-    @Autowired
-    private ClientService clientService;
+	@Autowired
+	private ClientService clientService;
 
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-        throws IOException, ServletException {
-        HttpServletResponse response = (HttpServletResponse) res;
-        String clientToken = getClientToken(req);
-        response.setHeader("Access-Control-Allow-Origin", clientToken);
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-        response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        response.setHeader("Access-Control-Expose-Headers", "Location");
-        chain.doFilter(req, res);
-    }
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletResponse response = (HttpServletResponse) res;
 
-    private String getClientToken(final ServletRequest req) {
-        String host = null;
-        String token = "";
-        try {
-            String request = ((HttpServletRequest) req).getRequestURI();
-            log.info("parsing request [{}].", request);
+		String clientToken = getClientToken(req);
+		if (StringUtils.isNoneBlank(clientToken)) {
+			response.setHeader("Access-Control-Allow-Origin", clientToken);
+		}
 
-            token = request.substring(request.lastIndexOf("/") + 1, request.length());
-            log.info("locking for a client with the token [{}].", token);
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+		response.setHeader("Access-Control-Expose-Headers", "Location");
+		chain.doFilter(req, res);
+	}
 
-            Client client = clientService.findByToken(token);
-            host = client.getClientHosts().iterator().next().getHost();
+	private String getClientToken(final ServletRequest req) {
+		String host = null;
+		String token = "";
+		try {
+			String request = ((HttpServletRequest) req).getRequestURI();
+			log.debug("parsing request [{}].", request);
 
-        } catch (Exception e) {
-            log.info("Client not found [{}].", token);
-        }
-        return host;
-    }
+			token = request.substring(request.lastIndexOf("/") + 1, request.length());
+			log.info("locking for a client with the token [{}].", token);
 
-    public void init(FilterConfig filterConfig) {
-    }
+			Client client = clientService.findByToken(token);
+			host = client.getClientHosts().iterator().next().getHost();
 
-    public void destroy() {
-    }
+		} catch (Exception e) {
+			log.info("Client not found [{}].", token);
+		}
+		return host;
+	}
+
+	public void init(FilterConfig filterConfig) {
+	}
+
+	public void destroy() {
+	}
 
 }

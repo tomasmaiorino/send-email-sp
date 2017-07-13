@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.RandomStringUtils.random;
 
 import java.util.Objects;
 
+import com.tsm.controller.MessagesControllerIT;
 import com.tsm.sendemail.resources.BaseResource;
 
 import lombok.Getter;
@@ -94,7 +95,8 @@ public class MessageResource extends BaseResource {
 
     public MessageResource create(final String clientToken) {
         assertFields();
-        return given().contentType("application/json").body(this).when().post("/api/v1/messages/{clientToken}", clientToken)
+        return given().headers(MessagesControllerIT.getHeader()).contentType("application/json").body(this).when()
+            .post("/api/v1/messages/{clientToken}", clientToken)
             .as(MessageResource.class);
     }
 
