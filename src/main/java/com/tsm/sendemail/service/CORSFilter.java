@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +41,8 @@ public class CORSFilter implements Filter {
             response.setHeader("Access-Control-Expose-Headers", "Location");
         } else {
             log.info("None header should be added to the host [{}].", request.getRequestURL().toString());
+            response.sendError(HttpStatus.SC_FORBIDDEN);
+            return;
         }
 
         chain.doFilter(req, res);
