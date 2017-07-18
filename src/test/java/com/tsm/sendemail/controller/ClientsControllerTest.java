@@ -26,14 +26,18 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.tsm.sendemail.exceptions.BadRequestException;
+import com.tsm.sendemail.exceptions.ForbiddenRequestException;
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.parser.ClientParser;
 import com.tsm.sendemail.resources.ClientResource;
+import com.tsm.sendemail.service.AssertClientRequest;
 import com.tsm.sendemail.service.ClientService;
 import com.tsm.sendemail.util.ClientTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientsControllerTest {
+
+	private static final String ADMIN_TOKEN_HEADER = "AT";
 
 	@Mock
 	private ClientService mockService;
@@ -45,13 +49,80 @@ public class ClientsControllerTest {
 	private ClientsController controller;
 
 	@Mock
+	private AssertClientRequest mockAssertClientRequest;
+
+	@Mock
 	private Validator validator;
+
+	@Mock
+	private MockHttpServletRequest request;
+
+	private static final String ADMIN_TOKEN_VALUE = "qwerty";
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		MockHttpServletRequest request = new MockHttpServletRequest();
+		when(request.getHeader(ADMIN_TOKEN_HEADER)).thenReturn(ADMIN_TOKEN_VALUE);
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+		when(mockAssertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(true);
+	}
+
+	@Test
+	public void save_NullHeaderGiven_ShouldThrowException() {
+		// Set up
+		ClientResource resource = ClientTestBuilder.buildResoure();
+
+		// Expectations
+		when(request.getHeader(ADMIN_TOKEN_HEADER)).thenReturn(null);
+
+		// Do test
+		try {
+			controller.save(resource, request);
+			fail();
+		} catch (BadRequestException e) {
+		}
+
+		// Assertions
+		verifyZeroInteractions(mockService, mockParser, validator, mockAssertClientRequest);
+	}
+
+	@Test
+	public void save_EmptyHeaderGiven_ShouldThrowException() {
+		// Set up
+		ClientResource resource = ClientTestBuilder.buildResoure();
+
+		// Expectations
+		when(request.getHeader(ADMIN_TOKEN_HEADER)).thenReturn("");
+
+		// Do test
+		try {
+			controller.save(resource, request);
+			fail();
+		} catch (BadRequestException e) {
+		}
+
+		// Assertions
+		verifyZeroInteractions(mockService, mockParser, validator, mockAssertClientRequest);
+	}
+
+	@Test
+	public void save_InvalidHeaderGiven_ShouldThrowException() {
+		// Set up
+		ClientResource resource = ClientTestBuilder.buildResoure();
+
+		// Expectations
+		when(mockAssertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(false);
+
+		// Do test
+		try {
+			controller.save(resource, request);
+			fail();
+		} catch (ForbiddenRequestException e) {
+		}
+
+		// Assertions
+		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verifyZeroInteractions(mockService, mockParser, validator);
 	}
 
 	@Test
@@ -64,7 +135,7 @@ public class ClientsControllerTest {
 
 		// Do test
 		try {
-			controller.save(resource);
+			controller.save(resource, request);
 			fail();
 		} catch (ValidationException e) {
 		}
@@ -88,7 +159,7 @@ public class ClientsControllerTest {
 
 		// Do test
 		try {
-			controller.save(resource);
+			controller.save(resource, request);
 			fail();
 		} catch (BadRequestException e) {
 		}
@@ -113,7 +184,7 @@ public class ClientsControllerTest {
 		when(mockParser.toResource(client)).thenReturn(resource);
 
 		// Do test
-		ClientResource result = controller.save(resource);
+		ClientResource result = controller.save(resource, request);
 
 		// Assertions
 		verify(validator).validate(resource, Default.class);

@@ -12,7 +12,10 @@ public interface ErrorCodes {
     public static final String INVALID_STATUS = "invalidStatus";
 
     // CLIENT
-
+    public static final String MISSING_HEADER = "missingHeader";
+    
+    public static final String ACCESS_NOT_ALLOWED = "accessNotAllowed";
+    
     public static final String REQUIRED_NAME = "requiredName";
 
     public static final String INVALID_NAME_SIZE = "invalidNameSize";

@@ -1,3 +1,7 @@
+client:
+  service:
+    key: c
+    url: api/v1/clients
 sendemail:
   service:
     mailgun:

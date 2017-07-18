@@ -1,18 +1,11 @@
 package com.tsm.sendemail.service;
 
-import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.tsm.sendemail.model.Client;
-import com.tsm.sendemail.model.Client.ClientStatus;
-import com.tsm.sendemail.model.Message;
-import com.tsm.sendemail.util.ClientTestBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,13 +28,13 @@ public class EmailServiceStatusService {
 	public void checkingDailyEmailsStatus() {
 		log.info("checkingDailyEmailsStatus ->");
 
-		Set<Message> messages = messageService.findByClientStatusAndCreatedBetween(ClientStatus.ACTIVE,
-				LocalDateTime.now(), LocalDateTime.now());
-		log.info("Messages found [{}].", messages.size());
-
-		if (!messages.isEmpty()) {
-
-		}
+//		Set<Message> messages = messageService.client(ClientStatus.ACTIVE,
+//				LocalDateTime.now(), LocalDateTime.now());
+//		log.info("Messages found [{}].", messages.size());
+//
+//		if (!messages.isEmpty()) {
+//
+//		}
 
 		log.info("checkingDailyEmailsStatus <-");
 

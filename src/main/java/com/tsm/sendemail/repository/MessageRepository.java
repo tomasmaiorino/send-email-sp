@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tsm.sendemail.model.Client;
-import com.tsm.sendemail.model.Client.ClientStatus;
 import com.tsm.sendemail.model.Message;
 
 @Transactional(propagation = Propagation.MANDATORY)
@@ -19,7 +18,7 @@ public interface MessageRepository extends Repository<Message, Long> {
 
 	Optional<Message> findByIdAndClient(final Long id, final Client client);
 
-	Set<Message> findByClientStatusAndCreatedBetween(final ClientStatus status, final LocalDateTime initialDate,
+	Set<Message> findByClientAndCreatedBetween(final Client client, final LocalDateTime initialDate,
 			final LocalDateTime finalDate);
 
 }
