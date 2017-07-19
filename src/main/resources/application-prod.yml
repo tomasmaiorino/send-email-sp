@@ -1,4 +1,7 @@
-create.client.key: 
+client:
+  service:
+    key: ${CLIENT_KEY}
+    url: api/v1/clients 
 sendemail:
   service:
     mailgun:
