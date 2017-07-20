@@ -15,9 +15,11 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "client")
@@ -55,6 +57,12 @@ public class Client extends BaseModel {
     @Getter
     @Column(nullable = false, length = 30)
     private String emailRecipient;
+
+    @Column(name = "is_admin")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    @Getter
+    @Setter
+    public Boolean isAdmin = false;
 
     public void setClientHosts(final Set<ClientHosts> clientHosts) {
         Assert.notNull(clientHosts, "The clientHosts must not be null!");

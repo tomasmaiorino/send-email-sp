@@ -14,9 +14,11 @@ import com.tsm.sendemail.model.Client.ClientStatus;
 public interface ClientRepository extends Repository<Client, Integer> {
 
     Client save(Client client);
-    
+
     Optional<Client> findByToken(final String token);
-    
+
     Set<Client> findByStatus(final ClientStatus status);
+
+    Set<Client> findByIsAdmin(final Boolean admin);
 
 }

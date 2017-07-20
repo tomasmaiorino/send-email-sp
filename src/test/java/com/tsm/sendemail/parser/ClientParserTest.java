@@ -31,10 +31,12 @@ public class ClientParserTest {
         parser.toModel(resource);
     }
 
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void toModel_ValidResourceGiven_ShouldCreateClientModel() {
         // Set up
         ClientResource resource = ClientTestBuilder.buildResoure();
+        resource.setIsAdmin(true);
 
         // Do test
         Client result = parser.toModel(resource);
@@ -47,6 +49,7 @@ public class ClientParserTest {
             hasProperty("token", is(resource.getToken())),
             hasProperty("emailRecipient", is(resource.getEmailRecipient())),
             hasProperty("clientHosts", notNullValue()),
+            hasProperty("isAdmin", is(resource.getIsAdmin())),
             hasProperty("status", is(ClientStatus.ACTIVE))));
 
         assertThat(result.getClientHosts().size(), is(resource.getHosts().size()));

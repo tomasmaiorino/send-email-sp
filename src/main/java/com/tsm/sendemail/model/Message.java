@@ -101,7 +101,7 @@ public class Message extends BaseModel {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        ClientHosts other = (ClientHosts) obj;
+        Message other = (Message) obj;
         if (getId() == null || other.getId() == null) {
             return false;
         }

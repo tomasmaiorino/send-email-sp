@@ -64,4 +64,15 @@ public class ClientService {
 
         return clients;
     }
+
+    public Set<Client> findByIsAdmin(final Boolean admin) {
+        Assert.notNull(admin, "The admin must not be null or empty.");
+        log.info("Finding client by admin [{}] .", admin);
+
+        Set<Client> clients = repository.findByIsAdmin(admin);
+
+        log.info("Clients found [{}].", clients.size());
+
+        return clients;
+    }
 }

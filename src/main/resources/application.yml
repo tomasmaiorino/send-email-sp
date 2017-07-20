@@ -1,6 +1,6 @@
 client:
   service:
-    key: c
+    key: cecadbd7-e07c-48b2-b11d-038f7aaab4f6
     url: api/v1/clients
 sendemail:
   service:

@@ -221,4 +221,58 @@ public class ClientServiceTest {
         assertThat(result.contains(client), is(true));
     }
 
+    @Test
+    public void findByIsAdmin_NullAdminGiven_ShouldThrowException() {
+        // Set up
+        Boolean isAdmin = null;
+
+        // Do test
+        try {
+            service.findByIsAdmin(isAdmin);
+            fail();
+        } catch (IllegalArgumentException e) {
+        }
+
+        // Assertions
+        verifyZeroInteractions(mockRepository);
+    }
+
+    @Test
+    public void findByIsAdmin_NotClientsFoundGiven_ShouldReturnEmptySet() {
+        // Set up
+        Boolean isAdmin = true;
+
+        // Expectations
+        when(service.findByIsAdmin(isAdmin)).thenReturn(Collections.emptySet());
+
+        // Do test
+        Set<Client> result = service.findByIsAdmin(isAdmin);
+
+        // Assertions
+        verify(mockRepository).findByIsAdmin(isAdmin);
+
+        assertNotNull(result);
+        assertThat(result.isEmpty(), is(true));
+    }
+
+    @Test
+    public void findByIsAdmin_ClientsFoundGiven_ShouldReturnContent() {
+        // Set up
+        Boolean isAdmin = true;
+        Client client = ClientTestBuilder.buildModel();
+
+        // Expectations
+        when(service.findByIsAdmin(isAdmin)).thenReturn(Collections.singleton(client));
+
+        // Do test
+        Set<Client> result = service.findByIsAdmin(isAdmin);
+
+        // Assertions
+        verify(mockRepository).findByIsAdmin(isAdmin);
+
+        assertNotNull(result);
+        assertThat(result.isEmpty(), is(false));
+        assertThat(result.contains(client), is(true));
+    }
+
 }
