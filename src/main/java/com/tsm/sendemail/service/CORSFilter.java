@@ -46,12 +46,12 @@ public class CORSFilter implements Filter {
 				response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 				response.setHeader("Access-Control-Expose-Headers", "Location");
 			} else {
-				log.info("None header should be added to the host [{}].", request.getRequestURL().toString());
+				log.debug("None header should be added to the host [{}].", request.getRequestURL().toString());
 				response.sendError(HttpStatus.SC_FORBIDDEN);
 				return;
 			}
 		} else {
-			log.info("Skiping host verification");
+			log.debug("Skiping host verification");
 		}
 
 		chain.doFilter(req, res);

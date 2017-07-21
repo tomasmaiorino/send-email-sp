@@ -34,7 +34,7 @@ public class Client extends BaseModel {
         ACTIVE, INACTIVE;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "client")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "client")
     private Set<ClientHosts> clientHosts;
 
     @Getter

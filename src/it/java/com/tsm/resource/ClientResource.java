@@ -80,6 +80,9 @@ public class ClientResource {
 	@Getter
 	private String emailRecipient;
 
+	@Getter
+	public Boolean isAdmin = false;
+
 	public ClientResource emailRecipient(final String emailRecipient) {
 		this.emailRecipient = emailRecipient;
 		return this;
@@ -101,6 +104,11 @@ public class ClientResource {
 
 	public ClientResource email() {
 		return email(random(20, true, true) + "@" + random(2, true, false) + ".com");
+	}
+
+	public ClientResource isAdmin(final Boolean isAdmin) {
+		this.isAdmin = isAdmin;
+		return this;
 	}
 
 	public ClientResource token(final String token) {

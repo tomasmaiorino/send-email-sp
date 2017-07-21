@@ -3,6 +3,7 @@ package com.tsm.sendemail.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -33,14 +34,19 @@ public class EmailServiceStatusService {
 	@Autowired
 	private BuildStatusEmailContentService buildStatusEmailContentService;
 
+	private LocalDateTime initialDate;
+
+	private LocalDateTime finalDate;
+
 	private static DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
-	@Scheduled(initialDelay = 1000, fixedRate = 5000)
+	@Scheduled(cron = "0 0 0 * * *")
+	// @Scheduled(initialDelay = 1000, fixedRate = 20000)
 	public void checkingDailyEmailsStatus() {
 		log.info("checkingDailyEmailsStatus ->");
 
-		LocalDateTime initialDate = LocalDateTime.now().minusHours(24);
-		LocalDateTime finalDate = LocalDateTime.now();
+		initialDate = LocalDateTime.now().minusHours(24);
+		finalDate = LocalDateTime.now();
 
 		Set<Client> activeClients = clientService.findByStatus(ClientStatus.ACTIVE);
 
@@ -80,10 +86,14 @@ public class EmailServiceStatusService {
 		message.setMessage(messageContent.toString());
 		message.setSenderEmail(client.getEmailRecipient());
 		message.setSenderName(client.getName());
-		message.setSubject(String.format("Send Email Status "));
+		message.setSubject(String.format("Email Status: %s", finalDate.format(formatter)));
 		message.setStatus(MessageStatus.CREATED);
 
 		return messageService.save(message);
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(UUID.randomUUID().toString());
 	}
 
 }
