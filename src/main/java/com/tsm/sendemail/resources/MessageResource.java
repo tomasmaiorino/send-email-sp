@@ -27,7 +27,7 @@ public class MessageResource extends BaseResource {
     @Getter
     @Setter
     @NotNull(message = REQUIRED_MESSAGE)
-    @Size(min = 2, max = 300, message = INVALID_MESSAGE_SIZE)
+    @Size(min = 2, max = 600, message = INVALID_MESSAGE_SIZE)
     private String message;
 
     @Getter
@@ -39,7 +39,7 @@ public class MessageResource extends BaseResource {
     @Getter
     @Setter
     @NotNull(message = REQUIRED_SENDER_NAME)
-    @Size(min = 2, max = 20, message = INVALID_SENDER_NAME_SIZE)
+    @Size(min = 2, max = 30, message = INVALID_SENDER_NAME_SIZE)
     private String senderName;
 
     @Getter

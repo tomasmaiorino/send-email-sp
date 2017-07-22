@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -42,11 +43,14 @@ public class ClientsControllerIT {
 	@Value(value = "${client.service.key}")
 	private String clientServiceKey;
 
+	@Value(value = "${it.test.email}")
+	private String itTestEmail;
+
 	@Before
 	public void setUp() {
 		RestAssured.port = port;
 	}
-	
+
 	public static Map<String, String> header = null;
 
 	public static final String ADMIN_TOKEN_HEADER = "AT";
@@ -273,6 +277,26 @@ public class ClientsControllerIT {
 				.body("token", is(resource.getToken())).body("status", is(resource.getStatus()))
 				.body("id", notNullValue()).body("hosts.size()", is(resource.getHosts().size()))
 				.body("email", is(resource.getEmail()));
+	}
+
+	@Test
+	public void generateReport_ValidClientGiven_ShouldSendReport() {
+		// Set Up
+		ClientResource.build().headers(getHeader()).email(itTestEmail).isAdmin(true).create();
+
+		// Do Test
+		given().headers(getHeader()).when().get("/api/v1/clients/report").then().statusCode(HttpStatus.OK.value());
+	}
+	
+	@Test
+	@Ignore
+	public void generateReport_NoneClientAdminGiven_ShouldReturnError() {
+
+		// Do Test
+		given().headers(getHeader()).when().get("/api/v1/clients/report")
+		.then().statusCode(HttpStatus.BAD_REQUEST.value())
+		.body("[0]message", is("Report not sent."));
+		
 	}
 
 }

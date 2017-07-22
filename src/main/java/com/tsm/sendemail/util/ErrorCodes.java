@@ -55,5 +55,7 @@ public interface ErrorCodes {
     public static final String ERROR_SENDING_EMAIL = "errorSendingEmail";
 
     public static final String MESSAGE_NOT_FOUND = "messageNotFound";
+    
+    public static final String REPORT_NOT_SENT= "reportNotSent";
 
 }

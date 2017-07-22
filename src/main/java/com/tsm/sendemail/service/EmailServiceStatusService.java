@@ -3,11 +3,8 @@ package com.tsm.sendemail.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.tsm.sendemail.model.Client;
@@ -18,7 +15,6 @@ import com.tsm.sendemail.model.Message.MessageStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
-@Profile(value = "prod")
 @Slf4j
 public class EmailServiceStatusService {
 
@@ -40,11 +36,9 @@ public class EmailServiceStatusService {
 
 	private static DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
-	@Scheduled(cron = "0 0 0 * * *")
-	// @Scheduled(initialDelay = 1000, fixedRate = 20000)
-	public void checkingDailyEmailsStatus() {
+	public Message checkingDailyEmailsStatus() {
 		log.info("checkingDailyEmailsStatus ->");
-
+		Message message = null;
 		initialDate = LocalDateTime.now().minusHours(24);
 		finalDate = LocalDateTime.now();
 
@@ -60,13 +54,15 @@ public class EmailServiceStatusService {
 
 			log.debug("Message content [{}].", messageContent);
 
-			sendEmail(messageContent, initialDate, finalDate);
+			message = sendEmail(messageContent, initialDate, finalDate);
 		}
 
+		log.debug("Message send [{}].", message);
 		log.info("checkingDailyEmailsStatus <-");
+		return message;
 	}
 
-	private void sendEmail(final String messageContent, final LocalDateTime initialDate,
+	private Message sendEmail(final String messageContent, final LocalDateTime initialDate,
 			final LocalDateTime finalDate) {
 		Message message = createMessage(messageContent, initialDate, finalDate);
 		try {
@@ -74,6 +70,7 @@ public class EmailServiceStatusService {
 		} catch (Exception e) {
 			log.error("Error sending status email.", e);
 		}
+		return message;
 
 	}
 
@@ -90,10 +87,6 @@ public class EmailServiceStatusService {
 		message.setStatus(MessageStatus.CREATED);
 
 		return messageService.save(message);
-	}
-	
-	public static void main(String[] args) {
-		System.out.println(UUID.randomUUID().toString());
 	}
 
 }

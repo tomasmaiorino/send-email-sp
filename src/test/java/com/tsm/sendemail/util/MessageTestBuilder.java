@@ -9,11 +9,11 @@ import com.tsm.sendemail.resources.MessageResource;
 
 public class MessageTestBuilder {
 
-	public static final String LARGE_MESSAGE = random(301, true, true);
+	public static final String LARGE_MESSAGE = random(601, true, true);
 	public static final String SMALL_MESSAGE = random(1, true, true);
 	public static final String LARGE_SUBJECT = random(31, true, true);
 	public static final String SMALL_SUBJECT = random(1, true, true);
-	public static final String LARGE_SENDER_NAME = random(21, true, true);
+	public static final String LARGE_SENDER_NAME = random(31, true, true);
 	public static final String SMALL_SENDER_NAME = random(1, true, true);
 	public static final String LARGE_SENDER_EMAIL = random(31, true, true);
 	public static final String RESOURCE_INVALID_EMAIL = random(31, true, true);

@@ -28,11 +28,15 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.tsm.sendemail.exceptions.BadRequestException;
 import com.tsm.sendemail.exceptions.ForbiddenRequestException;
 import com.tsm.sendemail.model.Client;
+import com.tsm.sendemail.model.Message;
+import com.tsm.sendemail.model.Message.MessageStatus;
 import com.tsm.sendemail.parser.ClientParser;
 import com.tsm.sendemail.resources.ClientResource;
 import com.tsm.sendemail.service.AssertClientRequest;
 import com.tsm.sendemail.service.ClientService;
+import com.tsm.sendemail.service.EmailServiceStatusService;
 import com.tsm.sendemail.util.ClientTestBuilder;
+import com.tsm.sendemail.util.MessageTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientsControllerTest {
@@ -56,6 +60,9 @@ public class ClientsControllerTest {
 
 	@Mock
 	private MockHttpServletRequest request;
+
+	@Mock
+	private EmailServiceStatusService mockEmailServiceStatusService;
 
 	private static final String ADMIN_TOKEN_VALUE = "qwerty";
 
@@ -194,5 +201,77 @@ public class ClientsControllerTest {
 
 		assertNotNull(result);
 		assertThat(result, is(resource));
+	}
+
+	@Test
+	public void generateReport_InvalidHeaderGiven_ShouldThrowException() {
+		// Expectations
+		when(mockAssertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(false);
+
+		// Do test
+		try {
+			controller.generateReport(request);
+			fail();
+		} catch (ForbiddenRequestException e) {
+		}
+
+		// Assertions
+		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verifyZeroInteractions(mockEmailServiceStatusService);
+	}
+
+	@Test
+	public void generateReport_EmailNotSend_ShouldThrowException() {
+		// Expectations
+		when(mockEmailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(null);
+
+		// Do test
+		try {
+			controller.generateReport(request);
+			fail();
+		} catch (BadRequestException e) {
+		}
+
+		// Assertions
+		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verify(mockEmailServiceStatusService).checkingDailyEmailsStatus();
+	}
+
+	@Test
+	public void generateReport_ReportSent_ShouldReturnSuccess() {
+		// Set up
+		Message message = MessageTestBuilder.buildModel();
+		message.setStatus(MessageStatus.SENT);
+
+		// Expectations
+		when(mockEmailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(message);
+
+		// Do test
+		controller.generateReport(request);
+
+		// Assertions
+		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verify(mockEmailServiceStatusService).checkingDailyEmailsStatus();
+	}
+
+	@Test
+	public void generateReport_ReportNotSent_ShouldReturnSuccess() {
+		// Set up
+		Message message = MessageTestBuilder.buildModel();
+		message.setStatus(MessageStatus.NOT_SENT);
+
+		// Expectations
+		when(mockEmailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(message);
+
+		// Do test
+		try {
+			controller.generateReport(request);
+			fail();
+		} catch (BadRequestException e) {
+		}
+
+		// Assertions
+		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verify(mockEmailServiceStatusService).checkingDailyEmailsStatus();
 	}
 }

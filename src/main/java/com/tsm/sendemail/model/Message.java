@@ -32,7 +32,7 @@ public class Message extends BaseModel {
     }
 
     @Getter
-    @Column(nullable = false, length = 300)
+    @Column(nullable = false, length = 600)
     private String message;
 
     @Getter
@@ -40,7 +40,7 @@ public class Message extends BaseModel {
     private String subject;
 
     @Getter
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 30)
     private String senderName;
 
     @Getter
