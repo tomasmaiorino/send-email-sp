@@ -48,6 +48,11 @@ $ mvn integration-test -DskipItTest=false -P it -Dsendemail.service.mailgun.mail
 ###### To run the application the maven command:
 $ mvn spring-boot:run -Dspring.profiles.active=local -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} 
 
+###### To send a report to the admin client using curl:
+$ curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -X GET http://localhost:8080/api/v1/clients/report
+Sample response:
+HTTP/1.1 200 
+
 ###### To create a client using curl:
 $ curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/clients -d "{\"hosts\": [\"http://localhost:8080\",\"localhost:8080\"],\"token\": \"qwetyuasdtyuer4rr\",\"email\": \"user@domain.com\",\"name\": \"Jean Gray\",\"emailRecipient\": \"user@domain.com\",\"status\":\"ACTIVE\"}
 Sample response:
