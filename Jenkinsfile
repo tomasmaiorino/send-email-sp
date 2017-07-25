@@ -1,23 +1,23 @@
 pipeline {
+
     agent any
 
-    environment {
-        MAILGUN_KEY = 'true'
-        MAILGUN_DOMAIN    = 'sqlite'
-        IT_TEST_EMAIL = ''
-    }
-
     stages {
-        stage('build') {
+        stage('build-deve') {
+         	when { branch "deve" }
             steps {
-                if (env.BRANCH_NAME == "deve") {
-                	sh 'echo env.BRANCH_NAME'
-                } else if (env.BRANCH_NAME == "sand") {
-                	sh 'echo env.BRANCH_NAME'
-                } else {
-                	sh 'echo env.BRANCH_NAME'
-                }
+            	sh 'echo deploying test'
+				sh 'mvn clean install'
+				sh 'mvn test'
             }
         }
+        stage('build-sand') {
+         	when { branch "sand" }
+            steps {
+            	sh 'echo deploying sand'            
+				sh 'mvn clean install'
+				sh 'mvn test'
+            }
+        }        
     }
 }
