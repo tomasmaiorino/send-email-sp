@@ -13,6 +13,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.tsm.sendemail.model.Message;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +29,7 @@ public class MessageResource extends BaseResource {
     @Getter
     @Setter
     @NotNull(message = REQUIRED_MESSAGE)
-    @Size(min = 2, max = 600, message = INVALID_MESSAGE_SIZE)
+    @Size(min = 2, max = Message.MESSAGE_MAX_LENGTH, message = INVALID_MESSAGE_SIZE)
     private String message;
 
     @Getter

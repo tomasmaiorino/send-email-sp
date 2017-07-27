@@ -22,6 +22,8 @@ import lombok.Getter;
 @Table(name = "message")
 public class Message extends BaseModel {
 
+    public static final int MESSAGE_MAX_LENGTH = 600;
+
     @Id
     @GeneratedValue
     @Getter
@@ -32,7 +34,7 @@ public class Message extends BaseModel {
     }
 
     @Getter
-    @Column(nullable = false, length = 600)
+    @Column(nullable = false, length = MESSAGE_MAX_LENGTH)
     private String message;
 
     @Getter
@@ -62,7 +64,11 @@ public class Message extends BaseModel {
 
     public void setMessage(final String message) {
         Assert.hasText(message, "The message must not be null or empty!");
-        this.message = message;
+        this.message = message.length() > MESSAGE_MAX_LENGTH ? reduceMessage(message) : message;
+    }
+
+    private String reduceMessage(String pMessage) {
+        return pMessage.substring(0, MESSAGE_MAX_LENGTH - 3) + "...";
     }
 
     public void setSubject(final String subject) {

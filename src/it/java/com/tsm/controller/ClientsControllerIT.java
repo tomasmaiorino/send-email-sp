@@ -282,21 +282,20 @@ public class ClientsControllerIT {
 	@Test
 	public void generateReport_ValidClientGiven_ShouldSendReport() {
 		// Set Up
-		ClientResource.build().headers(getHeader()).email(itTestEmail).isAdmin(true).create();
+		ClientResource.build().headers(getHeader()).emailRecipient(itTestEmail).isAdmin(true).create();
 
 		// Do Test
 		given().headers(getHeader()).when().get("/api/v1/clients/report").then().statusCode(HttpStatus.OK.value());
 	}
-	
+
 	@Test
 	@Ignore
 	public void generateReport_NoneClientAdminGiven_ShouldReturnError() {
 
 		// Do Test
-		given().headers(getHeader()).when().get("/api/v1/clients/report")
-		.then().statusCode(HttpStatus.BAD_REQUEST.value())
-		.body("[0]message", is("Report not sent."));
-		
+		given().headers(getHeader()).when().get("/api/v1/clients/report").then()
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0]message", is("Report not sent."));
+
 	}
 
 }

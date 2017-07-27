@@ -1,13 +1,19 @@
 package com.tsm.sendemail.model;
 
 import static org.apache.commons.lang3.RandomStringUtils.random;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.junit.Assert.assertThat;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.tsm.sendemail.model.Message.MessageStatus;
+import com.tsm.sendemail.util.ClientTestBuilder;
 import com.tsm.sendemail.util.MessageTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
@@ -28,6 +34,7 @@ public class MessageTest {
         senderName = random(20, true, true);
         subject = random(30, true, true);
         status = MessageStatus.CREATED;
+        client = ClientTestBuilder.buildModel();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -48,6 +55,20 @@ public class MessageTest {
 
         // Do test
         buildMessage();
+    }
+
+    @Test
+    public void build_MessageSizeGreaterGiven_ShouldThrowException() {
+
+        // Set up
+        message = random(Message.MESSAGE_MAX_LENGTH + 2, true, true);
+
+        // Do test
+        Message message = buildMessage();
+
+        // Assertions
+        assertThat(message.getMessage().length() == Message.MESSAGE_MAX_LENGTH, is(true));
+        assertThat(message.getMessage().contains("..."), is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -130,8 +151,23 @@ public class MessageTest {
         buildMessage();
     }
 
-    private void buildMessage() {
-        MessageTestBuilder.buildModel(message, senderEmail, senderName, subject, client, status);
+    @Test
+    public void build_RequiredValuesGiven_AllValuesShouldNotBeEmpty() {
+
+        // Do test
+        Message result = buildMessage();
+
+        // Assertions
+        Assert.assertThat(result, allOf(
+            hasProperty("message", is(message)),
+            hasProperty("subject", is(subject)),
+            hasProperty("senderName", is(senderName)),
+            hasProperty("senderEmail", is(senderEmail)),
+            hasProperty("client", is(client))));
+    }
+
+    private Message buildMessage() {
+        return MessageTestBuilder.buildModel(message, senderEmail, senderName, subject, client, status);
     }
 
 }
