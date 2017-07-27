@@ -11,13 +11,16 @@ pipeline {
         stage('build-deve') {
          when { branch "deve" }
             steps {
-				sh 'git push origin deve'
+            	sh 'git checkout sand'
+            	sh 'git merge deve'
+				sh 'git push origin sand'
             }
         }
         stage('build-sand') {
          when { branch "sand" }
             steps {
-            	sh 'git push origin sand'
+            	sh 'git checkout master'
+            	sh 'git merge sand'
             }
         }
         stage('build-master') {
