@@ -11,6 +11,7 @@ pipeline {
         stage('build-deve') {
          when { branch "deve" }
             steps {
+            	sh 'git fetch'
             	sh 'git checkout sand'
             	sh 'git merge deve'
 				sh 'git push origin sand'
