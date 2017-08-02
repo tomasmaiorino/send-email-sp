@@ -1,10 +1,6 @@
 pipeline {
     agent any
     stages {
-        stage('build-common') {
-        	steps {
-            }
-        }
         stage('build-deve') {
          when { branch "deve" }
             steps {
