@@ -1,5 +1,6 @@
 package com.tsm.sendemail.model;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,6 +18,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -64,6 +68,10 @@ public class Client extends BaseModel {
     @Setter
     public Boolean isAdmin = false;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client")
+    @JsonBackReference
+    private Set<ClientAttribute> clientAttributes;
+
     public void setClientHosts(final Set<ClientHosts> clientHosts) {
         Assert.notNull(clientHosts, "The clientHosts must not be null!");
         Assert.isTrue(!clientHosts.isEmpty(), "The clientHosts must not be empty!");
@@ -99,6 +107,15 @@ public class Client extends BaseModel {
         return clientHosts;
     }
 
+    public Set<ClientAttribute> getClientAttribute() {
+        return clientAttributes;
+    }
+
+    public void setClientAttribute(Set<ClientAttribute> clientAttributes) {
+        Assert.notEmpty(clientAttributes, "The clientAttributes must not be null or empty!");
+        this.clientAttributes = clientAttributes;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -115,6 +132,20 @@ public class Client extends BaseModel {
             return false;
         }
         return getId().equals(other.getId());
+    }
+
+    public String getClientAttributeValueByKey(final String key) {
+        Assert.hasText(key, "The key must not be null or empty!");
+        if (CollectionUtils.isEmpty(getClientAttribute())) {
+            return null;
+        }
+        Optional<ClientAttribute> optClient = getClientAttribute().stream().filter(ca -> key.equals(ca.getKey()))
+            .findFirst();
+
+        if (optClient.isPresent()) {
+            return optClient.get().getValue();
+        }
+        return null;
     }
 
     @Override

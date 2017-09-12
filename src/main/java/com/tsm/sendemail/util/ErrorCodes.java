@@ -9,7 +9,7 @@ public interface ErrorCodes {
 
     public static final String INVALID_EMAIL = "invalidEmail";
 
-    public static final String INVALID_STATUS = "invalidStatus";
+    public static final String INVALID_STATUS = "invalidClientStatus";
 
     // CLIENT
     public static final String MISSING_HEADER = "missingHeader";

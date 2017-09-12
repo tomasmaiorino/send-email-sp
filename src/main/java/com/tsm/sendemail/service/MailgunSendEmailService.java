@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import com.tsm.sendemail.exceptions.MessageException;
+import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Message;
 
 import lombok.Getter;
@@ -43,6 +44,10 @@ public class MailgunSendEmailService extends BaseSendEmailService {
     private static final String MAILGUN_USER = "api";
 
     private static final String MAILGUN_DOMAIN_NAME_KEY = "#domain_name";
+
+    private static final String MAILGUN_KEY = "mg_key";
+
+    private static final String MAILGUN_DOMAIN = "mg_dom";
 
     @Getter
     @Setter
@@ -66,7 +71,7 @@ public class MailgunSendEmailService extends BaseSendEmailService {
 
         try {
 
-            log.info("Endpoint [{}].", getUrl());
+            log.info("Endpoint [{}].", getUrl(message.getClient()));
 
             HttpResponse response = doesPostRequest(message);
 
@@ -93,8 +98,8 @@ public class MailgunSendEmailService extends BaseSendEmailService {
         throws AuthenticationException, UnsupportedEncodingException, IOException, ClientProtocolException {
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(MAILGUN_USER, getMailgunKey());
-        HttpPost httpPost = new HttpPost(getUrl());
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(MAILGUN_USER, getMailgunKey(message.getClient()));
+        HttpPost httpPost = new HttpPost(getUrl(message.getClient()));
 
         httpPost.addHeader(new BasicScheme().authenticate(creds, httpPost));
         List<NameValuePair> nvps = new ArrayList<NameValuePair>();
@@ -122,8 +127,18 @@ public class MailgunSendEmailService extends BaseSendEmailService {
         return mailgunTextMessage.getParams();
     }
 
-    private String getUrl() {
-        return getServiceEndpoint().replaceAll(MAILGUN_DOMAIN_NAME_KEY, getMailgunDomain());
+    private String getUrl(final Client client) {
+        return getServiceEndpoint().replaceAll(MAILGUN_DOMAIN_NAME_KEY, getMailgunDomain(client));
+    }
+
+    private String getMailgunKey(final Client client) {
+        String key = client.getClientAttributeValueByKey(MAILGUN_KEY);
+        return key == null ? getMailgunKey() : key;
+    }
+
+    private String getMailgunDomain(final Client client) {
+        String domain = client.getClientAttributeValueByKey(MAILGUN_DOMAIN);
+        return domain == null ? getMailgunDomain() : domain;
     }
 
     private class MailgunTextMessage {
