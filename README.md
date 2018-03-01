@@ -2,29 +2,88 @@ It's an application that can be used to send contact email from your website to 
 
 This application is running under Spring Boot and as it uses mailgun's engine to send the email you need to create a mailgun's account.
 
-
 ## Used Technologies
 
 **1. Java version 8.**
 
-**2. JPA:** Mapping persistent entities in domains objects.
+**2. POSTGRES **
 
-**3. Spring Data JPA:** It's used to generate part of the code of the persistence layer.
+**3. Spring boot 1.5.4 **
 
-## Additional Technologies
+**4. Maven **  Life cycle management and project build.
 
-**Database:** The first client needs to be insert through database in order to enable the crossdomain post to the client's hosts. A script example can be found at the end of this file.
+**5. Docker (Optional) ** Used container manager to create an application image and the containers.
+
+## Considerations
 
 **Tests:** The tests are defined as use case of the Junit. The tests have been made available in the structure: src/test/java.
 
-**Spring Boot:** It is important to check the application's profiles once that its use more than one. 
+**Integration Tests:** The integration tests are defined as use case of the Junit. The tests have been made available in the structure: src/it/java.
 
-**Maven:** Life cycle management and project build.
+## Usage In Local Machine
+
+###### Pré-requisitos
+
+JDK - Java version 1.8.
+
+Docker latest version. (For docker installation).
+
+Maven for build and dependecies. (For not docker installation).
+
+### Using Docker
+
+1 - To install postgres container.  
+```$
+docker pull postgres
+```  
+2 - To create container.  
+```$
+docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=initdb -d postgres
+```  
+3 - To access the postgres container.
+```$
+docker exec -it postgres /bin/sh
+```  
+4 - To postgres and to create the database send_email.  
+```$
+psql -U postgres
+```  
+```$
+create database send_email;
+```  
+5 - To insert client configuration.
+```$
+insert into client(id, name, token, email, status, emailRecipient, created) values (1, <client_name>, <client_token>, <client_email>, <client_status>, <client_email_to_receive_messages>, current_timestamp);
+```  
+```$
+insert into client_hosts(id, host, client_id, created) values (<client_host_table_id>, <client_host_page, <client_id>, current_timestamp);
+```  
+6 - To quit postgres.
+```$
+\q
+```  
+5 - To exit from container.  
+```$
+quit
+```  
+6 - To create application image. (This steps excute the mvn clean install automatically)  
+```$
+docker build -t send_email --build-arg branch_name=master .
+```  
+7 - To create application container and start it.  
+```$
+docker run --rm -it --link postgres -p 8080:8080 --name send_email send_email mvn spring-boot:run -Drun.arguments="--spring.profiles.active=container"
+```  
+
+###### To run the integrations tests through docker run this command:
+```$
+docker run --rm -it --name eng_it eng mvn verify -DskipItTest=false -Drun.arguments="--spring.profiles.active=it" -Doxford.service.api.id=OXFORD_SERVICE_API_ID -Doxford.service.app.key=OXFORD_SERVICE_APP_KEY
+```
 
 ## Considerations
 
 The site http://tomasmaiorino.github.io uses for its contact functionality this send-email service. As the applications has been running using heroku, it may take a while for the first response.
- 
+
 ## Usage In Local Machine
 
 ###### Pré-requisitos
@@ -36,25 +95,37 @@ Any Java IDE with support Maven.
 Maven for build and dependencies.
 
 
-###### After download the fonts, to install the application and test it execute the maven command:
-$ mvn clean install
+###### After download the fonts, to install the application and test it execute the maven command
+```$
+mvn clean install
+```  
 
 ###### To only test the application execute the maven command:
-$ mvn clean test
+```$
+mvn clean test
+```  
 
 ###### To run the integrations tests execute the maven command:
-$ mvn integration-test -DskipItTest=false -P it -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} -Dit.test.email=${IT_TEST_EMAIL}
+```$
+mvn integration-test -DskipItTest=false -P it -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} -Dit.test.email=${IT_TEST_EMAIL}
+```
 
 ###### To run the application the maven command:
-$ mvn spring-boot:run -Dspring.profiles.active=local -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} 
+```$
+mvn spring-boot:run -Dspring.profiles.active=local -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN}
+```
 
 ###### To send a report to the admin client using curl:
-$ curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -X GET http://localhost:8080/api/v1/clients/report
+```$
+curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -X GET http://localhost:8080/api/v1/clients/report
+```
 Sample response:
-HTTP/1.1 200 
+HTTP/1.1 200
 
 ###### To create a client using curl:
-$ curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/clients -d "{\"hosts\": [\"http://localhost:8080\",\"localhost:8080\"],\"token\": \"qwetyuasdtyuer4rr\",\"email\": \"user@domain.com\",\"name\": \"Jean Gray\",\"emailRecipient\": \"user@domain.com\",\"status\":\"ACTIVE\"}
+```$
+curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/clients -d "{\"hosts\": [\"http://localhost:8080\",\"localhost:8080\"],\"token\": \"qwetyuasdtyuer4rr\",\"email\": \"user@domain.com\",\"name\": \"Jean Gray\",\"emailRecipient\": \"user@domain.com\",\"status\":\"ACTIVE\"}
+```
 Sample response:
 {
     "id": 1 ,
@@ -67,7 +138,10 @@ Sample response:
 }
 
 ###### To send a message using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -H "Referer: http://localhost" -X POST http://localhost:40585/api/v1/messages/qwetyuasdtyuer4rr -d "{\"message\": \"I really enjoy your site.\",\"subject\": \"Contact\",\"name\": \"Jean Gray\",\"senderEmail\": \"user@domain.com\",\"senderName\":\"Logan\"}"
+```$
+curl -i -H "Content-Type:application/json" -H "Accept:application/json" -H "Referer: http://localhost" -X POST http://localhost:40585/api/v1/messages/qwetyuasdtyuer4rr -d "{\"message\": \"I really enjoy your site.\",\"subject\": \"Contact\",\"name\": \"Jean Gray\",\"senderEmail\": \"user@domain.com\",\"senderName\":\"Logan\"}
+```  
+```
 Sample response:
 {
     "id": 1,
@@ -78,16 +152,8 @@ Sample response:
     "senderEmail": "user@domain.com",
     "senderName": "Logan"
 }
-
-## Usage In Production Machine
-JDK - Java version 1.8.
-
-Maven for build and dependencies.
-
+```  
 ###### To run the application the maven command:
-$ mvn spring-boot:run -Dspring.profiles.active=prod -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN}
-
-###### First client's insert (postgre) sample:
-insert into client(id, name, token, email, status, emailRecipient, created) values (1, 'Jean Gray','qwetyuasdtyu', 'user@site.com', 'ACTIVE', 'user@site.com', current_timestamp);
-
-insert into client_hosts(id, host, client_id, created) values (1, 'http://site.com',1, current_timestamp);
+```$
+mvn spring-boot:run -Dspring.profiles.active=prod -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN}
+```

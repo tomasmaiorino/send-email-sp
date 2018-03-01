@@ -2,7 +2,7 @@ server:
   port: 40585
 client:
   service:
-    key: cecadbd7-e07c-48b2-b11d-038f7aaab4f6 
+    key: cecadbd7-e07c-48b2-b11d-038f7aaab4f6
     url: api/v1/clients
 sendemail:
   service:
@@ -11,13 +11,13 @@ sendemail:
       mailgunKey: 123
       mailgunDomain: 123
 spring:
-  jpa:
-    show-sql: true
-    hibernate.ddl-auto: create
-    properties.hibernate.dialect: org.hibernate.dialect.HSQLDialect
-    database: HSQL
   datasource:
-    driverClassName: org.hsqldb.jdbcDriver
-    url: jdbc:hsqldb:mem:auth
-    username: sa  
-    
+    url: jdbc:postgresql://localhost:5432/send_email
+    username: postgres
+    password: initdb
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: updat
