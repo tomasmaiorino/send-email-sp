@@ -9,6 +9,7 @@ import static com.tsm.sendemail.util.ClientTestBuilder.SMALL_NAME;
 import static com.tsm.sendemail.util.ClientTestBuilder.SMALL_TOKEN;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -273,10 +274,37 @@ public class ClientsControllerIT {
 
 		// Do Test
 		given().headers(getHeader()).body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
-				.statusCode(HttpStatus.CREATED.value()).body("name", is(resource.getName()))
-				.body("token", is(resource.getToken())).body("status", is(resource.getStatus()))
-				.body("id", notNullValue()).body("hosts.size()", is(resource.getHosts().size()))
-				.body("email", is(resource.getEmail()));
+				.statusCode(HttpStatus.CREATED.value()).body("name", is(resource.getName()), "token",
+						is(resource.getToken()), "status", is(resource.getStatus()), "attributes", nullValue(), "id",
+						notNullValue(), "hosts.size()", is(resource.getHosts().size()), "email",
+						is(resource.getEmail()));
+	}
+
+	@Test
+	public void save_ValidResourceWithAttributesGiven_ShouldSaveClient() {
+		// Set Up
+		ClientResource resource = ClientResource.build().attributes().assertFields();
+
+		// Do Test
+		given().headers(getHeader()).body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+				.statusCode(HttpStatus.CREATED.value()).body("name", is(resource.getName()), "token",
+						is(resource.getToken()), "status", is(resource.getStatus()), "attributes.size()",
+						is(resource.getAttributes().size()), "id", notNullValue(), "hosts.size()",
+						is(resource.getHosts().size()), "email", is(resource.getEmail()));
+	}
+
+	@Test
+	public void save_ValidResourceWithOneInvalidAttributeGiven_ShouldSaveClient() {
+		// Set Up
+		ClientResource resource = ClientResource.build().attributes(3).assertFields();
+		resource.getAttributes().entrySet().iterator().next().setValue(null);
+
+		// Do Test
+		given().headers(getHeader()).body(resource).contentType(ContentType.JSON).when().post("/api/v1/clients").then()
+				.statusCode(HttpStatus.CREATED.value()).body("name", is(resource.getName()), "token",
+						is(resource.getToken()), "status", is(resource.getStatus()), "attributes.size()",
+						is(resource.getAttributes().size() - 1), "id", notNullValue(), "hosts.size()",
+						is(resource.getHosts().size()), "email", is(resource.getEmail()));
 	}
 
 	@Test

@@ -12,144 +12,138 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.tsm.sendemail.util.ClientAttributeTestBuilder;
 import com.tsm.sendemail.util.ClientTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientAttributeTest {
 
-    private String key;
-    private String value;
-    private Client client;
+	private String key;
+	private String value;
+	private Client client;
 
-    @Before
-    public void setUp() {
-        key = random(5, false, true);
-        value = random(5, false, true);
-        client = ClientTestBuilder.buildModel();
-    }
+	@Before
+	public void setUp() {
+		key = random(5, false, true);
+		value = random(5, false, true);
+		client = ClientTestBuilder.buildModel();
+	}
 
-    @Test
-    public void build_RequiredValuesGiven_ValuesShouldSet() {
-        // Do test
-        ClientAttribute clientAttribute = build();
+	@Test
+	public void build_RequiredValuesGiven_ValuesShouldSet() {
+		// Do test
+		ClientAttribute clientAttribute = build();
 
-        // Assertions
-        assertThat(clientAttribute, allOf(
-            hasProperty("key", is(key)),
-            hasProperty("value", is(value)),
-            hasProperty("client", is(client))));
-    }
+		// Assertions
+		assertThat(clientAttribute,
+				allOf(hasProperty("key", is(key)), hasProperty("value", is(value)), hasProperty("client", is(client))));
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_NullKeyGiven_ShouldThrowException() {
-        // Set up
-        key = null;
+	@Test(expected = IllegalArgumentException.class)
+	public void build_NullKeyGiven_ShouldThrowException() {
+		// Set up
+		key = null;
 
-        // Do test
-        build();
-    }
+		// Do test
+		build();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_EmptyKeyGiven_ShouldThrowException() {
-        // Set up
-        key = "";
+	@Test(expected = IllegalArgumentException.class)
+	public void build_EmptyKeyGiven_ShouldThrowException() {
+		// Set up
+		key = "";
 
-        // Do test
-        build();
-    }
+		// Do test
+		build();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_EmptyValueGiven_ShouldThrowException() {
-        // Set up
-        value = "";
+	@Test(expected = IllegalArgumentException.class)
+	public void build_EmptyValueGiven_ShouldThrowException() {
+		// Set up
+		value = "";
 
-        // Do test
-        build();
-    }
+		// Do test
+		build();
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void build_NullValueGiven_ShouldThrowException() {
-        // Set up
-        value = null;
+	@Test(expected = IllegalArgumentException.class)
+	public void build_NullValueGiven_ShouldThrowException() {
+		// Set up
+		value = null;
 
-        // Do test
-        build();
-    }
+		// Do test
+		build();
+	}
 
-    @Test
-    public void equals_NullKeyGiven_ShouldReturnFalse() {
-        // Set up
-        ClientAttribute st = build();
-        ReflectionTestUtils.setField(st, "key", null);
+	@Test
+	public void equals_NullKeyGiven_ShouldReturnFalse() {
+		// Set up
+		ClientAttribute st = build();
+		ReflectionTestUtils.setField(st, "key", null);
 
-        ClientAttribute st2 = build();
+		ClientAttribute st2 = build();
 
-        // Do test
-        boolean result = st.equals(st2);
-        boolean result2 = st2.equals(st);
+		// Do test
+		boolean result = st.equals(st2);
+		boolean result2 = st2.equals(st);
 
-        // Assertions
-        assertThat(result, is(false));
-        assertThat(result2, is(false));
-    }
+		// Assertions
+		assertThat(result, is(false));
+		assertThat(result2, is(false));
+	}
 
-    @Test
-    public void equals_ClientGiven_ShouldReturnFalse() {
-        // Set up
-        ClientAttribute st = build();
-        ReflectionTestUtils.setField(st, "client", null);
+	@Test
+	public void equals_ClientGiven_ShouldReturnFalse() {
+		// Set up
+		ClientAttribute st = build();
+		ReflectionTestUtils.setField(st, "client", null);
 
-        ClientAttribute st2 = build();
+		ClientAttribute st2 = build();
 
-        // Do test
-        boolean result = st.equals(st2);
-        boolean result2 = st2.equals(st);
+		// Do test
+		boolean result = st.equals(st2);
+		boolean result2 = st2.equals(st);
 
-        // Assertions
-        assertThat(result, is(false));
-        assertThat(result2, is(false));
-    }
+		// Assertions
+		assertThat(result, is(false));
+		assertThat(result2, is(false));
+	}
 
-    @Test
-    public void equals_ValidClientAttributesGiven_ShouldReturnTrue() {
-        // Set up
-        ClientAttribute st = build();
+	@Test
+	public void equals_ValidClientAttributesGiven_ShouldReturnTrue() {
+		// Set up
+		ClientAttribute st = build();
 
-        ClientAttribute st2 = build();
+		ClientAttribute st2 = build();
 
-        // Do test
-        boolean result = st.equals(st2);
-        boolean result2 = st2.equals(st);
+		// Do test
+		boolean result = st.equals(st2);
+		boolean result2 = st2.equals(st);
 
-        // Assertions
-        assertThat(result, is(true));
-        assertThat(result2, is(true));
-    }
+		// Assertions
+		assertThat(result, is(true));
+		assertThat(result2, is(true));
+	}
 
-    @Test
-    public void equals_ValidDifferentKeyGiven_ShouldReturnTrue() {
-        // Set up
-        ClientAttribute st = build();
-        st.setKey(key.toUpperCase());
+	@Test
+	public void equals_ValidDifferentKeyGiven_ShouldReturnTrue() {
+		// Set up
+		ClientAttribute st = build();
+		st.setKey(key.toUpperCase());
 
-        ClientAttribute st2 = build();
+		ClientAttribute st2 = build();
 
-        // Do test
-        boolean result = st.equals(st2);
-        boolean result2 = st2.equals(st);
+		// Do test
+		boolean result = st.equals(st2);
+		boolean result2 = st2.equals(st);
 
-        // Assertions
-        assertThat(result, is(true));
-        assertThat(result2, is(true));
-    }
+		// Assertions
+		assertThat(result, is(true));
+		assertThat(result2, is(true));
+	}
 
-    private ClientAttribute build() {
-        ClientAttribute ac = new ClientAttribute();
-        ac.setClient(client);
-        ac.setKey(key);
-        ac.setValue(value);
-        return ac;
-
-    }
+	private ClientAttribute build() {
+		return ClientAttributeTestBuilder.buildModel(client, key, value);
+	}
 
 }

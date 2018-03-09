@@ -40,14 +40,8 @@ public class ClientTestBuilder {
 
 	public static Client buildModel(final String name, final String token, final Set<ClientHosts> clientHosts,
 			final ClientStatus status, final String email, final String emailRecipient) {
-		Client client = new Client();
-		client.setName(name);
-		client.setToken(token);
+		Client client = Client.ClientBuilder.Client(name, email, token, status, emailRecipient, false).build();
 		client.setClientHosts(clientHosts);
-		client.setClientStatus(status);
-		client.setEmail(email);
-		client.setEmailRecipient(emailRecipient);
-		client.setIsAdmin(false);
 		return client;
 	}
 

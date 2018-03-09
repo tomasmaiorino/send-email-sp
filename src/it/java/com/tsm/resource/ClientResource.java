@@ -12,6 +12,7 @@ import org.apache.commons.lang3.RandomUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tsm.sendemail.model.Client.ClientStatus;
+import com.tsm.sendemail.util.ClientAttributeTestBuilder;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -83,6 +84,9 @@ public class ClientResource {
 	@Getter
 	public Boolean isAdmin = false;
 
+	@Getter
+	private Map<String, String> attributes;
+
 	public ClientResource emailRecipient(final String emailRecipient) {
 		this.emailRecipient = emailRecipient;
 		return this;
@@ -134,6 +138,15 @@ public class ClientResource {
 		hosts.add("http://" + random(5, true, false) + ".com");
 		hosts.add(random(5, true, false) + ".com");
 		return hosts(hosts);
+	}
+
+	public ClientResource attributes(Integer quantity) {
+		this.attributes = ClientAttributeTestBuilder.getAttributes(quantity);
+		return this;
+	}
+
+	public ClientResource attributes() {
+		return attributes(RandomUtils.nextInt(1, 3));
 	}
 
 	public ClientResource hosts(final Set<String> hosts) {
