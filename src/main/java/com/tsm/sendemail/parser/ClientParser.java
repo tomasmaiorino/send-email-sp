@@ -4,11 +4,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Client.ClientStatus;
+import com.tsm.sendemail.model.ClientAttribute;
 import com.tsm.sendemail.model.ClientHosts;
 import com.tsm.sendemail.resources.ClientResource;
 
@@ -17,15 +20,24 @@ public class ClientParser {
 
 	public Client toModel(final ClientResource resource) {
 		Assert.notNull(resource, "The resource must not be null!");
-		Client client = new Client();
-		client.setClientStatus(ClientStatus.valueOf(resource.getStatus()));
-		client.setEmail(resource.getEmail());
-		client.setName(resource.getName());
-		client.setToken(resource.getToken());
+		Client client = Client.ClientBuilder
+				.Client(resource.getName(), resource.getEmail(), resource.getToken(),
+						ClientStatus.valueOf(resource.getStatus()), resource.getEmailRecipient(), resource.getIsAdmin())
+				.build();
 		client.setClientHosts(loadClientHosts(client, resource.getHosts()));
-		client.setEmailRecipient(resource.getEmailRecipient());
-		client.setIsAdmin(resource.getIsAdmin());
+
+		if (!CollectionUtils.isEmpty(resource.getAttributes())) {
+			resource.getAttributes().forEach((k, v) -> {
+				if (StringUtils.isNotBlank(v)) {
+					client.addAttribute(buildClientAttribute(client, k, v));
+				}
+			});
+		}
 		return client;
+	}
+
+	private ClientAttribute buildClientAttribute(final Client client, final String k, final String v) {
+		return ClientAttribute.ClientAttributeBuilder.ClientAttribute(client, k, v).build();
 	}
 
 	private Set<ClientHosts> loadClientHosts(final Client client, final Set<String> hosts) {
@@ -51,6 +63,10 @@ public class ClientParser {
 		resource.setHosts(loadHosts(client));
 		resource.setEmailRecipient(client.getEmailRecipient());
 		resource.setIsAdmin(client.getIsAdmin());
+		if (!CollectionUtils.isEmpty(client.getClientAttributes())) {
+			resource.setAttributes(client.getClientAttributes().stream()
+					.collect(Collectors.toMap(ClientAttribute::getKey, ClientAttribute::getValue)));
+		}
 		return resource;
 
 	}

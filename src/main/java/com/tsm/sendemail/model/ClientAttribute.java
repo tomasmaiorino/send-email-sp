@@ -16,82 +16,102 @@ import org.springframework.util.Assert;
 @Table(name = "client_attribute")
 public class ClientAttribute extends BaseModel {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+	private ClientAttribute() {
+	}
 
-    @Column(name = "key_name", nullable = false)
-    private String key;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    @Column(name = "key_value", nullable = false)
-    private String value;
+	@Column(name = "key_name", nullable = false)
+	private String key;
 
-    @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
-    private Client client;
+	@Column(name = "key_value", nullable = false)
+	private String value;
 
-    public String getKey() {
-        return key;
-    }
+	@ManyToOne
+	@JoinColumn(name = "client_id", nullable = false)
+	private Client client;
 
-    public void setKey(final String key) {
-        Assert.hasText(key, "The key must not be null or empty!");
-        this.key = key;
-    }
+	public String getKey() {
+		return key;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public void setKey(final String key) {
+		Assert.hasText(key, "The key must not be null or empty!");
+		this.key = key;
+	}
 
-    public void setValue(final String value) {
-        Assert.hasText(value, "The value must not be null or empty!");
-        this.value = value;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setValue(final String value) {
+		Assert.hasText(value, "The value must not be null or empty!");
+		this.value = value;
+	}
 
-    public Client getClient() {
-        return client;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setClient(final Client client) {
-        Assert.notNull(client, "The client must not be null!");
-        this.client = client;
-    }
+	public Client getClient() {
+		return client;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }
+	public void setClient(final Client client) {
+		Assert.notNull(client, "The client must not be null!");
+		this.client = client;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        ClientAttribute other = (ClientAttribute) obj;
-        if (client == null || other.getClient() == null ||
-            key == null || other.key == null) {
-            return false;
-        }
+	/** {@inheritDoc} */
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
+	}
 
-        return client.equals(other.getClient()) && key.equalsIgnoreCase(other.getKey());
-    }
+	public static class ClientAttributeBuilder {
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .append(id)
-            .toHashCode();
-    }
+		private final ClientAttribute clientAttribute;
+
+		private ClientAttributeBuilder(final Client client, final String key, final String value) {
+			clientAttribute = new ClientAttribute();
+			clientAttribute.setClient(client);
+			clientAttribute.setKey(key);
+			clientAttribute.setValue(value);
+		}
+
+		public static ClientAttributeBuilder ClientAttribute(final Client client, final String key, final String value) {
+			return new ClientAttributeBuilder(client, key, value);
+		}
+
+		public ClientAttribute build() {
+			return clientAttribute;
+		}
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		ClientAttribute other = (ClientAttribute) obj;
+		if (client == null || other.getClient() == null || key == null || other.key == null) {
+			return false;
+		}
+
+		return client.equals(other.getClient()) && key.equalsIgnoreCase(other.getKey());
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(id).toHashCode();
+	}
 
 }

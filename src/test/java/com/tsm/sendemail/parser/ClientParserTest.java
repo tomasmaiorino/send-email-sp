@@ -8,80 +8,133 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import java.util.Map;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Client.ClientStatus;
+import com.tsm.sendemail.model.ClientAttribute;
 import com.tsm.sendemail.resources.ClientResource;
+import com.tsm.sendemail.util.ClientAttributeTestBuilder;
 import com.tsm.sendemail.util.ClientTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientParserTest {
 
-    private ClientParser parser = new ClientParser();
+	private ClientParser parser = new ClientParser();
 
-    @Test(expected = IllegalArgumentException.class)
-    public void toModel_NullResourceGiven_ShouldThrowException() {
-        // Set up
-        ClientResource resource = null;
+	@Test(expected = IllegalArgumentException.class)
+	public void toModel_NullResourceGiven_ShouldThrowException() {
+		// Set up
+		ClientResource resource = null;
 
-        // Do test
-        parser.toModel(resource);
-    }
+		// Do test
+		parser.toModel(resource);
+	}
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Test
-    public void toModel_ValidResourceGiven_ShouldCreateClientModel() {
-        // Set up
-        ClientResource resource = ClientTestBuilder.buildResoure();
-        resource.setIsAdmin(true);
+	public void toModel_ValidResourceGiven_ShouldCreateClientModel() {
+		// Set up
+		ClientResource resource = ClientTestBuilder.buildResoure();
+		resource.setIsAdmin(true);
 
-        // Do test
-        Client result = parser.toModel(resource);
+		// Do test
+		Client result = parser.toModel(resource);
 
-        // Assertions
-        assertNotNull(result);
-        assertThat(result, allOf(
-            hasProperty("id", nullValue()),
-            hasProperty("name", is(resource.getName())),
-            hasProperty("token", is(resource.getToken())),
-            hasProperty("emailRecipient", is(resource.getEmailRecipient())),
-            hasProperty("clientHosts", notNullValue()),
-            hasProperty("isAdmin", is(resource.getIsAdmin())),
-            hasProperty("status", is(ClientStatus.ACTIVE))));
+		// Assertions
+		assertNotNull(result);
+		assertThat(result, allOf(hasProperty("id", nullValue()), hasProperty("name", is(resource.getName())),
+				hasProperty("token", is(resource.getToken())),
+				hasProperty("emailRecipient", is(resource.getEmailRecipient())),
+				hasProperty("clientAttributes", nullValue()), hasProperty("clientHosts", notNullValue()),
+				hasProperty("isAdmin", is(resource.getIsAdmin())), hasProperty("status", is(ClientStatus.ACTIVE))));
 
-        assertThat(result.getClientHosts().size(), is(resource.getHosts().size()));
-    }
+		assertThat(result.getClientHosts().size(), is(resource.getHosts().size()));
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void toResource_NullClientGiven_ShouldThrowException() {
-        // Set up
-        Client client = null;
+	@SuppressWarnings("unchecked")
+	@Test
+	public void toModel_ValidClientAttributeResourceGiven_ShouldCreateClientModel() {
+		// Set up
+		ClientResource resource = ClientTestBuilder.buildResoure();
+		resource.setIsAdmin(true);
+		Map<String, String> attributes = ClientAttributeTestBuilder.getAttributes(3);
+		attributes.entrySet().iterator().next().setValue(null);
+		resource.setAttributes(attributes);
 
-        // Do test
-        parser.toResource(client);
-    }
+		// Do test
+		Client result = parser.toModel(resource);
 
-    @Test
-    public void toResource_ValidClientGiven_ShouldCreateResourceModel() {
-        // Set up
-        Client client = ClientTestBuilder.buildModel();
+		// Assertions
+		assertNotNull(result);
+		assertThat(result, allOf(hasProperty("id", nullValue()), hasProperty("name", is(resource.getName())),
+				hasProperty("token", is(resource.getToken())),
+				hasProperty("emailRecipient", is(resource.getEmailRecipient())),
+				hasProperty("clientHosts", notNullValue()), hasProperty("clientAttributes", notNullValue()),
+				hasProperty("isAdmin", is(resource.getIsAdmin())), hasProperty("status", is(ClientStatus.ACTIVE))));
 
-        // Do test
-        ClientResource result = parser.toResource(client);
+		assertThat(result.getClientHosts().size(), is(resource.getHosts().size()));
+		// as one of the values in the map was set as null, the attribute must not be
+		// created.
+		assertThat(result.getClientAttributes().size(), is(2));
+	}
 
-        // Assertions
-        assertNotNull(result);
-        assertThat(result, allOf(
-            hasProperty("id", is(client.getId())),
-            hasProperty("name", is(client.getName())),
-            hasProperty("token", is(client.getToken())),
-            hasProperty("emailRecipient", is(client.getEmailRecipient())),
-            hasProperty("hosts", notNullValue()),
-            hasProperty("status", is(ClientStatus.ACTIVE.name()))));
+	@Test(expected = IllegalArgumentException.class)
+	public void toResource_NullClientGiven_ShouldThrowException() {
+		// Set up
+		Client client = null;
 
-        assertThat(result.getHosts().size(), is(client.getClientHosts().size()));
-    }
+		// Do test
+		parser.toResource(client);
+	}
+
+	@Test
+	public void toResource_ValidClientGiven_ShouldCreateResourceModel() {
+		// Set up
+		Client client = ClientTestBuilder.buildModel();
+
+		// Do test
+		ClientResource result = parser.toResource(client);
+
+		// Assertions
+		assertNotNull(result);
+		assertThat(result, allOf(hasProperty("id", is(client.getId())), hasProperty("name", is(client.getName())),
+				hasProperty("token", is(client.getToken())),
+				hasProperty("emailRecipient", is(client.getEmailRecipient())), hasProperty("attributes", nullValue()),
+				hasProperty("hosts", notNullValue()), hasProperty("status", is(ClientStatus.ACTIVE.name()))));
+
+		assertThat(result.getHosts().size(), is(client.getClientHosts().size()));
+	}
+
+	@Test
+	public void toResource_ValidClientWithAttributesGiven_ShouldCreateResourceModel() {
+		// Set up
+		Client client = ClientTestBuilder.buildModel();
+		ClientAttribute attribute = ClientAttributeTestBuilder.buildModel(client, ClientAttributeTestBuilder.getKey(),
+				ClientAttributeTestBuilder.getValue());
+		ClientAttribute attribute2 = ClientAttributeTestBuilder.buildModel(client, ClientAttributeTestBuilder.getKey(),
+				ClientAttributeTestBuilder.getValue());
+		client.addAttribute(attribute);
+		client.addAttribute(attribute2);
+
+		// Do test
+		ClientResource result = parser.toResource(client);
+
+		// Assertions
+		assertNotNull(result);
+		assertThat(result,
+				allOf(hasProperty("id", is(client.getId())), hasProperty("name", is(client.getName())),
+						hasProperty("token", is(client.getToken())),
+						hasProperty("emailRecipient", is(client.getEmailRecipient())),
+						hasProperty("attributes", notNullValue()), hasProperty("hosts", notNullValue()),
+						hasProperty("status", is(ClientStatus.ACTIVE.name()))));
+
+		assertThat(result.getHosts().size(), is(client.getClientHosts().size()));
+		assertThat(result.getAttributes().size(), is(client.getClientAttributes().size()));
+	}
+
 }

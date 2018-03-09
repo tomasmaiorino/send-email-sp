@@ -1,6 +1,7 @@
 It's an application that can be used to send contact email from your website to your email account.
 
-This application is running under Spring Boot and as it uses mailgun's engine to send the email you need to create a mailgun's account.
+This application is running under Spring Boot and as it uses mailgun's engine to send the email you need to create a mailgun's account. This application required a mailgun account and the value of these two attributes:
+MAILGUN_KEY and MAILGUN_DOMAIN.
 
 ## Used Technologies
 
@@ -15,6 +16,7 @@ This application is running under Spring Boot and as it uses mailgun's engine to
 **5. Docker (Optional) ** Used container manager to create an application image and the containers.
 
 ## Considerations
+
 
 **Tests:** The tests are defined as use case of the Junit. The tests have been made available in the structure: src/test/java.
 
@@ -77,28 +79,23 @@ docker run --rm -it --link postgres -p 8080:8080 --name send_email send_email mv
 
 ###### To run the integrations tests through docker run this command:
 ```$
-docker run --rm -it --name eng_it eng mvn verify -DskipItTest=false -Drun.arguments="--spring.profiles.active=it" -Doxford.service.api.id=OXFORD_SERVICE_API_ID -Doxford.service.app.key=OXFORD_SERVICE_APP_KEY
+docker run --rm -it --name eng_it eng mvn verify -P it -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} -Dit.test.email=${IT_TEST_EMAIL}
 ```
 
 ## Considerations
 
 The site http://tomasmaiorino.github.io uses for its contact functionality this send-email service. As the applications has been running using heroku, it may take a while for the first response.
 
-## Usage In Local Machine
 
-###### Pré-requisitos
+### Not using Docker
 
-JDK - Java version 1.8.
-
-Any Java IDE with support Maven.
-
-Maven for build and dependencies.
+Maven for build and dependecies.
 
 
-###### After download the fonts, to install the application and test it execute the maven command
+###### After download the fonts from [link github](https://github.com/tomasmaiorino/send_email), to install the application and test it execute the maven command:
 ```$
-mvn clean install
-```  
+mvn clean instal
+```
 
 ###### To only test the application execute the maven command:
 ```$
@@ -107,7 +104,7 @@ mvn clean test
 
 ###### To run the integrations tests execute the maven command:
 ```$
-mvn integration-test -DskipItTest=false -P it -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} -Dit.test.email=${IT_TEST_EMAIL}
+mvn verify -DskipItTest=false -P it -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN} -Dit.test.email=${IT_TEST_EMAIL}
 ```
 
 ###### To run the application the maven command:
@@ -115,45 +112,24 @@ mvn integration-test -DskipItTest=false -P it -Dsendemail.service.mailgun.mailgu
 mvn spring-boot:run -Dspring.profiles.active=local -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN}
 ```
 
-###### To send a report to the admin client using curl:
+### Service's call examples:
+
+#### To send a report to the admin client using curl.
 ```$
 curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -X GET http://localhost:8080/api/v1/clients/report
 ```
-Sample response:
-HTTP/1.1 200
 
-###### To create a client using curl:
+#### To create a client using curl
 ```$
 curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/clients -d "{\"hosts\": [\"http://localhost:8080\",\"localhost:8080\"],\"token\": \"qwetyuasdtyuer4rr\",\"email\": \"user@domain.com\",\"name\": \"Jean Gray\",\"emailRecipient\": \"user@domain.com\",\"status\":\"ACTIVE\"}
 ```
-Sample response:
-{
-    "id": 1 ,
-    "hosts": ["http://localhost:8080", "localhost:8080"],
-    "token": "qwetyuasdtyu",
-    "email": "user@domain.com",
-    "name": "Jean Gray",
-    "emailRecipient": "user@domain.com",
-    "status": "ACTIVE"
-}
 
-###### To send a message using curl:
+#### To send a message using curl.
 ```$
 curl -i -H "Content-Type:application/json" -H "Accept:application/json" -H "Referer: http://localhost" -X POST http://localhost:40585/api/v1/messages/qwetyuasdtyuer4rr -d "{\"message\": \"I really enjoy your site.\",\"subject\": \"Contact\",\"name\": \"Jean Gray\",\"senderEmail\": \"user@domain.com\",\"senderName\":\"Logan\"}
 ```  
-```
-Sample response:
-{
-    "id": 1,
-    "status": "CREATED | SENT | NOT_SENT | ERROR"
-    "message": "I really enjoy your site.",
-    "subject": "Contact",
-    "name": "Jean Gray",
-    "senderEmail": "user@domain.com",
-    "senderName": "Logan"
-}
-```  
-###### To run the application the maven command:
+
+#### To run the application the maven command.
 ```$
 mvn spring-boot:run -Dspring.profiles.active=prod -Dsendemail.service.mailgun.mailgunKey=${MAILGUN_KEY} -Dsendemail.service.mailgun.mailgunDomain=${MAILGUN_DOMAIN}
 ```
