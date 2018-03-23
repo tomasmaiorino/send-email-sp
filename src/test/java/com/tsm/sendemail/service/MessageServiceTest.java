@@ -40,7 +40,7 @@ public class MessageServiceTest {
     private MessageService service;
 
     @Mock
-    private MessageRepository mockRepository;
+    private MessageRepository repository;
 
     @Before
     public void setUp() {
@@ -60,7 +60,7 @@ public class MessageServiceTest {
         }
 
         // Assertions
-        verifyZeroInteractions(mockRepository);
+        verifyZeroInteractions(repository);
     }
 
     @Test
@@ -69,13 +69,13 @@ public class MessageServiceTest {
         Message message = MessageTestBuilder.buildModel();
 
         // Expectations
-        when(mockRepository.save(message)).thenReturn(message);
+        when(repository.save(message)).thenReturn(message);
 
         // Do test
         Message result = service.save(message);
 
         // Assertions
-        verify(mockRepository).save(message);
+        verify(repository).save(message);
         assertNotNull(result);
         assertThat(result, is(message));
     }
@@ -94,7 +94,7 @@ public class MessageServiceTest {
         }
 
         // Assertions
-        verifyNoMoreInteractions(mockRepository);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class MessageServiceTest {
         }
 
         // Assertions
-        verifyNoMoreInteractions(mockRepository);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class MessageServiceTest {
         Client client = ClientTestBuilder.buildModel();
 
         // Expectations
-        when(mockRepository.findByIdAndClient(id, client)).thenReturn(Optional.empty());
+        when(repository.findByIdAndClient(id, client)).thenReturn(Optional.empty());
 
         // Do test
         try {
@@ -131,7 +131,7 @@ public class MessageServiceTest {
         }
 
         // Assertions
-        verify(mockRepository).findByIdAndClient(id, client);
+        verify(repository).findByIdAndClient(id, client);
     }
 
     @Test
@@ -142,13 +142,13 @@ public class MessageServiceTest {
         Message message = MessageTestBuilder.buildModel();
 
         // Expectations
-        when(mockRepository.findByIdAndClient(id, client)).thenReturn(Optional.of(message));
+        when(repository.findByIdAndClient(id, client)).thenReturn(Optional.of(message));
 
         // Do test
         Message result = service.findByIdAndClient(id, client);
 
         // Assertions
-        verify(mockRepository).findByIdAndClient(id, client);
+        verify(repository).findByIdAndClient(id, client);
 
         assertNotNull(result);
         assertThat(result,
@@ -177,7 +177,7 @@ public class MessageServiceTest {
         }
 
         // Assertions
-        verifyNoMoreInteractions(mockRepository);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
@@ -196,7 +196,7 @@ public class MessageServiceTest {
         }
 
         // Assertions
-        verifyNoMoreInteractions(mockRepository);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
@@ -215,7 +215,7 @@ public class MessageServiceTest {
         }
 
         // Assertions
-        verifyNoMoreInteractions(mockRepository);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
@@ -226,14 +226,14 @@ public class MessageServiceTest {
         LocalDateTime finalDate = LocalDateTime.now();
 
         // Expectations
-        when(mockRepository.findByClientAndCreatedBetween(client, initialDate, finalDate))
+        when(repository.findByClientAndCreatedBetween(client, initialDate, finalDate))
             .thenReturn(Collections.emptySet());
 
         // Do test
         Set<Message> result = service.findByClientAndCreatedBetween(client, initialDate, finalDate);
 
         // Assertions
-        verify(mockRepository).findByClientAndCreatedBetween(client, initialDate, finalDate);
+        verify(repository).findByClientAndCreatedBetween(client, initialDate, finalDate);
 
         assertNotNull(result);
         assertThat(result.isEmpty(), is(true));
@@ -247,14 +247,14 @@ public class MessageServiceTest {
         Message message = MessageTestBuilder.buildModel();
 
         // Expectations
-        when(mockRepository.findByClientAndCreatedBetween(client, initialDate, finalDate))
+        when(repository.findByClientAndCreatedBetween(client, initialDate, finalDate))
             .thenReturn(Collections.singleton(message));
 
         // Do test
         Set<Message> result = service.findByClientAndCreatedBetween(client, initialDate, finalDate);
 
         // Assertions
-        verify(mockRepository).findByClientAndCreatedBetween(client, initialDate, finalDate);
+        verify(repository).findByClientAndCreatedBetween(client, initialDate, finalDate);
 
         assertNotNull(result);
         assertThat(result.isEmpty(), is(false));

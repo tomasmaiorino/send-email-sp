@@ -36,6 +36,7 @@ public class ClientService extends BaseService<Client, Integer>{
         return repository;
     }
 
+    @Override
     protected void saveValidation(final Client model) {
         repository.findByToken(model.getToken()).ifPresent(c -> {
             throw new BadRequestException(DUPLICATED_TOKEN);

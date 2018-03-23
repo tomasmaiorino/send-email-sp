@@ -35,7 +35,7 @@ public class ClientServiceTest {
     private ClientService service;
 
     @Mock
-    private ClientRepository mockRepository;
+    private ClientRepository repository;
 
     @Before
     public void setUp() {
@@ -55,7 +55,7 @@ public class ClientServiceTest {
         }
 
         // Assertions
-        verifyZeroInteractions(mockRepository);
+        verifyZeroInteractions(repository);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ClientServiceTest {
         Client client = ClientTestBuilder.buildModel();
 
         // Expectations
-        when(mockRepository.findByToken(client.getToken())).thenReturn(Optional.of(client));
+        when(repository.findByToken(client.getToken())).thenReturn(Optional.of(client));
 
         // Do test
         try {
@@ -74,8 +74,8 @@ public class ClientServiceTest {
         }
 
         // Assertions
-        verify(mockRepository).findByToken(client.getToken());
-        verify(mockRepository, times(0)).save(client);
+        verify(repository).findByToken(client.getToken());
+        verify(repository, times(0)).save(client);
     }
 
     @Test
@@ -84,15 +84,15 @@ public class ClientServiceTest {
         Client client = ClientTestBuilder.buildModel();
 
         // Expectations
-        when(mockRepository.save(client)).thenReturn(client);
-        when(mockRepository.findByToken(client.getToken())).thenReturn(Optional.empty());
+        when(repository.save(client)).thenReturn(client);
+        when(repository.findByToken(client.getToken())).thenReturn(Optional.empty());
 
         // Do test
         Client result = service.save(client);
 
         // Assertions
-        verify(mockRepository).save(client);
-        verify(mockRepository).findByToken(client.getToken());
+        verify(repository).save(client);
+        verify(repository).findByToken(client.getToken());
         assertNotNull(result);
         assertThat(result, is(client));
     }
@@ -110,7 +110,7 @@ public class ClientServiceTest {
         }
 
         // Assertions
-        verifyZeroInteractions(mockRepository);
+        verifyZeroInteractions(repository);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ClientServiceTest {
         }
 
         // Assertions
-        verifyZeroInteractions(mockRepository);
+        verifyZeroInteractions(repository);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ClientServiceTest {
         String token = ClientTestBuilder.CLIENT_TOKEN;
 
         // Expectations
-        when(mockRepository.findByToken(token)).thenReturn(Optional.empty());
+        when(repository.findByToken(token)).thenReturn(Optional.empty());
 
         // Do test
         try {
@@ -145,7 +145,7 @@ public class ClientServiceTest {
         }
 
         // Assertions
-        verify(mockRepository).findByToken(token);
+        verify(repository).findByToken(token);
     }
 
     @Test
@@ -155,13 +155,13 @@ public class ClientServiceTest {
         Client client = ClientTestBuilder.buildModel();
 
         // Expectations
-        when(mockRepository.findByToken(token)).thenReturn(Optional.of(client));
+        when(repository.findByToken(token)).thenReturn(Optional.of(client));
 
         // Do test
         Client result = service.findByToken(token);
 
         // Assertions
-        verify(mockRepository).findByToken(token);
+        verify(repository).findByToken(token);
 
         assertNotNull(result);
         assertThat(result, is(client));
@@ -180,7 +180,7 @@ public class ClientServiceTest {
         }
 
         // Assertions
-        verifyZeroInteractions(mockRepository);
+        verifyZeroInteractions(repository);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class ClientServiceTest {
         Set<Client> result = service.findByStatus(status);
 
         // Assertions
-        verify(mockRepository).findByStatus(status);
+        verify(repository).findByStatus(status);
 
         assertNotNull(result);
         assertThat(result.isEmpty(), is(true));
@@ -214,7 +214,7 @@ public class ClientServiceTest {
         Set<Client> result = service.findByStatus(status);
 
         // Assertions
-        verify(mockRepository).findByStatus(status);
+        verify(repository).findByStatus(status);
 
         assertNotNull(result);
         assertThat(result.isEmpty(), is(false));
@@ -234,7 +234,7 @@ public class ClientServiceTest {
         }
 
         // Assertions
-        verifyZeroInteractions(mockRepository);
+        verifyZeroInteractions(repository);
     }
 
     @Test
@@ -249,7 +249,7 @@ public class ClientServiceTest {
         Set<Client> result = service.findByIsAdmin(isAdmin);
 
         // Assertions
-        verify(mockRepository).findByIsAdmin(isAdmin);
+        verify(repository).findByIsAdmin(isAdmin);
 
         assertNotNull(result);
         assertThat(result.isEmpty(), is(true));
@@ -268,7 +268,7 @@ public class ClientServiceTest {
         Set<Client> result = service.findByIsAdmin(isAdmin);
 
         // Assertions
-        verify(mockRepository).findByIsAdmin(isAdmin);
+        verify(repository).findByIsAdmin(isAdmin);
 
         assertNotNull(result);
         assertThat(result.isEmpty(), is(false));

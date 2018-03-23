@@ -1,14 +1,20 @@
+user:
+  it:
+    email: user-it@test.com
+    name: it user
+    pass: 7c30110b
+
 client:
   service:
     key: cecadbd7-e07c-48b2-b11d-038f7aaab4f6
     url: api/v1/clients
-it.test.email: 
+it.test.email:
 sendemail:
   service:
     mailgun:
       serviceEndpoint: https://api.mailgun.net/v3/#domain_name/messages
-      mailgunKey: 
-      mailgunDomain: 
+      mailgunKey:
+      mailgunDomain:
 spring:
   jpa:
     show-sql: true
@@ -18,4 +24,4 @@ spring:
   datasource:
     driverClassName: org.hsqldb.jdbcDriver
     url: jdbc:hsqldb:mem:auth
-    username: sa    
+    username: sa

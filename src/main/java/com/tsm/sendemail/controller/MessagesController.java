@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tsm.sendemail.exceptions.BadRequestException;
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Message;
+import com.tsm.sendemail.parser.IParser;
 import com.tsm.sendemail.parser.MessageParser;
 import com.tsm.sendemail.resources.MessageResource;
+import com.tsm.sendemail.service.BaseService;
 import com.tsm.sendemail.service.ClientService;
 import com.tsm.sendemail.service.MessageService;
 import com.tsm.sendemail.service.SendEmailService;
@@ -32,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping(value = "/api/v1/messages/{clientToken}")
 @Slf4j
-public class MessagesController extends BaseController {
+public class MessagesController extends RestBaseController<MessageResource, Message, Long> {
 
 	@Autowired
 	private MessageService service;
@@ -114,5 +116,16 @@ public class MessagesController extends BaseController {
 		}
 		return parsedHost;
 	}
+
+	@Override
+	public BaseService<Message, Long> getService() {
+		return service;
+	}
+
+	@Override
+	public IParser<MessageResource, Message> getParser() {
+		return parser;
+	}
+
 
 }

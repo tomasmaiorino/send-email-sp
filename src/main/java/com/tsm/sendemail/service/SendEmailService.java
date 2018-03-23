@@ -40,7 +40,7 @@ public class SendEmailService {
 			message.setStatus(MessageStatus.ERROR);
 			throw e;
 		} finally {
-			messageService.update(message);
+			messageService.update(message, message);
 		}
 		return message;
 	}

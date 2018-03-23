@@ -1,4 +1,4 @@
-package com.tsm.resource;
+package com.tsm.it.resource;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.apache.commons.lang3.RandomStringUtils.random;

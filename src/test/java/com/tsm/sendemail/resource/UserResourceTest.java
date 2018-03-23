@@ -1,7 +1,7 @@
 package com.tsm.sendemail.resource;
 
 import com.tsm.sendemail.resources.BaseResource;
-import com.tsm.sendemail.resources.LoginResource;
+import com.tsm.sendemail.resources.UserResource;
 import com.tsm.sendemail.util.LoginTestBuilder;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -19,9 +19,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @FixMethodOrder(MethodSorters.JVM)
-public class LoginResourceTest extends BaseResourceTest {
+public class UserResourceTest extends BaseResourceTest {
 
-	private Supplier<? extends BaseResource> buildResourceFunction = LoginTestBuilder::buildLoginResource;
+	private Supplier<? extends BaseResource> buildResourceFunction = LoginTestBuilder::buildResource;
 
 	@Before
 	public void setUp() {
@@ -70,7 +70,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		String password = LoginTestBuilder.getPassword();
 		String email = LoginTestBuilder.getValidEmail();
 
-		LoginResource result = LoginTestBuilder.buildResource(email, password);
+		UserResource result = LoginTestBuilder.buildResource(email, password);
 
 		// Assertions
 		assertNotNull(result);

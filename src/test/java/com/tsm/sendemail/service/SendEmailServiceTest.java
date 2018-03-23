@@ -25,13 +25,13 @@ import com.tsm.sendemail.util.MessageTestBuilder;
 public class SendEmailServiceTest {
 
 	@Mock
-	private MessageService mockMessageService;
+	private MessageService messageService;
 
 	@Mock
-	private BaseSendEmailService mockSendEmailService;
+	private BaseSendEmailService sendEmailService;
 
 	@InjectMocks
-	private SendEmailService sendEmailService;
+	private SendEmailService service;
 
 	@Before
 	public void setUp() {
@@ -45,13 +45,13 @@ public class SendEmailServiceTest {
 
 		// Do test
 		try {
-			sendEmailService.sendTextEmail(message);
+			service.sendTextEmail(message);
 			fail();
 		} catch (IllegalArgumentException e) {
 		}
 
 		// Assertions
-		verifyZeroInteractions(mockMessageService, mockSendEmailService);
+		verifyZeroInteractions(messageService, sendEmailService);
 	}
 
 	@Test
@@ -60,18 +60,18 @@ public class SendEmailServiceTest {
 		Message message = MessageTestBuilder.buildModel();
 
 		// Expectations
-		when(mockSendEmailService.sendTextEmail(message)).thenThrow(MessageException.class);
+		when(sendEmailService.sendTextEmail(message)).thenThrow(MessageException.class);
 
 		// Do test
 		try {
-			sendEmailService.sendTextEmail(message);
+			service.sendTextEmail(message);
 			fail();
 		} catch (MessageException e) {
 		}
 
 		// Assertions
-		verify(mockSendEmailService).sendTextEmail(message);
-		verify(mockMessageService).update(message);
+		verify(sendEmailService).sendTextEmail(message);
+		verify(messageService).update(message, message);
 
 		assertThat(message.getStatus(), is(MessageStatus.ERROR));
 

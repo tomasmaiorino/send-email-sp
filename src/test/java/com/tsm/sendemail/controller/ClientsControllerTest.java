@@ -44,16 +44,16 @@ public class ClientsControllerTest {
 	private static final String ADMIN_TOKEN_HEADER = "AT";
 
 	@Mock
-	private ClientService mockService;
+	private ClientService service;
 
 	@Mock
-	private ClientParser mockParser;
+	private ClientParser parser;
 
 	@InjectMocks
 	private ClientsController controller;
 
 	@Mock
-	private AssertClientRequest mockAssertClientRequest;
+	private AssertClientRequest assertClientRequest;
 
 	@Mock
 	private Validator validator;
@@ -62,7 +62,7 @@ public class ClientsControllerTest {
 	private MockHttpServletRequest request;
 
 	@Mock
-	private EmailServiceStatusService mockEmailServiceStatusService;
+	private EmailServiceStatusService emailServiceStatusService;
 
 	private static final String ADMIN_TOKEN_VALUE = "qwerty";
 
@@ -71,7 +71,7 @@ public class ClientsControllerTest {
 		MockitoAnnotations.initMocks(this);
 		when(request.getHeader(ADMIN_TOKEN_HEADER)).thenReturn(ADMIN_TOKEN_VALUE);
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-		when(mockAssertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(true);
+		when(assertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(true);
 	}
 
 	@Test
@@ -90,7 +90,7 @@ public class ClientsControllerTest {
 		}
 
 		// Assertions
-		verifyZeroInteractions(mockService, mockParser, validator, mockAssertClientRequest);
+		verifyZeroInteractions(service, parser, validator, assertClientRequest);
 	}
 
 	@Test
@@ -109,7 +109,7 @@ public class ClientsControllerTest {
 		}
 
 		// Assertions
-		verifyZeroInteractions(mockService, mockParser, validator, mockAssertClientRequest);
+		verifyZeroInteractions(service, parser, validator, assertClientRequest);
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class ClientsControllerTest {
 		ClientResource resource = ClientTestBuilder.buildResoure();
 
 		// Expectations
-		when(mockAssertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(false);
+		when(assertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(false);
 
 		// Do test
 		try {
@@ -128,8 +128,8 @@ public class ClientsControllerTest {
 		}
 
 		// Assertions
-		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
-		verifyZeroInteractions(mockService, mockParser, validator);
+		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verifyZeroInteractions(service, parser, validator);
 	}
 
 	@Test
@@ -149,7 +149,7 @@ public class ClientsControllerTest {
 
 		// Assertions
 		verify(validator).validate(resource, Default.class);
-		verifyZeroInteractions(mockService, mockParser);
+		verifyZeroInteractions(service, parser);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -161,8 +161,8 @@ public class ClientsControllerTest {
 
 		// Expectations
 		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
-		when(mockParser.toModel(resource)).thenReturn(client);
-		when(mockService.save(client)).thenThrow(BadRequestException.class);
+		when(parser.toModel(resource)).thenReturn(client);
+		when(service.save(client)).thenThrow(BadRequestException.class);
 
 		// Do test
 		try {
@@ -173,8 +173,8 @@ public class ClientsControllerTest {
 
 		// Assertions
 		verify(validator).validate(resource, Default.class);
-		verify(mockService).save(client);
-		verify(mockParser).toModel(resource);
+		verify(service).save(client);
+		verify(parser).toModel(resource);
 
 	}
 
@@ -186,18 +186,18 @@ public class ClientsControllerTest {
 
 		// Expectations
 		when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
-		when(mockParser.toModel(resource)).thenReturn(client);
-		when(mockService.save(client)).thenReturn(client);
-		when(mockParser.toResource(client)).thenReturn(resource);
+		when(parser.toModel(resource)).thenReturn(client);
+		when(service.save(client)).thenReturn(client);
+		when(parser.toResource(client)).thenReturn(resource);
 
 		// Do test
 		ClientResource result = controller.save(resource, request);
 
 		// Assertions
 		verify(validator).validate(resource, Default.class);
-		verify(mockService).save(client);
-		verify(mockParser).toModel(resource);
-		verify(mockParser).toResource(client);
+		verify(service).save(client);
+		verify(parser).toModel(resource);
+		verify(parser).toResource(client);
 
 		assertNotNull(result);
 		assertThat(result, is(resource));
@@ -206,7 +206,7 @@ public class ClientsControllerTest {
 	@Test
 	public void generateReport_InvalidHeaderGiven_ShouldThrowException() {
 		// Expectations
-		when(mockAssertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(false);
+		when(assertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(false);
 
 		// Do test
 		try {
@@ -216,14 +216,14 @@ public class ClientsControllerTest {
 		}
 
 		// Assertions
-		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
-		verifyZeroInteractions(mockEmailServiceStatusService);
+		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verifyZeroInteractions(emailServiceStatusService);
 	}
 
 	@Test
 	public void generateReport_EmailNotSend_ShouldThrowException() {
 		// Expectations
-		when(mockEmailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(null);
+		when(emailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(null);
 
 		// Do test
 		try {
@@ -233,8 +233,8 @@ public class ClientsControllerTest {
 		}
 
 		// Assertions
-		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
-		verify(mockEmailServiceStatusService).checkingDailyEmailsStatus();
+		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verify(emailServiceStatusService).checkingDailyEmailsStatus();
 	}
 
 	@Test
@@ -244,14 +244,14 @@ public class ClientsControllerTest {
 		message.setStatus(MessageStatus.SENT);
 
 		// Expectations
-		when(mockEmailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(message);
+		when(emailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(message);
 
 		// Do test
 		controller.generateReport(request);
 
 		// Assertions
-		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
-		verify(mockEmailServiceStatusService).checkingDailyEmailsStatus();
+		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verify(emailServiceStatusService).checkingDailyEmailsStatus();
 	}
 
 	@Test
@@ -261,7 +261,7 @@ public class ClientsControllerTest {
 		message.setStatus(MessageStatus.NOT_SENT);
 
 		// Expectations
-		when(mockEmailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(message);
+		when(emailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(message);
 
 		// Do test
 		try {
@@ -271,7 +271,7 @@ public class ClientsControllerTest {
 		}
 
 		// Assertions
-		verify(mockAssertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
-		verify(mockEmailServiceStatusService).checkingDailyEmailsStatus();
+		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
+		verify(emailServiceStatusService).checkingDailyEmailsStatus();
 	}
 }

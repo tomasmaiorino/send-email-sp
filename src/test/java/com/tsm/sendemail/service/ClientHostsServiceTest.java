@@ -31,7 +31,7 @@ public class ClientHostsServiceTest {
     private ClientHostsService service;
 
     @Mock
-    private ClientHostsRepository mockRepository;
+    private ClientHostsRepository repository;
 
     @Before
     public void setUp() {
@@ -51,7 +51,7 @@ public class ClientHostsServiceTest {
         }
 
         // Assertions
-        verifyZeroInteractions(mockRepository);
+        verifyZeroInteractions(repository);
     }
 
     @Test
@@ -60,13 +60,13 @@ public class ClientHostsServiceTest {
         ClientStatus status = ClientStatus.ACTIVE;
 
         // Expectations
-        when(mockRepository.findByClientStatus(status)).thenReturn(Collections.emptySet());
+        when(repository.findByClientStatus(status)).thenReturn(Collections.emptySet());
 
         // Do test
         Set<ClientHosts> result = service.findByClientStatus(status);
 
         // Assertions
-        verify(mockRepository).findByClientStatus(status);
+        verify(repository).findByClientStatus(status);
 
         assertNotNull(result);
         assertThat(result.isEmpty(), is(true));
@@ -79,13 +79,13 @@ public class ClientHostsServiceTest {
         Set<ClientHosts> clientHosts = ClientTestBuilder.buildClientHost();
 
         // Expectations
-        when(mockRepository.findByClientStatus(status)).thenReturn(clientHosts);
+        when(repository.findByClientStatus(status)).thenReturn(clientHosts);
 
         // Do test
         Set<ClientHosts> result = service.findByClientStatus(status);
 
         // Assertions
-        verify(mockRepository).findByClientStatus(status);
+        verify(repository).findByClientStatus(status);
 
         assertNotNull(result);
         assertThat(result.isEmpty(), is(false));

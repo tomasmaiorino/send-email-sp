@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
-public class LoginResource extends BaseResource {
+public class UserResource extends BaseResource {
 
 	@Getter
 	@Setter
@@ -36,7 +36,7 @@ public class LoginResource extends BaseResource {
 		if (obj.getClass() != getClass()) {
 			return false;
 		}
-		LoginResource other = (LoginResource) obj;
+		UserResource other = (UserResource) obj;
 		if (getEmail() == null || other.getEmail() == null) {
 			return false;
 		}

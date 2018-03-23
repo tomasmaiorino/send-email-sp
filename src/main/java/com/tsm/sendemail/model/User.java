@@ -18,12 +18,10 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = "user")
@@ -54,12 +52,6 @@ public class User extends BaseModel {
 	@Getter
 	@Column(nullable = false)
 	private String password;
-
-	@Column(name = "is_admin")
-	@Type(type = "org.hibernate.type.NumericBooleanType")
-	@Getter
-	@Setter
-	public Boolean enable = true;
 
 	@Getter
 	@Column(nullable = false, length = 10)
@@ -141,8 +133,7 @@ public class User extends BaseModel {
 
 		private final User user;
 
-		private UserBuilder(final String name, final String email, final String password,
-							final UserStatus status) {
+		private UserBuilder(final String name, final String email, final String password, final UserStatus status) {
 			user = new User();
 			user.setEmail(email);
 			user.setName(name);
@@ -152,8 +143,13 @@ public class User extends BaseModel {
 		}
 
 		public static UserBuilder User(final String name, final String email, final String password,
-									   final UserStatus status) {
+				final UserStatus status) {
 			return new UserBuilder(name, email, password, status);
+		}
+
+		public UserBuilder role(final Role role) {
+			user.addRole(role);
+			return this;
 		}
 
 		public User build() {

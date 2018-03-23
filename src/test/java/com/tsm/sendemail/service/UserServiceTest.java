@@ -28,7 +28,7 @@ public class UserServiceTest {
 	private UserService service;
 
 	@Mock
-	private UserRepository mockRepository;
+	private UserRepository repository;
 
 	@Before
 	public void setUp() {
@@ -48,7 +48,7 @@ public class UserServiceTest {
 		}
 
 		// Assertions
-		verifyZeroInteractions(mockRepository);
+		verifyZeroInteractions(repository);
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class UserServiceTest {
 		User user = UserTestBuilder.buildModel();
 
 		// Expectations
-		when(mockRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+		when(repository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
 		// Do test
 		try {
@@ -67,8 +67,8 @@ public class UserServiceTest {
 		}
 
 		// Assertions
-		verify(mockRepository).findByEmail(user.getEmail());
-		verify(mockRepository, times(0)).save(user);
+		verify(repository).findByEmail(user.getEmail());
+		verify(repository, times(0)).save(user);
 	}
 
 	@Test
@@ -77,15 +77,15 @@ public class UserServiceTest {
 		User user = UserTestBuilder.buildModel();
 
 		// Expectations
-		when(mockRepository.save(user)).thenReturn(user);
-		when(mockRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+		when(repository.save(user)).thenReturn(user);
+		when(repository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
 
 		// Do test
 		User result = service.save(user);
 
 		// Assertions
-		verify(mockRepository).save(user);
-		verify(mockRepository).findByEmail(user.getEmail());
+		verify(repository).save(user);
+		verify(repository).findByEmail(user.getEmail());
 		assertNotNull(result);
 		assertThat(result, is(user));
 	}
@@ -103,7 +103,7 @@ public class UserServiceTest {
 		}
 
 		// Assertions
-		verifyZeroInteractions(mockRepository);
+		verifyZeroInteractions(repository);
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class UserServiceTest {
 		}
 
 		// Assertions
-		verifyZeroInteractions(mockRepository);
+		verifyZeroInteractions(repository);
 	}
 
 	@Test
@@ -128,7 +128,7 @@ public class UserServiceTest {
 		String email = UserTestBuilder.getValidEmail();
 
 		// Expectations
-		when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
+		when(repository.findByEmail(email)).thenReturn(Optional.empty());
 
 		// Do test
 		try {
@@ -138,7 +138,7 @@ public class UserServiceTest {
 		}
 
 		// Assertions
-		verify(mockRepository).findByEmail(email);
+		verify(repository).findByEmail(email);
 	}
 
 	@Test
@@ -148,13 +148,13 @@ public class UserServiceTest {
 		User user = UserTestBuilder.buildModel();
 
 		// Expectations
-		when(mockRepository.findByEmail(email)).thenReturn(Optional.of(user));
+		when(repository.findByEmail(email)).thenReturn(Optional.of(user));
 
 		// Do test
 		User result = service.findByEmail(email);
 
 		// Assertions
-		verify(mockRepository).findByEmail(email);
+		verify(repository).findByEmail(email);
 
 		assertNotNull(result);
 		assertThat(result, is(user));
@@ -174,7 +174,7 @@ public class UserServiceTest {
 		}
 
 		// Assertions
-		verifyZeroInteractions(mockRepository);
+		verifyZeroInteractions(repository);
 	}
 
 	@Test
@@ -183,7 +183,7 @@ public class UserServiceTest {
 		String email = UserTestBuilder.getValidEmail();
 
 		// Expectations
-		when(mockRepository.findByEmail(email)).thenReturn(Optional.empty());
+		when(repository.findByEmail(email)).thenReturn(Optional.empty());
 
 		// Do test
 		try {
@@ -193,7 +193,7 @@ public class UserServiceTest {
 		}
 
 		// Assertions
-		verify(mockRepository).findByEmail(email);
+		verify(repository).findByEmail(email);
 	}
 
 	@Test
@@ -203,13 +203,13 @@ public class UserServiceTest {
 		User user = UserTestBuilder.buildModel();
 
 		// Expectations
-		when(mockRepository.findByEmail(email)).thenReturn(Optional.of(user));
+		when(repository.findByEmail(email)).thenReturn(Optional.of(user));
 
 		// Do test
 		UserDetails result = service.loadUserByUsername(email);
 
 		// Assertions
-		verify(mockRepository).findByEmail(email);
+		verify(repository).findByEmail(email);
 
 		assertNotNull(result);
 		assertThat(result, allOf(hasProperty("username", is(user.getEmail())),

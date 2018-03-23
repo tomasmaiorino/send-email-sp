@@ -54,13 +54,13 @@ public class MessagesControllerTest {
     private static final Long MESSAGE_ID = null;
 
     @Mock
-    private MessageService mockService;
+    private MessageService service;
 
     @Mock
-    private ClientService mockClientService;
+    private ClientService clientService;
 
     @Mock
-    private MessageParser mockParser;
+    private MessageParser parser;
 
     @InjectMocks
     private MessagesController controller;
@@ -72,7 +72,7 @@ public class MessagesControllerTest {
     private MockHttpServletRequest request;
 
     @Mock
-    private SendEmailService mockSendEmailService;
+    private SendEmailService sendEmailService;
 
     @Before
     public void setUp() {
@@ -98,7 +98,7 @@ public class MessagesControllerTest {
 
         // Assertions
         verify(validator).validate(resource, Default.class);
-        verifyZeroInteractions(mockService, mockClientService, mockParser, mockSendEmailService);
+        verifyZeroInteractions(service, clientService, parser, sendEmailService);
     }
 
     @SuppressWarnings("unchecked")
@@ -109,7 +109,7 @@ public class MessagesControllerTest {
 
         // Expectations
         when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
-        when(mockClientService.findByToken(CLIENT_TOKEN)).thenThrow(ResourceNotFoundException.class);
+        when(clientService.findByToken(CLIENT_TOKEN)).thenThrow(ResourceNotFoundException.class);
 
         // Do test
         try {
@@ -120,8 +120,8 @@ public class MessagesControllerTest {
 
         // Assertions
         verify(validator).validate(resource, Default.class);
-        verify(mockClientService).findByToken(CLIENT_TOKEN);
-        verifyZeroInteractions(mockService, mockParser, mockSendEmailService);
+        verify(clientService).findByToken(CLIENT_TOKEN);
+        verifyZeroInteractions(service, parser, sendEmailService);
     }
 
     @Test
@@ -132,7 +132,7 @@ public class MessagesControllerTest {
 
         // Expectations
         when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
-        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(clientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
 
         // Do test
         try {
@@ -143,8 +143,8 @@ public class MessagesControllerTest {
 
         // Assertions
         verify(validator).validate(resource, Default.class);
-        verify(mockClientService).findByToken(CLIENT_TOKEN);
-        verifyZeroInteractions(mockService, mockParser, mockSendEmailService);
+        verify(clientService).findByToken(CLIENT_TOKEN);
+        verifyZeroInteractions(service, parser, sendEmailService);
     }
 
     @SuppressWarnings("unchecked")
@@ -159,11 +159,11 @@ public class MessagesControllerTest {
 
         // Expectations
         when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
-        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
-        when(mockParser.toModel(resource, client)).thenReturn(message);
-        when(mockService.save(message)).thenReturn(message);
-        when(mockSendEmailService.sendTextEmail(message)).thenThrow(MessageException.class);
-        when(mockService.update(message)).thenReturn(message);
+        when(clientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(parser.toModel(resource, client)).thenReturn(message);
+        when(service.save(message)).thenReturn(message);
+        when(sendEmailService.sendTextEmail(message)).thenThrow(MessageException.class);
+        when(service.update(message, message)).thenReturn(message);
 
         // Do test
         try {
@@ -174,10 +174,10 @@ public class MessagesControllerTest {
 
         // Assertions
         verify(validator).validate(resource, Default.class);
-        verify(mockClientService).findByToken(CLIENT_TOKEN);
-        verify(mockSendEmailService).sendTextEmail(message);
-        verify(mockService).save(message);
-        verify(mockParser).toModel(resource, client);
+        verify(clientService).findByToken(CLIENT_TOKEN);
+        verify(sendEmailService).sendTextEmail(message);
+        verify(service).save(message);
+        verify(parser).toModel(resource, client);
     }
 
     @Test
@@ -191,21 +191,21 @@ public class MessagesControllerTest {
 
         // Expectations
         when(validator.validate(resource, Default.class)).thenReturn(Collections.emptySet());
-        when(mockParser.toModel(resource, client)).thenReturn(message);
-        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
-        when(mockSendEmailService.sendTextEmail(message)).thenReturn(message);
-        when(mockService.save(message)).thenReturn(message);
-        when(mockParser.toResource(message)).thenReturn(resource);
+        when(parser.toModel(resource, client)).thenReturn(message);
+        when(clientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(sendEmailService.sendTextEmail(message)).thenReturn(message);
+        when(service.save(message)).thenReturn(message);
+        when(parser.toResource(message)).thenReturn(resource);
 
         // Do test
         MessageResource result = controller.save(CLIENT_TOKEN, resource, request);
 
         // Assertions
         verify(validator).validate(resource, Default.class);
-        verify(mockService).save(message);
-        verify(mockParser).toModel(resource, client);
-        verify(mockService).save(message);
-        verify(mockParser).toResource(message);
+        verify(service).save(message);
+        verify(parser).toModel(resource, client);
+        verify(service).save(message);
+        verify(parser).toResource(message);
 
         assertNotNull(result);
         assertThat(result,
@@ -222,7 +222,7 @@ public class MessagesControllerTest {
         Client client = ClientTestBuilder.buildModel();
 
         // Expectations
-        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(clientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
 
         // Do test
         try {
@@ -232,15 +232,15 @@ public class MessagesControllerTest {
         }
 
         // Assertions
-        verify(mockClientService).findByToken(CLIENT_TOKEN);
-        verifyZeroInteractions(mockService, mockParser);
+        verify(clientService).findByToken(CLIENT_TOKEN);
+        verifyZeroInteractions(service, parser);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void findById_InvalidClientGiven_ShouldThrowException() {
         // Expectations
-        when(mockClientService.findByToken(CLIENT_TOKEN)).thenThrow(ResourceNotFoundException.class);
+        when(clientService.findByToken(CLIENT_TOKEN)).thenThrow(ResourceNotFoundException.class);
 
         // Do test
         try {
@@ -250,8 +250,8 @@ public class MessagesControllerTest {
         }
 
         // Assertions
-        verify(mockClientService).findByToken(CLIENT_TOKEN);
-        verifyZeroInteractions(mockService, mockParser);
+        verify(clientService).findByToken(CLIENT_TOKEN);
+        verifyZeroInteractions(service, parser);
     }
 
     @SuppressWarnings("unchecked")
@@ -263,8 +263,8 @@ public class MessagesControllerTest {
         client.setClientHosts(clientHosts);
 
         // Expectations
-        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
-        when(mockService.findByIdAndClient(MESSAGE_ID, client)).thenThrow(ResourceNotFoundException.class);
+        when(clientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(service.findByIdAndClient(MESSAGE_ID, client)).thenThrow(ResourceNotFoundException.class);
 
         // Do test
         try {
@@ -274,9 +274,9 @@ public class MessagesControllerTest {
         }
 
         // Assertions
-        verify(mockClientService).findByToken(CLIENT_TOKEN);
-        verify(mockService).findByIdAndClient(MESSAGE_ID, client);
-        verifyZeroInteractions(mockParser);
+        verify(clientService).findByToken(CLIENT_TOKEN);
+        verify(service).findByIdAndClient(MESSAGE_ID, client);
+        verifyZeroInteractions(parser);
     }
 
     @Test
@@ -289,17 +289,17 @@ public class MessagesControllerTest {
         client.setClientHosts(clientHosts);
 
         // Expectations
-        when(mockClientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
-        when(mockService.findByIdAndClient(MESSAGE_ID, client)).thenReturn(message);
-        when(mockParser.toResource(message)).thenReturn(resource);
+        when(clientService.findByToken(CLIENT_TOKEN)).thenReturn(client);
+        when(service.findByIdAndClient(MESSAGE_ID, client)).thenReturn(message);
+        when(parser.toResource(message)).thenReturn(resource);
 
         // Do test
         MessageResource result = controller.findById(CLIENT_TOKEN, MESSAGE_ID, request);
 
         // Assertions
-        verify(mockClientService).findByToken(CLIENT_TOKEN);
-        verify(mockService).findByIdAndClient(MESSAGE_ID, client);
-        verify(mockParser).toResource(message);
+        verify(clientService).findByToken(CLIENT_TOKEN);
+        verify(service).findByIdAndClient(MESSAGE_ID, client);
+        verify(parser).toResource(message);
 
         assertNotNull(result);
         assertThat(result,

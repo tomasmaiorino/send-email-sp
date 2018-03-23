@@ -1,5 +1,8 @@
 package com.tsm.sendemail.security;
 
+import static com.tsm.sendemail.security.SecurityConstants.CREATE_MESSAGE_URL;
+import static com.tsm.sendemail.security.SecurityConstants.SIGN_UP_URL;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,37 +16,32 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import static com.tsm.sendemail.security.SecurityConstants.CREATE_CUSTOMER_URL;
-import static com.tsm.sendemail.security.SecurityConstants.SIGN_UP_URL;
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+	@Autowired
+	private UserDetailsService userDetailsService;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Bean
-    public JWTAuthorizationFilter jwtAuthorizationFilter() {
-        return new JWTAuthorizationFilter();
-    }
+	@Bean
+	public JWTAuthorizationFilter jwtAuthorizationFilter() {
+		return new JWTAuthorizationFilter();
+	}
 
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class).authorizeRequests()
+				.antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll().antMatchers(HttpMethod.POST, CREATE_MESSAGE_URL)
+				.permitAll().anyRequest().authenticated().and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class)
-                .authorizeRequests().antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                .antMatchers(HttpMethod.POST, CREATE_CUSTOMER_URL).permitAll().anyRequest().authenticated().and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
-    }
+	@Override
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+	}
 
 }

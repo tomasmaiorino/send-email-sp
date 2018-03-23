@@ -12,9 +12,7 @@ import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Message;
 
 @Transactional(propagation = Propagation.MANDATORY)
-public interface MessageRepository extends Repository<Message, Long> {
-
-	Message save(final Message message);
+public interface MessageRepository extends Repository<Message, Long>, IBaseRepository<Message, Long> {
 
 	Optional<Message> findByIdAndClient(final Long id, final Client client);
 

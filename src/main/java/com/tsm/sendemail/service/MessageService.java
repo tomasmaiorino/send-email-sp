@@ -14,6 +14,7 @@ import org.springframework.util.Assert;
 import com.tsm.sendemail.exceptions.ResourceNotFoundException;
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Message;
+import com.tsm.sendemail.repository.IBaseRepository;
 import com.tsm.sendemail.repository.MessageRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,57 +22,54 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
-public class MessageService {
+public class MessageService extends BaseService<Message, Long> {
 
-    @Autowired
-    private MessageRepository repository;
+	@Autowired
+	private MessageRepository repository;
 
-    @Transactional
-    public Message save(final Message message) {
-        Assert.notNull(message, "The message must not be null.");
-        log.info("Saving message [{}] .", message);
+	@Override
+	protected void merge(final Message origin, final Message model) {
+		origin.setClient(model.getClient());
+		origin.setMessage(model.getMessage());
+		origin.setSenderEmail(model.getSenderEmail());
+		origin.setSenderName(model.getSenderName());
+		origin.setSubject(model.getSubject());
+		origin.setStatus(model.getStatus());
+	}
 
-        repository.save(message);
+	public Message findByIdAndClient(final Long id, final Client client) {
+		Assert.notNull(id, "The id must not be null!");
+		Assert.notNull(client, "The client must not be null!");
+		log.info("Searching for a message by id [{}] and client [{}].", id, client);
 
-        log.info("Saved message [{}].", message);
-        return message;
-    }
+		Message message = repository.findByIdAndClient(id, client)
+				.orElseThrow(() -> new ResourceNotFoundException(MESSAGE_NOT_FOUND));
 
-    @Transactional
-    public Message update(final Message message) {
-        Assert.notNull(message, "The message must not be null.");
-        log.info("Updating message [{}] .", message);
+		log.info("Message found [{}].", message);
 
-        repository.save(message);
+		return message;
+	}
 
-        log.info("Updated message [{}].", message);
+	public Set<Message> findByClientAndCreatedBetween(final Client client, final LocalDateTime initialDate,
+			final LocalDateTime finalDate) {
+		Assert.notNull(client, "The client must not be null.");
+		Assert.notNull(initialDate, "The initialDate must not be null.");
+		Assert.notNull(finalDate, "The finalDate must not be null.");
 
-        return message;
-    }
+		Set<Message> messages = repository.findByClientAndCreatedBetween(client, initialDate, finalDate);
 
-    public Message findByIdAndClient(final Long id, final Client client) {
-        Assert.notNull(id, "The id must not be null!");
-        Assert.notNull(client, "The client must not be null!");
-        log.info("Searching for a message by id [{}] and client [{}].", id, client);
+		log.info("Messages found [{}].", messages.size());
 
-        Message message = repository.findByIdAndClient(id, client)
-            .orElseThrow(() -> new ResourceNotFoundException(MESSAGE_NOT_FOUND));
+		return messages;
+	}
 
-        log.info("Message found [{}].", message);
+	@Override
+	public IBaseRepository<Message, Long> getRepository() {
+		return repository;
+	}
 
-        return message;
-    }
-
-    public Set<Message> findByClientAndCreatedBetween(final Client client, final LocalDateTime initialDate,
-        final LocalDateTime finalDate) {
-        Assert.notNull(client, "The client must not be null.");
-        Assert.notNull(initialDate, "The initialDate must not be null.");
-        Assert.notNull(finalDate, "The finalDate must not be null.");
-
-        Set<Message> messages = repository.findByClientAndCreatedBetween(client, initialDate, finalDate);
-
-        log.info("Messages found [{}].", messages.size());
-
-        return messages;
-    }
+	@Override
+	protected String getClassName() {
+		return Message.class.getSimpleName();
+	}
 }
