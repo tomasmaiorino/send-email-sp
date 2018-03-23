@@ -1,45 +1,46 @@
 package com.tsm.sendemail.service;
 
-import static com.tsm.sendemail.util.ErrorCodes.CLIENT_NOT_FOUND;
-import static com.tsm.sendemail.util.ErrorCodes.DUPLICATED_TOKEN;
-
-import java.util.Set;
-
+import com.tsm.sendemail.exceptions.BadRequestException;
+import com.tsm.sendemail.exceptions.ResourceNotFoundException;
+import com.tsm.sendemail.model.Client;
+import com.tsm.sendemail.model.Client.ClientStatus;
+import com.tsm.sendemail.repository.ClientRepository;
+import com.tsm.sendemail.repository.IBaseRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.tsm.sendemail.exceptions.BadRequestException;
-import com.tsm.sendemail.exceptions.ResourceNotFoundException;
-import com.tsm.sendemail.model.Client;
-import com.tsm.sendemail.model.Client.ClientStatus;
-import com.tsm.sendemail.repository.ClientRepository;
+import java.util.Set;
 
-import lombok.extern.slf4j.Slf4j;
+import static com.tsm.sendemail.util.ErrorCodes.CLIENT_NOT_FOUND;
+import static com.tsm.sendemail.util.ErrorCodes.DUPLICATED_TOKEN;
 
 @Service
 @Slf4j
 @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
-public class ClientService {
+public class ClientService extends BaseService<Client, Integer>{
 
     @Autowired
     private ClientRepository repository;
 
-    @Transactional
-    public Client save(final Client client) {
-        Assert.notNull(client, "The client must not be null.");
-        log.info("Saving client [{}] .", client);
+    @Override
+    protected String getClassName() {
+        return Client.class.getSimpleName();
+    }
 
-        repository.findByToken(client.getToken()).ifPresent(c -> {
+    @Override
+    public IBaseRepository<Client, Integer> getRepository() {
+        return repository;
+    }
+
+    protected void saveValidation(final Client model) {
+        repository.findByToken(model.getToken()).ifPresent(c -> {
             throw new BadRequestException(DUPLICATED_TOKEN);
         });
 
-        repository.save(client);
-
-        log.info("Saved client [{}].", client);
-        return client;
     }
 
     public Client findByToken(final String token) {

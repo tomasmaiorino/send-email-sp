@@ -1,35 +1,35 @@
 package com.tsm.sendemail.controller;
 
-import static com.tsm.sendemail.util.ErrorCodes.REPORT_NOT_SENT;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.groups.Default;
-
+import com.tsm.sendemail.exceptions.BadRequestException;
+import com.tsm.sendemail.model.Client;
+import com.tsm.sendemail.model.Message;
+import com.tsm.sendemail.model.Message.MessageStatus;
+import com.tsm.sendemail.parser.ClientParser;
+import com.tsm.sendemail.parser.IParser;
+import com.tsm.sendemail.resources.ClientResource;
+import com.tsm.sendemail.service.BaseService;
+import com.tsm.sendemail.service.ClientService;
+import com.tsm.sendemail.service.EmailServiceStatusService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tsm.sendemail.exceptions.BadRequestException;
-import com.tsm.sendemail.model.Client;
-import com.tsm.sendemail.model.Message;
-import com.tsm.sendemail.model.Message.MessageStatus;
-import com.tsm.sendemail.parser.ClientParser;
-import com.tsm.sendemail.resources.ClientResource;
-import com.tsm.sendemail.service.ClientService;
-import com.tsm.sendemail.service.EmailServiceStatusService;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.groups.Default;
 
-import lombok.extern.slf4j.Slf4j;
+import static com.tsm.sendemail.util.ErrorCodes.REPORT_NOT_SENT;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping(value = "/api/v1/clients")
 @Slf4j
-public class ClientsController extends BaseController {
+public class ClientsController extends BaseController <ClientResource, Client, Integer>{
 
 	@Autowired
 	private ClientService service;
@@ -60,6 +60,9 @@ public class ClientsController extends BaseController {
 		return result;
 	}
 
+	private void assertClientHeader(HttpServletRequest request) {
+	}
+
 	@RequestMapping(method = GET, path = "/report")
 	@ResponseStatus(OK)
 	public void generateReport(HttpServletRequest request) {
@@ -77,4 +80,13 @@ public class ClientsController extends BaseController {
 
 	}
 
+	@Override
+	public BaseService<Client, Integer> getService() {
+		return service;
+	}
+
+	@Override
+	public IParser<ClientResource, Client> getParser() {
+		return parser;
+	}
 }

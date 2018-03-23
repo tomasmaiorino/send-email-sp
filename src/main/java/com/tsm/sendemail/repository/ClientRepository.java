@@ -11,9 +11,7 @@ import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Client.ClientStatus;
 
 @Transactional(propagation = Propagation.MANDATORY)
-public interface ClientRepository extends Repository<Client, Integer> {
-
-    Client save(Client client);
+public interface ClientRepository extends Repository<Client, Integer>, IBaseRepository<Client, Integer> {
 
     Optional<Client> findByToken(final String token);
 

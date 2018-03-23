@@ -1,22 +1,21 @@
 package com.tsm.sendemail.parser;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Client.ClientStatus;
 import com.tsm.sendemail.model.ClientAttribute;
 import com.tsm.sendemail.model.ClientHosts;
 import com.tsm.sendemail.resources.ClientResource;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
-public class ClientParser {
+public class ClientParser implements  IParser<ClientResource, Client>{
 
 	public Client toModel(final ClientResource resource) {
 		Assert.notNull(resource, "The resource must not be null!");
@@ -69,6 +68,11 @@ public class ClientParser {
 		}
 		return resource;
 
+	}
+
+	@Override
+	public Set<ClientResource> toResources(Set<Client> models) {
+		return null;
 	}
 
 	private Set<String> loadHosts(final Client client) {
