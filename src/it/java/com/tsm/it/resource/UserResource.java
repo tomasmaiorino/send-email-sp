@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.jayway.restassured.http.ContentType;
 import com.tsm.it.controller.BaseTestIT;
 import com.tsm.sendemail.util.UserTestBuilder;
 
@@ -50,7 +49,7 @@ public class UserResource {
 
 	public UserResource auth(final String pEmail, final String pass) {
 		this.email(pEmail).password(pass);
-		return given().contentType(ContentType.JSON).body(this).when().post(BaseTestIT.AUTH_URL)
+		return given().contentType("application/json").body(this).when().post(BaseTestIT.AUTH_URL)
 				.as(UserResource.class);
 	}
 

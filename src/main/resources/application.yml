@@ -8,3 +8,7 @@ sendemail:
       serviceEndpoint: https://api.mailgun.net/v3/#domain_name/messages
       mailgunKey: 123
       mailgunDomain: 123
+urls:
+  skip:
+    host:
+      validation: api/v1/clients,api/v1/users/auth

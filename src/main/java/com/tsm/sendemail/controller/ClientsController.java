@@ -7,11 +7,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.groups.Default;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,6 +44,7 @@ public class ClientsController extends RestBaseController<ClientResource, Client
 
 	@RequestMapping(method = POST, consumes = JSON_VALUE, produces = JSON_VALUE)
 	@ResponseStatus(CREATED)
+	@ResponseBody
 	public ClientResource save(@RequestBody final ClientResource resource, final HttpServletRequest request) {
 		return super.save(resource);
 	}

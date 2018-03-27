@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Profile(value = "it")
 @Slf4j
-public class InitiaItlLoad implements ApplicationListener<ApplicationReadyEvent> {
+public class InitialItlLoad implements ApplicationListener<ApplicationReadyEvent> {
 
 	@Autowired
 	private UserService userService;

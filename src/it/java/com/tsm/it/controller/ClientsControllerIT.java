@@ -62,20 +62,8 @@ public class ClientsControllerIT extends BaseTestIT {
 
 	protected static Map<String, String> header = null;
 
-	public static final String ADMIN_TOKEN_HEADER = "AT";
-
 	@Test
 	public void save_NoneHeaderGiven_ShouldReturnError() {
-		// Set Up
-		ClientResource resource = ClientResource.build().assertFields().name(null);
-
-		// Do Test
-		given().body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body(MESSAGE_FIELD, is("Missing admin header."));
-	}
-
-	@Test
-	public void save_InvalidHeaderGiven_ShouldReturnError() {
 		// Set Up
 		ClientResource resource = ClientResource.build().assertFields();
 

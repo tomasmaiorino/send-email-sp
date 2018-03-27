@@ -48,7 +48,8 @@ public class MessagesController extends RestBaseController<MessageResource, Mess
 	@Autowired
 	private MessageParser parser;
 
-	@RequestMapping(method = POST, consumes = JSON_VALUE, produces = JSON_VALUE)
+	@RequestMapping(method = POST, consumes = JSON_VALUE, produces = JSON_VALUE, headers = {
+			"content-type=application/json" })
 	@ResponseStatus(OK)
 	public MessageResource save(@PathVariable String clientToken, @RequestBody final MessageResource resource,
 			HttpServletRequest request) {
@@ -126,6 +127,5 @@ public class MessagesController extends RestBaseController<MessageResource, Mess
 	public IParser<MessageResource, Message> getParser() {
 		return parser;
 	}
-
 
 }

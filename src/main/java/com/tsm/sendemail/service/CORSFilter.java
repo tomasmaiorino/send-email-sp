@@ -1,6 +1,7 @@
 package com.tsm.sendemail.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -31,13 +32,16 @@ public class CORSFilter implements Filter {
 	@Value(value = "${client.service.url}")
 	private String clientServiceUrl;
 
+	@Value(value = "${urls.skip.host.validation}")
+	private List<String> urlSkipHostValidation;
+
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
 
 		HttpServletResponse response = (HttpServletResponse) res;
 		HttpServletRequest request = (HttpServletRequest) req;
 
-		if (!request.getRequestURI().contains(clientServiceUrl)) {
+		if (!skipUrlValidation(request.getRequestURI())) {
 			String clientHost = getClientHost(request);
 			if (!StringUtils.isBlank(clientHost)) {
 				response.setHeader("Access-Control-Allow-Origin", clientHost);
@@ -55,6 +59,10 @@ public class CORSFilter implements Filter {
 		}
 
 		chain.doFilter(req, res);
+	}
+
+	private boolean skipUrlValidation(final String requestUri) {
+		return urlSkipHostValidation.stream().filter(u -> requestUri.contains(u)).count() == 0l;
 	}
 
 	private String getClientHost(final HttpServletRequest req) {

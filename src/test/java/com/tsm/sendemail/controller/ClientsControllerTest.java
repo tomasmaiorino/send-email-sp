@@ -26,7 +26,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.tsm.sendemail.exceptions.BadRequestException;
-import com.tsm.sendemail.exceptions.ForbiddenRequestException;
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Message;
 import com.tsm.sendemail.model.Message.MessageStatus;
@@ -72,64 +71,6 @@ public class ClientsControllerTest {
 		when(request.getHeader(ADMIN_TOKEN_HEADER)).thenReturn(ADMIN_TOKEN_VALUE);
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 		when(assertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(true);
-	}
-
-	@Test
-	public void save_NullHeaderGiven_ShouldThrowException() {
-		// Set up
-		ClientResource resource = ClientTestBuilder.buildResoure();
-
-		// Expectations
-		when(request.getHeader(ADMIN_TOKEN_HEADER)).thenReturn(null);
-
-		// Do test
-		try {
-			controller.save(resource, request);
-			fail();
-		} catch (BadRequestException e) {
-		}
-
-		// Assertions
-		verifyZeroInteractions(service, parser, validator, assertClientRequest);
-	}
-
-	@Test
-	public void save_EmptyHeaderGiven_ShouldThrowException() {
-		// Set up
-		ClientResource resource = ClientTestBuilder.buildResoure();
-
-		// Expectations
-		when(request.getHeader(ADMIN_TOKEN_HEADER)).thenReturn("");
-
-		// Do test
-		try {
-			controller.save(resource, request);
-			fail();
-		} catch (BadRequestException e) {
-		}
-
-		// Assertions
-		verifyZeroInteractions(service, parser, validator, assertClientRequest);
-	}
-
-	@Test
-	public void save_InvalidHeaderGiven_ShouldThrowException() {
-		// Set up
-		ClientResource resource = ClientTestBuilder.buildResoure();
-
-		// Expectations
-		when(assertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(false);
-
-		// Do test
-		try {
-			controller.save(resource, request);
-			fail();
-		} catch (ForbiddenRequestException e) {
-		}
-
-		// Assertions
-		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
-		verifyZeroInteractions(service, parser, validator);
 	}
 
 	@Test
@@ -204,23 +145,6 @@ public class ClientsControllerTest {
 	}
 
 	@Test
-	public void generateReport_InvalidHeaderGiven_ShouldThrowException() {
-		// Expectations
-		when(assertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(false);
-
-		// Do test
-		try {
-			controller.generateReport(request);
-			fail();
-		} catch (ForbiddenRequestException e) {
-		}
-
-		// Assertions
-		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
-		verifyZeroInteractions(emailServiceStatusService);
-	}
-
-	@Test
 	public void generateReport_EmailNotSend_ShouldThrowException() {
 		// Expectations
 		when(emailServiceStatusService.checkingDailyEmailsStatus()).thenReturn(null);
@@ -233,7 +157,6 @@ public class ClientsControllerTest {
 		}
 
 		// Assertions
-		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
 		verify(emailServiceStatusService).checkingDailyEmailsStatus();
 	}
 
@@ -250,7 +173,6 @@ public class ClientsControllerTest {
 		controller.generateReport(request);
 
 		// Assertions
-		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
 		verify(emailServiceStatusService).checkingDailyEmailsStatus();
 	}
 
@@ -271,7 +193,6 @@ public class ClientsControllerTest {
 		}
 
 		// Assertions
-		verify(assertClientRequest).isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE);
 		verify(emailServiceStatusService).checkingDailyEmailsStatus();
 	}
 }
