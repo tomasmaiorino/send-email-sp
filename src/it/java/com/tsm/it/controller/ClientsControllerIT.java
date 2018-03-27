@@ -36,13 +36,6 @@ import com.tsm.sendemail.SendEmailApplication;
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientsControllerIT extends BaseTestIT {
 
-	private static final String EMAIL_REQUIRED_MESSAGE = "The email is required.";
-
-	private static final String INVALID_TOKEN_SIZE_MESSAGE = "The token must be between 2 and 50 characters.";
-
-	private static final String EMAIL_RECIPIENT_REQUIRED_MESSAGE = "The email recipient is required.";
-
-	private static final String INVALID_NAME_SIZE_MESSAGE = "The name must be between 2 and 30 characters.";
 
 	private static final String CLIENTS_URL_POST = "/api/v1/clients";
 

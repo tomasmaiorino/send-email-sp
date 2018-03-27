@@ -24,7 +24,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import lombok.Getter;
 
-public class ClientResource extends BaseResource {
+public class ClientResource implements BaseResource {
 
 	@Getter
 	private Integer id;

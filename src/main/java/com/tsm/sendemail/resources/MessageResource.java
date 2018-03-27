@@ -18,7 +18,7 @@ import com.tsm.sendemail.model.Message;
 import lombok.Getter;
 import lombok.Setter;
 
-public class MessageResource extends BaseResource {
+public class MessageResource implements BaseResource {
 
     public static final String EMAIL = "^\\w+([-+._]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
 

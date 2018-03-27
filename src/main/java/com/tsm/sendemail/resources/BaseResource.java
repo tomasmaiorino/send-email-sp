@@ -1,5 +1,6 @@
 package com.tsm.sendemail.resources;
 
-public abstract class BaseResource {
+public interface BaseResource {
+	
 
 }

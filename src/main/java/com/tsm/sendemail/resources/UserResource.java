@@ -4,6 +4,7 @@ package com.tsm.sendemail.resources;
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_LOGIN_EMAIL;
 import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_EMAIL;
 import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_PASSWORD;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.hibernate.validator.constraints.Email;
@@ -12,7 +13,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
-public class UserResource extends BaseResource {
+public class UserResource implements BaseResource {
 
 	@Getter
 	@Setter

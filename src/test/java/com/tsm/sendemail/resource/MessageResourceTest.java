@@ -32,7 +32,7 @@ import com.tsm.sendemail.util.MessageTestBuilder;
 @FixMethodOrder(MethodSorters.JVM)
 public class MessageResourceTest extends BaseResourceTest {
 
-    private Supplier<? extends BaseResource> buildResourceFunction = MessageTestBuilder::buildResoure;
+    private Supplier<BaseResource> buildResourceFunction = MessageTestBuilder::buildResoure;
 
     @Before
     public void setUp() {

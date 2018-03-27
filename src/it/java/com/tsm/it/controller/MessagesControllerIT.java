@@ -35,8 +35,14 @@ import com.tsm.sendemail.util.MessageTestBuilder;
 @FixMethodOrder(MethodSorters.JVM)
 public class MessagesControllerIT extends BaseTestIT {
 
+	private static final String INVALID_MESSAGE_SIZE_MESSAGE = "The message must be between 2 and 300 characters.";
+
+	private static final String INVALID_SUBJECT_SIZE_MESSAGE = "The subject must be between 2 and 30 characters.";
+
+	private static final String INVALID_SENDER_NAME_SIZE_MESSAGE = "The sender name must be between 2 and 20 characters.";
+
 	public static final String MESSAGE_POST_URL = "/api/v1/messages/{clientToken}";
-	
+
 	@LocalServerPort
 	private int port;
 
@@ -52,6 +58,7 @@ public class MessagesControllerIT extends BaseTestIT {
 	public void setUp() {
 		RestAssured.port = port;
 		header = getHeader();
+		header.put("Referer", host);
 	}
 
 	@Test
@@ -77,14 +84,13 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
 				.header("Access-Control-Allow-Origin", is(client.getHosts().iterator().next()))
 				.header("Access-Control-Allow-Methods", is("POST, GET, OPTIONS"))
 				.header("Access-Control-Max-Age", is("3600"))
 				.header("Access-Control-Allow-Headers", is("Origin, X-Requested-With, Content-Type, Accept"))
 				.header("Access-Control-Expose-Headers", is("Location"))
-				.body("[0].message", is("The message is required."), "[0].field", is("message"));
+				.body(MESSAGE_CHECK_KEY, is("The message is required."), MESSAGE_FIELD_KEY, is("message"));
 	}
 
 	@Test
@@ -95,9 +101,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
-						is("The message must be between 2 and 300 characters."), "[0].field", is("message"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is(INVALID_MESSAGE_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("message"));
 	}
 
 	@Test
@@ -108,9 +113,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
-						is("The message must be between 2 and 300 characters."), "[0].field", is("message"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is(INVALID_MESSAGE_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("message"));
 	}
 
 	@Test
@@ -121,9 +125,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
-						is("The message must be between 2 and 300 characters."), "[0].field", is("message"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is(INVALID_MESSAGE_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("message"));
 	}
 
 	//
@@ -135,9 +138,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The subject is required."), "[0].field", is("subject"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is("The subject is required."), MESSAGE_FIELD_KEY, is("subject"));
 	}
 
 	@Test
@@ -148,9 +150,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
-						is("The subject must be between 2 and 30 characters."), "[0].field", is("subject"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is(INVALID_SUBJECT_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("subject"));
 	}
 
 	@Test
@@ -161,9 +162,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
-						is("The subject must be between 2 and 30 characters."), "[0].field", is("subject"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is(INVALID_SUBJECT_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("subject"));
 	}
 
 	@Test
@@ -174,9 +174,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
-						is("The subject must be between 2 and 30 characters."), "[0].field", is("subject"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is(INVALID_SUBJECT_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("subject"));
 	}
 
 	//
@@ -189,9 +188,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The sender name is required."), "[0].field", is("senderName"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is("The sender name is required."), MESSAGE_FIELD_KEY, is("senderName"));
 	}
 
 	@Test
@@ -202,9 +200,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
-						is("The sender name must be between 2 and 20 characters."), "[0].field", is("senderName"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is(INVALID_SENDER_NAME_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("senderName"));
 	}
 
 	@Test
@@ -216,9 +213,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
-						is("The sender name must be between 2 and 20 characters."), "[0].field", is("senderName"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is(INVALID_SENDER_NAME_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("senderName"));
 	}
 
 	@Test
@@ -230,9 +226,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0].message",
-						is("The sender name must be between 2 and 20 characters."), "[0].field", is("senderName"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is(INVALID_SENDER_NAME_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("senderName"));
 	}
 
 	//
@@ -245,9 +240,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("The sender email is required."), "[0].field", is("senderEmail"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is("The sender email is required."), MESSAGE_FIELD_KEY, is("senderEmail"));
 	}
 
 	@Test
@@ -260,9 +254,8 @@ public class MessagesControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.post(MESSAGE_POST_URL, client.getToken()).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value())
-				.body("[0].message", is("Invalid email."), "[0].field", is("senderEmail"));
+				.post(MESSAGE_POST_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is("Invalid email."), MESSAGE_FIELD_KEY, is("senderEmail"));
 	}
 
 	@Test
@@ -304,7 +297,7 @@ public class MessagesControllerIT extends BaseTestIT {
 		hosts.add(host);
 		ClientResource client = ClientResource.build().emailRecipient(itTestEmail).headers(getTokenHeader())
 				.hosts(hosts).create();
-		MessageResource resource = MessageResource.build().create(client.getToken());
+		MessageResource resource = MessageResource.build().headers(getHeader()).create(client.getToken());
 
 		// Do Test
 		given().headers(header).body(resource).contentType(ContentType.JSON).when()

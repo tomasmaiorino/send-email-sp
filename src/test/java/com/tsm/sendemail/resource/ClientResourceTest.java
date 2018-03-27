@@ -31,7 +31,7 @@ import com.tsm.sendemail.util.ClientTestBuilder;
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientResourceTest extends BaseResourceTest {
 
-    private Supplier<? extends BaseResource> buildResourceFunction = ClientTestBuilder::buildResoure;
+    private Supplier<BaseResource> buildResourceFunction = ClientTestBuilder::buildResoure;
 
     @Before
     public void setUp() {

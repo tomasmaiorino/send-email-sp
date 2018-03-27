@@ -10,14 +10,13 @@ import java.util.Set;
 
 import org.apache.commons.lang3.RandomUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tsm.sendemail.model.Client.ClientStatus;
 import com.tsm.sendemail.util.ClientAttributeTestBuilder;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class ClientResource {
+public class ClientResource extends BaseItResource {
 
 	public static ClientResource build() {
 		return new ClientResource();
@@ -53,11 +52,6 @@ public class ClientResource {
 
 	private ClientResource() {
 	}
-
-	@JsonIgnore
-	@Getter
-	@Setter
-	private Map<String, String> headers;
 
 	@Getter
 	@Setter

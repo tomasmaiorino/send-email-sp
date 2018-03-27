@@ -26,6 +26,14 @@ public class BaseTestIT {
 	protected static final String AUTHORIZATION_VALUE_PREFIX = "Bearer ";
 
 	public static final String AUTH_URL = "/api/v1/users/auth";
+	
+	protected static final String EMAIL_REQUIRED_MESSAGE = "The email is required.";
+
+	protected static final String INVALID_TOKEN_SIZE_MESSAGE = "The token must be between 2 and 50 characters.";
+
+	protected static final String EMAIL_RECIPIENT_REQUIRED_MESSAGE = "The email recipient is required.";
+
+	protected static final String INVALID_NAME_SIZE_MESSAGE = "The name must be between 2 and 30 characters.";
 
 	@Value("${user.it.email}")
 	@Getter
