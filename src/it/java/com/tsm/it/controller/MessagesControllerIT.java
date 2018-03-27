@@ -51,8 +51,6 @@ public class MessagesControllerIT extends BaseTestIT {
 	@Value(value = "${it.test.email}")
 	private String itTestEmail;
 
-	@Value(value = "${client.service.key}")
-	private String clientServiceKey;
 
 	@Before
 	public void setUp() {

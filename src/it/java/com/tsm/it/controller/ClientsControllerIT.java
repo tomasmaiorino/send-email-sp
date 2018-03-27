@@ -37,13 +37,20 @@ import com.tsm.sendemail.SendEmailApplication;
 public class ClientsControllerIT extends BaseTestIT {
 
 
+	private static final String NAME_PARAM = "name";
+
+	private static final String CLIENTS_REPORT_URL = "/api/v1/clients/report";
+
+	private static final String EMAIL_RECIPIENT_PARAM = "emailRecipient";
+
+	private static final String EMAIL_PARAM = "email";
+
+	private static final String TOKEN_PARAM = "token";
+
 	private static final String CLIENTS_URL_POST = "/api/v1/clients";
 
 	@LocalServerPort
 	private int port;
-
-	@Value(value = "${client.service.key}")
-	private String clientServiceKey;
 
 	@Value(value = "${it.test.email}")
 	private String itTestEmail;
@@ -73,7 +80,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is("The name is required."), MESSAGE_FIELD_KEY, is("name"));
+				.body(MESSAGE_CHECK_KEY, is("The name is required."), MESSAGE_FIELD_KEY, is(NAME_PARAM));
 	}
 
 	@Test
@@ -84,7 +91,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(INVALID_NAME_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("name"));
+				.body(MESSAGE_CHECK_KEY, is(INVALID_NAME_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is(NAME_PARAM));
 	}
 
 	@Test
@@ -95,7 +102,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(INVALID_NAME_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("name"));
+				.body(MESSAGE_CHECK_KEY, is(INVALID_NAME_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is(NAME_PARAM));
 	}
 
 	@Test
@@ -106,7 +113,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(INVALID_NAME_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("name"));
+				.body(MESSAGE_CHECK_KEY, is(INVALID_NAME_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is(NAME_PARAM));
 	}
 
 	//
@@ -118,7 +125,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is("The token is required."), MESSAGE_FIELD_KEY, is("token"));
+				.body(MESSAGE_CHECK_KEY, is("The token is required."), MESSAGE_FIELD_KEY, is(TOKEN_PARAM));
 	}
 
 	@Test
@@ -129,7 +136,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(INVALID_TOKEN_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("token"));
+				.body(MESSAGE_CHECK_KEY, is(INVALID_TOKEN_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is(TOKEN_PARAM));
 	}
 
 	@Test
@@ -140,7 +147,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(INVALID_TOKEN_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("token"));
+				.body(MESSAGE_CHECK_KEY, is(INVALID_TOKEN_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is(TOKEN_PARAM));
 	}
 
 	@Test
@@ -151,7 +158,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(INVALID_TOKEN_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is("token"));
+				.body(MESSAGE_CHECK_KEY, is(INVALID_TOKEN_SIZE_MESSAGE), MESSAGE_FIELD_KEY, is(TOKEN_PARAM));
 	}
 
 	//
@@ -163,7 +170,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(EMAIL_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is("email"));
+				.body(MESSAGE_CHECK_KEY, is(EMAIL_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is(EMAIL_PARAM));
 	}
 
 	@Test
@@ -174,7 +181,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(EMAIL_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is("email"));
+				.body(MESSAGE_CHECK_KEY, is(EMAIL_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is(EMAIL_PARAM));
 	}
 
 	@Test
@@ -185,7 +192,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is("Invalid email."), MESSAGE_FIELD_KEY, is("email"));
+				.body(MESSAGE_CHECK_KEY, is("Invalid email."), MESSAGE_FIELD_KEY, is(EMAIL_PARAM));
 	}
 
 	//
@@ -197,7 +204,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(EMAIL_RECIPIENT_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is("emailRecipient"));
+				.body(MESSAGE_CHECK_KEY, is(EMAIL_RECIPIENT_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is(EMAIL_RECIPIENT_PARAM));
 	}
 
 	@Test
@@ -208,7 +215,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(EMAIL_RECIPIENT_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is("emailRecipient"));
+				.body(MESSAGE_CHECK_KEY, is(EMAIL_RECIPIENT_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is(EMAIL_RECIPIENT_PARAM));
 	}
 
 	@Test
@@ -219,7 +226,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
 				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is("Invalid email."), MESSAGE_FIELD_KEY, is("emailRecipient"));
+				.body(MESSAGE_CHECK_KEY, is("Invalid email."), MESSAGE_FIELD_KEY, is(EMAIL_RECIPIENT_PARAM));
 	}
 
 	//
@@ -252,9 +259,9 @@ public class ClientsControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
-				.then().statusCode(HttpStatus.CREATED.value()).body("name", is(resource.getName()), "token",
+				.then().statusCode(HttpStatus.CREATED.value()).body(NAME_PARAM, is(resource.getName()), TOKEN_PARAM,
 						is(resource.getToken()), "status", is(resource.getStatus()), "attributes", nullValue(), "id",
-						notNullValue(), "hosts.size()", is(resource.getHosts().size()), "email",
+						notNullValue(), "hosts.size()", is(resource.getHosts().size()), EMAIL_PARAM,
 						is(resource.getEmail()));
 	}
 
@@ -265,10 +272,10 @@ public class ClientsControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
-				.then().statusCode(HttpStatus.CREATED.value()).body("name", is(resource.getName()), "token",
+				.then().statusCode(HttpStatus.CREATED.value()).body(NAME_PARAM, is(resource.getName()), TOKEN_PARAM,
 						is(resource.getToken()), "status", is(resource.getStatus()), "attributes.size()",
 						is(resource.getAttributes().size()), "id", notNullValue(), "hosts.size()",
-						is(resource.getHosts().size()), "email", is(resource.getEmail()));
+						is(resource.getHosts().size()), EMAIL_PARAM, is(resource.getEmail()));
 	}
 
 	@Test
@@ -279,10 +286,10 @@ public class ClientsControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
-				.then().statusCode(HttpStatus.CREATED.value()).body("name", is(resource.getName()), "token",
+				.then().statusCode(HttpStatus.CREATED.value()).body(NAME_PARAM, is(resource.getName()), TOKEN_PARAM,
 						is(resource.getToken()), "status", is(resource.getStatus()), "attributes.size()",
 						is(resource.getAttributes().size() - 1), "id", notNullValue(), "hosts.size()",
-						is(resource.getHosts().size()), "email", is(resource.getEmail()));
+						is(resource.getHosts().size()), EMAIL_PARAM, is(resource.getEmail()));
 	}
 
 	@Test
@@ -291,7 +298,7 @@ public class ClientsControllerIT extends BaseTestIT {
 		ClientResource.build().headers(getTokenHeader()).emailRecipient(itTestEmail).isAdmin(true).create();
 
 		// Do Test
-		given().headers(getTokenHeader()).when().get("/api/v1/clients/report").then().statusCode(HttpStatus.OK.value());
+		given().headers(getTokenHeader()).when().get(CLIENTS_REPORT_URL).then().statusCode(HttpStatus.OK.value());
 	}
 
 	@Test
@@ -299,8 +306,8 @@ public class ClientsControllerIT extends BaseTestIT {
 	public void generateReport_NoneClientAdminGiven_ShouldReturnError() {
 
 		// Do Test
-		given().headers(getTokenHeader()).when().get("/api/v1/clients/report").then()
-				.statusCode(HttpStatus.BAD_REQUEST.value()).body("[0]message", is("Report not sent."));
+		given().headers(getTokenHeader()).when().get(CLIENTS_REPORT_URL).then()
+				.statusCode(HttpStatus.BAD_REQUEST.value()).body(MESSAGE_CHECK_KEY, is("Report not sent."));
 
 	}
 

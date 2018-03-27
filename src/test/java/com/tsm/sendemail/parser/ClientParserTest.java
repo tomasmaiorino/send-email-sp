@@ -21,6 +21,7 @@ import com.tsm.sendemail.resources.ClientResource;
 import com.tsm.sendemail.util.ClientAttributeTestBuilder;
 import com.tsm.sendemail.util.ClientTestBuilder;
 
+@SuppressWarnings("unchecked")
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientParserTest {
 
@@ -35,7 +36,6 @@ public class ClientParserTest {
 		parser.toModel(resource);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void toModel_ValidResourceGiven_ShouldCreateClientModel() {
 		// Set up
@@ -56,7 +56,6 @@ public class ClientParserTest {
 		assertThat(result.getClientHosts().size(), is(resource.getHosts().size()));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void toModel_ValidClientAttributeResourceGiven_ShouldCreateClientModel() {
 		// Set up

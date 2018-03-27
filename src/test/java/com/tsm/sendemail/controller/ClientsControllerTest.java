@@ -40,7 +40,6 @@ import com.tsm.sendemail.util.MessageTestBuilder;
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientsControllerTest {
 
-	private static final String ADMIN_TOKEN_HEADER = "AT";
 
 	@Mock
 	private ClientService service;
@@ -63,14 +62,11 @@ public class ClientsControllerTest {
 	@Mock
 	private EmailServiceStatusService emailServiceStatusService;
 
-	private static final String ADMIN_TOKEN_VALUE = "qwerty";
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		when(request.getHeader(ADMIN_TOKEN_HEADER)).thenReturn(ADMIN_TOKEN_VALUE);
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-		when(assertClientRequest.isRequestAllowedCheckingAdminToken(ADMIN_TOKEN_VALUE)).thenReturn(true);
 	}
 
 	@Test

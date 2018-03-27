@@ -10,7 +10,7 @@ import com.tsm.it.resource.UserResource;
 import lombok.Getter;
 import lombok.Setter;
 
-public class BaseTestIT {
+public abstract class BaseTestIT {
 
 	public static Map<String, String> header = null;
 	protected static final String REQUIRED_NAME = "The name is required.";
