@@ -24,8 +24,7 @@ import org.springframework.util.CollectionUtils;
 import lombok.Getter;
 
 @Entity
-@Table(name = "user")
-
+@Table(name = "send_user")
 public class User extends BaseModel {
 
 	private User() {
@@ -35,6 +34,7 @@ public class User extends BaseModel {
 	@Id
 	@GeneratedValue
 	@Getter
+	@Column(name = "user_id")
 	private Integer id;
 
 	public enum UserStatus {
@@ -59,7 +59,9 @@ public class User extends BaseModel {
 	private UserStatus status;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@JoinTable(name = "user_role",
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName="user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName="role_id"))
 	private Set<Role> roles;
 
 	public Set<Role> getRoles() {

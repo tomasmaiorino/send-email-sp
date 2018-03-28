@@ -116,18 +116,23 @@ mvn spring-boot:run -Dspring.profiles.active=local -Dsendemail.service.mailgun.m
 
 #### To send a report to the admin client using curl.
 ```$
-curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -X GET http://localhost:8080/api/v1/clients/report
+curl -i -H "Content-Type:application/json" -H "Authorization: Bearer <token>" -X GET http://localhost:8080/api/v1/clients/report
 ```
 
 #### To create a client using curl
 ```$
-curl -i -H "Content-Type:application/json"  -H "AT: $ADMIN_TOKEN_VALUE" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/clients -d "{\"hosts\": [\"http://localhost:8080\",\"localhost:8080\"],\"token\": \"qwetyuasdtyuer4rr\",\"email\": \"user@domain.com\",\"name\": \"Jean Gray\",\"emailRecipient\": \"user@domain.com\",\"status\":\"ACTIVE\"}
+curl -i -H "Content-Type:application/json" -H "Authorization: Bearer <token>" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/clients -d "{\"hosts\": [\"http://localhost:8080\",\"localhost:8080\"],\"token\": \"qwetyuasdtyuer4rr\",\"email\": \"user@domain.com\",\"name\": \"Jean Gray\",\"emailRecipient\": \"user@domain.com\",\"status\":\"ACTIVE\"}
 ```
 
 #### To send a message using curl.
 ```$
 curl -i -H "Content-Type:application/json" -H "Accept:application/json" -H "Referer: http://localhost" -X POST http://localhost:40585/api/v1/messages/qwetyuasdtyuer4rr -d "{\"message\": \"I really enjoy your site.\",\"subject\": \"Contact\",\"name\": \"Jean Gray\",\"senderEmail\": \"user@domain.com\",\"senderName\":\"Logan\"}
 ```  
+
+#### To recover the token.
+```$
+curl -i -H "Content-Type:application/json" -H "Accept:application/json" -H  -X POST http://localhost:8080/api/v1/users/auth -d "{\"email\": \"<email>\",\"password\": \"<password>\"}"
+```
 
 #### To run the application the maven command.
 ```$

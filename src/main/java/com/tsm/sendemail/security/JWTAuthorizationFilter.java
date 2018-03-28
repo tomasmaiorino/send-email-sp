@@ -73,6 +73,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 				log.warn("The token is expired and not valid anymore.", e);
 			} catch (MalformedJwtException e) {
 				log.warn(String.format("The token is malformed [%s].", authToken), e);
+			} catch (Exception e) {
+				log.warn(String.format("The token is invalid [%s].", authToken), e);
 			}
 		} else {
 			log.warn("Couldn't find bearer string, will ignore the header.");
