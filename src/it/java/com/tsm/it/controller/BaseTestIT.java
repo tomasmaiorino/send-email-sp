@@ -54,7 +54,7 @@ public abstract class BaseTestIT {
 
 	protected Map<String, String> getTokenHeader() {
 		UserResource userResource = UserResource.build().auth(getUserItEmail(), getUserItPass());
-		getHeader().put(AUTHORIZATION_KEY, AUTHORIZATION_VALUE_PREFIX + userResource.getToken());
+		getHeader().put(AUTHORIZATION_KEY, userResource.getToken());
 		return getHeader();
 	}
 

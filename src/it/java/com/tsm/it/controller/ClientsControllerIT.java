@@ -36,7 +36,6 @@ import com.tsm.sendemail.SendEmailApplication;
 @FixMethodOrder(MethodSorters.JVM)
 public class ClientsControllerIT extends BaseTestIT {
 
-
 	private static final String NAME_PARAM = "name";
 
 	private static final String CLIENTS_REPORT_URL = "/api/v1/clients/report";
@@ -203,8 +202,8 @@ public class ClientsControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
-				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(EMAIL_RECIPIENT_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is(EMAIL_RECIPIENT_PARAM));
+				.then().statusCode(HttpStatus.BAD_REQUEST.value()).body(MESSAGE_CHECK_KEY,
+						is(EMAIL_RECIPIENT_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is(EMAIL_RECIPIENT_PARAM));
 	}
 
 	@Test
@@ -214,8 +213,8 @@ public class ClientsControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().headers(getTokenHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST)
-				.then().statusCode(HttpStatus.BAD_REQUEST.value())
-				.body(MESSAGE_CHECK_KEY, is(EMAIL_RECIPIENT_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is(EMAIL_RECIPIENT_PARAM));
+				.then().statusCode(HttpStatus.BAD_REQUEST.value()).body(MESSAGE_CHECK_KEY,
+						is(EMAIL_RECIPIENT_REQUIRED_MESSAGE), MESSAGE_FIELD_KEY, is(EMAIL_RECIPIENT_PARAM));
 	}
 
 	@Test

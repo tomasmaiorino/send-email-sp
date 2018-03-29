@@ -12,7 +12,6 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.bouncycastle.jcajce.provider.symmetric.ChaCha;
 import org.springframework.util.Assert;
 
 import lombok.Getter;

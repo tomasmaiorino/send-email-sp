@@ -1,7 +1,5 @@
 package com.tsm.sendemail.security;
 
-import static com.tsm.sendemail.security.SecurityConstants.TOKEN_PREFIX;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -52,9 +50,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
 
-		String header = req.getHeader(SecurityConstants.HEADER_STRING);
+		String authToken = req.getHeader(SecurityConstants.HEADER_STRING);
 		String userEmail = null;
-		String authToken = null;
 
 		try {
 			configureCors(req, res);
@@ -63,8 +60,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		if (header != null && header.startsWith(TOKEN_PREFIX)) {
-			authToken = header.replace(TOKEN_PREFIX, "");
+		if (StringUtils.isNotBlank(authToken)) {
 			try {
 				userEmail = jwtTokenUtil.getUserEmailFromToken(authToken);
 			} catch (IllegalArgumentException e) {

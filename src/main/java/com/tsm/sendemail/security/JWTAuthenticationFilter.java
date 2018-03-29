@@ -47,6 +47,6 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		String token = Jwts.builder().setSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
 				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, "").compact();
-		res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+		res.addHeader(SecurityConstants.HEADER_STRING, token);
 	}
 }
