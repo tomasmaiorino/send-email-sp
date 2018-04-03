@@ -1,22 +1,27 @@
 package com.tsm.sendemail.resource;
 
-import com.tsm.sendemail.resources.BaseResource;
-import com.tsm.sendemail.resources.UserResource;
-import com.tsm.sendemail.util.LoginTestBuilder;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import static com.tsm.sendemail.util.ErrorCodes.INVALID_LOGIN_EMAIL;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_EMAIL;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_PASSWORD;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
+import java.util.function.Supplier;
 
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
-import java.util.function.Supplier;
 
-import static com.tsm.sendemail.util.ErrorCodes.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+import com.tsm.sendemail.resources.BaseResource;
+import com.tsm.sendemail.resources.UserResource;
+import com.tsm.sendemail.util.LoginTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class UserResourceTest extends BaseResourceTest {
@@ -31,17 +36,9 @@ public class UserResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	@Ignore
 	public void build_NullPasswordGiven_ShouldThrowException() {
 		// Set up
 		checkResource(buildResourceFunction, "password", null, REQUIRED_LOGIN_PASSWORD);
-	}
-
-
-	@Test
-	public void build_EmptyPasswordGiven_ShouldThrowException() {
-		// Set up
-		checkResource(buildResourceFunction, "password", "", REQUIRED_LOGIN_PASSWORD);
 	}
 
 	//
@@ -74,8 +71,6 @@ public class UserResourceTest extends BaseResourceTest {
 
 		// Assertions
 		assertNotNull(result);
-		assertThat(result,
-				allOf(hasProperty("email", is(email)),
-						hasProperty("password", is(password))));
+		assertThat(result, allOf(hasProperty("email", is(email)), hasProperty("password", is(password))));
 	}
 }
