@@ -24,6 +24,7 @@ public class JwtTokenUtil implements Serializable {
 	private static final long serialVersionUID = 5117178732468774972L;
 
 	public String getUserEmailFromToken(final String token) {
+		Assert.hasText(token, "The token must not be empty!");
 		return (String) getClaimFromToken(token, Claims::getSubject);
 	}
 
@@ -44,13 +45,6 @@ public class JwtTokenUtil implements Serializable {
 		return Jwts.builder().setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS * 1000))
 				.signWith(SignatureAlgorithm.HS512, SIGNING_KEY).compact();
-
-		// return
-		// Jwts.builder().setClaims(claims).setIssuer("http://devglan.com")
-		// .setIssuedAt(new Date(System.currentTimeMillis()))
-		// .setExpiration(new Date(System.currentTimeMillis() +
-		// ACCESS_TOKEN_VALIDITY_SECONDS * 1000))
-		// .signWith(SignatureAlgorithm.HS256, SIGNING_KEY).compact();
 	}
 
 	public Date getExpirationDateFromToken(final String token) {
@@ -58,7 +52,7 @@ public class JwtTokenUtil implements Serializable {
 		return (Date) getClaimFromToken(token, Claims::getExpiration);
 	}
 
-	public Boolean validateToken(String token, final String subject) {
+	public Boolean validateToken(final String token, final String subject) {
 		Assert.hasText(token, "The token must not be empty!");
 		Assert.hasText(subject, "The subject must not be empty!");
 		final String username = getUserEmailFromToken(token);

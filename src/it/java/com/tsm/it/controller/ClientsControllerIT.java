@@ -29,6 +29,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.tsm.it.resource.ClientResource;
 import com.tsm.sendemail.SendEmailApplication;
+import com.tsm.sendemail.util.ClientTestBuilder;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SendEmailApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -68,6 +69,18 @@ public class ClientsControllerIT extends BaseTestIT {
 
 		// Do Test
 		given().body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST).then()
+				.statusCode(HttpStatus.FORBIDDEN.value());
+	}
+	
+	@Test
+	public void save_InvalidTokenGiven_ShouldReturnError() {
+		// Set Up
+		ClientResource resource = ClientResource.build().assertFields();
+		getTokenHeader();
+		getHeader().put(AUTHORIZATION_KEY, ClientTestBuilder.CLIENT_TOKEN);
+
+		// Do Test
+		given().headers(getHeader()).body(resource).contentType(ContentType.JSON).when().post(CLIENTS_URL_POST).then()
 				.statusCode(HttpStatus.FORBIDDEN.value());
 	}
 
