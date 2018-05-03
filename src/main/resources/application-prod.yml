@@ -2,8 +2,8 @@ logging:
   level:
     org:
       springframework:
-        web: DEBUG
-      hibernate: ERROR
+        web: INFO
+#      hibernate: ERROR
 sendemail:
   service:
     mailgun:
