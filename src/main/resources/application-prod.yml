@@ -1,3 +1,9 @@
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+      hibernate: ERROR
 sendemail:
   service:
     mailgun:
