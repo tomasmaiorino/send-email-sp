@@ -5,7 +5,7 @@
 
 	<groupId>com.tsm</groupId>
 	<artifactId>send-email-sp</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>send-email-sp</name>
@@ -36,11 +36,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
@@ -50,6 +52,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/postgresql/postgresql -->
@@ -87,7 +94,6 @@
 			<artifactId>gson</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-client -->
 		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-client -->
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
@@ -109,8 +115,6 @@
 			<version>2.9.0</version>
 			<scope>test</scope>
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
@@ -136,12 +140,12 @@
 			<artifactId>spring-security-jwt</artifactId>
 		</dependency>
 
-
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.7.0</version>
 		</dependency>
+
 	</dependencies>
 
 	<profiles>
@@ -162,7 +166,7 @@
 				<executions>
 					<execution>
 						<id>add-test-source</id>
-						<!-- This will help m2eclipse to recognize the folder as source folder
+						<!-- This will help m2eclipse to recognize the folder as source folder 
 							after update project configuration. -->
 						<!-- <phase>process-resources</phase> -->
 						<phase>generate-test-sources</phase>
