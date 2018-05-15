@@ -23,4 +23,4 @@ sendemail:
 urls:
   skip:
     host:
-      validation: api/v1/clients,api/v1/users/auth
+      validation: api/v1/clients,api/v1/users/auth,health,info,metrics
