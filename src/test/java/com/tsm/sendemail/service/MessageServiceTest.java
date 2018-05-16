@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
+import com.tsm.sendemail.repository.MessageRepositoryImpl;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class MessageServiceTest {
     private MessageService service;
 
     @Mock
-    private MessageRepository repository;
+    private MessageRepositoryImpl repository;
 
     @Before
     public void setUp() {

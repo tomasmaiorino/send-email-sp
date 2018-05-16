@@ -18,5 +18,4 @@ public interface MessageRepository extends Repository<Message, Long>, IBaseRepos
 
 	Set<Message> findByClientAndCreatedBetween(final Client client, final LocalDateTime initialDate,
 			final LocalDateTime finalDate);
-
 }

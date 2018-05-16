@@ -5,6 +5,7 @@ import static com.tsm.sendemail.util.ErrorCodes.MESSAGE_NOT_FOUND;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.tsm.sendemail.repository.MessageRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MessageService extends BaseService<Message, Long> {
 
 	@Autowired
-	private MessageRepository repository;
+	private MessageRepositoryImpl repository;
 
 	@Override
 	protected void merge(final Message origin, final Message model) {
