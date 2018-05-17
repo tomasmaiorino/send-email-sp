@@ -57,6 +57,8 @@ public interface ErrorCodes {
     public static final String MESSAGE_NOT_FOUND = "messageNotFound";
     
     public static final String REPORT_NOT_SENT= "reportNotSent";
+    
+    public static final String INVALID_SEARCH_PARAMS = "invalidSearchParams";
 
 
     // CUSTOMER

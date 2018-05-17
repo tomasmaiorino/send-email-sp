@@ -13,11 +13,12 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.tsm.sendemail.repository.MessageRepositoryImpl;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -30,6 +31,7 @@ import com.tsm.sendemail.exceptions.ResourceNotFoundException;
 import com.tsm.sendemail.model.Client;
 import com.tsm.sendemail.model.Message;
 import com.tsm.sendemail.model.Message.MessageStatus;
+import com.tsm.sendemail.model.SearchCriteria;
 import com.tsm.sendemail.repository.MessageRepository;
 import com.tsm.sendemail.util.ClientTestBuilder;
 import com.tsm.sendemail.util.MessageTestBuilder;
@@ -37,228 +39,316 @@ import com.tsm.sendemail.util.MessageTestBuilder;
 @FixMethodOrder(MethodSorters.JVM)
 public class MessageServiceTest {
 
-    @InjectMocks
-    private MessageService service;
+	@InjectMocks
+	private MessageService service;
 
-    @Mock
-    private MessageRepository repository;
+	@Mock
+	private MessageRepository repository;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
 
-    @Test
-    public void save_NullMessageGiven_ShouldThrowException() {
-        // Set up
-        Message message = null;
+	@Test
+	public void search_NullSearchCriteriaGiven_ShouldThrowException() {
+		// Set up
+		List<SearchCriteria> criterias = null;
 
-        // Do test
-        try {
-            service.save(message);
-            fail();
-        } catch (IllegalArgumentException e) {
-        }
+		// Do test
+		try {
+			service.search(criterias);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
 
-        // Assertions
-        verifyZeroInteractions(repository);
-    }
+		// Assertions
+		verifyZeroInteractions(repository);
+	}
 
-    @Test
-    public void save_ValidMessageGiven_ShouldCreateMessage() {
-        // Set up
-        Message message = MessageTestBuilder.buildModel();
+	@Test
+	public void search_EmptySearchCriteriaGiven_ShouldThrowException() {
+		// Set up
+		List<SearchCriteria> criterias = Collections.emptyList();
 
-        // Expectations
-        when(repository.save(message)).thenReturn(message);
+		// Do test
+		try {
+			service.search(criterias);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
 
-        // Do test
-        Message result = service.save(message);
+		// Assertions
+		verifyZeroInteractions(repository);
+	}
 
-        // Assertions
-        verify(repository).save(message);
-        assertNotNull(result);
-        assertThat(result, is(message));
-    }
+	@Test
+	public void search_NotFoundSearchCriteriaGiven_ShouldEmptyContent() {
+		// Set up
+		List<SearchCriteria> criterias = buildSearchCriterias();
+		List<Message> result = null;
 
-    @Test
-    public void findByIdAndClient_NullIdGiven_ShouldThrowException() {
-        // Set up
-        Long id = null;
-        Client client = ClientTestBuilder.buildModel();
+		// Expectations
+		when(repository.search(criterias, Message.class)).thenReturn(Collections.emptyList());
 
-        // Do test
-        try {
-            service.findByIdAndClient(id, client);
-            fail();
-        } catch (IllegalArgumentException e) {
-        }
+		// Do test
+		try {
+			result = service.search(criterias);
 
-        // Assertions
-        verifyNoMoreInteractions(repository);
-    }
+		} catch (Exception e) {
+			fail();
+		}
 
-    @Test
-    public void findByIdAndClient_NullClientGiven_ShouldThrowException() {
-        // Set up
-        Long id = 1l;
-        Client client = null;
+		// Assertions
+		assertNotNull(result);
+		assertThat(result.isEmpty(), is(true));
+		verify(repository).search(criterias, Message.class);
+	}
 
-        // Do test
-        try {
-            service.findByIdAndClient(id, client);
-            fail();
-        } catch (IllegalArgumentException e) {
-        }
+	@Test
+	public void search_FoundSearchCriteriaGiven_ShouldContent() {
+		// Set up
+		List<SearchCriteria> criterias = buildSearchCriterias();
+		List<Message> messages = new ArrayList<>();
+		messages.add(MessageTestBuilder.buildModel());
+		List<Message> result = null;
 
-        // Assertions
-        verifyNoMoreInteractions(repository);
-    }
+		// Expectations
+		when(repository.search(criterias, Message.class)).thenReturn(messages);
 
-    @Test
-    public void findByIdAndClient_NotFoundMessageGiven_ShouldThrowException() {
-        // Set up
-        Long id = 1l;
-        Client client = ClientTestBuilder.buildModel();
+		// Do test
+		try {
+			result = service.search(criterias);
 
-        // Expectations
-        when(repository.findByIdAndClient(id, client)).thenReturn(Optional.empty());
+		} catch (Exception e) {
+			fail();
+		}
 
-        // Do test
-        try {
-            service.findByIdAndClient(id, client);
-            fail();
-        } catch (ResourceNotFoundException e) {
-        }
+		// Assertions
+		assertNotNull(result);
+		assertThat(result.isEmpty(), is(false));
+		assertThat(result, is(messages));
+		verify(repository).search(criterias, Message.class);
+	}
 
-        // Assertions
-        verify(repository).findByIdAndClient(id, client);
-    }
+	private List<SearchCriteria> buildSearchCriterias() {
+		List<SearchCriteria> criterias = new ArrayList<>();
+		criterias.add(new SearchCriteria("name", ":", "test"));
+		criterias.add(new SearchCriteria("emaail", ":", MessageTestBuilder.SENDER_EMAIL));
+		return criterias;
+	}
 
-    @Test
-    public void findByIdAndClient_FoundMessageGiven_ShouldReturnMessage() {
-        // Set up
-        Long id = 1l;
-        Client client = ClientTestBuilder.buildModel();
-        Message message = MessageTestBuilder.buildModel();
+	@Test
+	public void save_NullMessageGiven_ShouldThrowException() {
+		// Set up
+		Message message = null;
 
-        // Expectations
-        when(repository.findByIdAndClient(id, client)).thenReturn(Optional.of(message));
+		// Do test
+		try {
+			service.save(message);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
 
-        // Do test
-        Message result = service.findByIdAndClient(id, client);
+		// Assertions
+		verifyZeroInteractions(repository);
+	}
 
-        // Assertions
-        verify(repository).findByIdAndClient(id, client);
+	@Test
+	public void save_ValidMessageGiven_ShouldCreateMessage() {
+		// Set up
+		Message message = MessageTestBuilder.buildModel();
 
-        assertNotNull(result);
-        assertThat(result,
-            allOf(hasProperty("id", nullValue()), hasProperty("message", is(message.getMessage())),
-                hasProperty("subject", is(message.getSubject())),
-                hasProperty("senderName", is(message.getSenderName())),
-                hasProperty("senderEmail", is(message.getSenderEmail())),
-                hasProperty("status", is(MessageStatus.CREATED))));
-    }
+		// Expectations
+		when(repository.save(message)).thenReturn(message);
 
-    //
+		// Do test
+		Message result = service.save(message);
 
-    @Test
-    public void findByClientAndCreatedBetween_NullClientStatusGiven_ShouldThrowException() {
-        // Set up
-        Client client = null;
-        LocalDateTime initialDate = LocalDateTime.now();
-        LocalDateTime finalDate = LocalDateTime.now();
+		// Assertions
+		verify(repository).save(message);
+		assertNotNull(result);
+		assertThat(result, is(message));
+	}
 
-        // Do test
-        try {
-            service.findByClientAndCreatedBetween(client, initialDate, finalDate);
+	@Test
+	public void findByIdAndClient_NullIdGiven_ShouldThrowException() {
+		// Set up
+		Long id = null;
+		Client client = ClientTestBuilder.buildModel();
 
-            fail();
-        } catch (IllegalArgumentException e) {
-        }
+		// Do test
+		try {
+			service.findByIdAndClient(id, client);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
 
-        // Assertions
-        verifyNoMoreInteractions(repository);
-    }
+		// Assertions
+		verifyNoMoreInteractions(repository);
+	}
 
-    @Test
-    public void findByClientAndCreatedBetween_NullInitialDateGiven_ShouldThrowException() {
-        // Set up
-        Client client = ClientTestBuilder.buildModel();
-        LocalDateTime initialDate = null;
-        LocalDateTime finalDate = LocalDateTime.now();
+	@Test
+	public void findByIdAndClient_NullClientGiven_ShouldThrowException() {
+		// Set up
+		Long id = 1l;
+		Client client = null;
 
-        // Do test
-        try {
-            service.findByClientAndCreatedBetween(client, initialDate, finalDate);
+		// Do test
+		try {
+			service.findByIdAndClient(id, client);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
 
-            fail();
-        } catch (IllegalArgumentException e) {
-        }
+		// Assertions
+		verifyNoMoreInteractions(repository);
+	}
 
-        // Assertions
-        verifyNoMoreInteractions(repository);
-    }
+	@Test
+	public void findByIdAndClient_NotFoundMessageGiven_ShouldThrowException() {
+		// Set up
+		Long id = 1l;
+		Client client = ClientTestBuilder.buildModel();
 
-    @Test
-    public void findByClientAndCreatedBetween_NullFinalDateGiven_ShouldThrowException() {
-        // Set up
-        Client client = ClientTestBuilder.buildModel();
-        LocalDateTime initialDate = LocalDateTime.now();
-        LocalDateTime finalDate = null;
+		// Expectations
+		when(repository.findByIdAndClient(id, client)).thenReturn(Optional.empty());
 
-        // Do test
-        try {
-            service.findByClientAndCreatedBetween(client, initialDate, finalDate);
+		// Do test
+		try {
+			service.findByIdAndClient(id, client);
+			fail();
+		} catch (ResourceNotFoundException e) {
+		}
 
-            fail();
-        } catch (IllegalArgumentException e) {
-        }
+		// Assertions
+		verify(repository).findByIdAndClient(id, client);
+	}
 
-        // Assertions
-        verifyNoMoreInteractions(repository);
-    }
+	@Test
+	public void findByIdAndClient_FoundMessageGiven_ShouldReturnMessage() {
+		// Set up
+		Long id = 1l;
+		Client client = ClientTestBuilder.buildModel();
+		Message message = MessageTestBuilder.buildModel();
 
-    @Test
-    public void findByClientAndCreatedBetween_NotFoundMessagesGiven_ShouldEmptyContent() {
-        // Set up
-        Client client = ClientTestBuilder.buildModel();
-        LocalDateTime initialDate = LocalDateTime.now();
-        LocalDateTime finalDate = LocalDateTime.now();
+		// Expectations
+		when(repository.findByIdAndClient(id, client)).thenReturn(Optional.of(message));
 
-        // Expectations
-        when(repository.findByClientAndCreatedBetween(client, initialDate, finalDate))
-            .thenReturn(Collections.emptySet());
+		// Do test
+		Message result = service.findByIdAndClient(id, client);
 
-        // Do test
-        Set<Message> result = service.findByClientAndCreatedBetween(client, initialDate, finalDate);
+		// Assertions
+		verify(repository).findByIdAndClient(id, client);
 
-        // Assertions
-        verify(repository).findByClientAndCreatedBetween(client, initialDate, finalDate);
+		assertNotNull(result);
+		assertThat(result,
+				allOf(hasProperty("id", nullValue()), hasProperty("message", is(message.getMessage())),
+						hasProperty("subject", is(message.getSubject())),
+						hasProperty("senderName", is(message.getSenderName())),
+						hasProperty("senderEmail", is(message.getSenderEmail())),
+						hasProperty("status", is(MessageStatus.CREATED))));
+	}
 
-        assertNotNull(result);
-        assertThat(result.isEmpty(), is(true));
-    }
+	//
 
-    public void findByClientAndCreatedBetween_FounddMessagesGiven_ShouldContent() {
-        // Set up
-        Client client = ClientTestBuilder.buildModel();
-        LocalDateTime initialDate = LocalDateTime.now();
-        LocalDateTime finalDate = LocalDateTime.now();
-        Message message = MessageTestBuilder.buildModel();
+	@Test
+	public void findByClientAndCreatedBetween_NullClientStatusGiven_ShouldThrowException() {
+		// Set up
+		Client client = null;
+		LocalDateTime initialDate = LocalDateTime.now();
+		LocalDateTime finalDate = LocalDateTime.now();
 
-        // Expectations
-        when(repository.findByClientAndCreatedBetween(client, initialDate, finalDate))
-            .thenReturn(Collections.singleton(message));
+		// Do test
+		try {
+			service.findByClientAndCreatedBetween(client, initialDate, finalDate);
 
-        // Do test
-        Set<Message> result = service.findByClientAndCreatedBetween(client, initialDate, finalDate);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
 
-        // Assertions
-        verify(repository).findByClientAndCreatedBetween(client, initialDate, finalDate);
+		// Assertions
+		verifyNoMoreInteractions(repository);
+	}
 
-        assertNotNull(result);
-        assertThat(result.isEmpty(), is(false));
-        assertThat(result.contains(message), is(true));
-    }
+	@Test
+	public void findByClientAndCreatedBetween_NullInitialDateGiven_ShouldThrowException() {
+		// Set up
+		Client client = ClientTestBuilder.buildModel();
+		LocalDateTime initialDate = null;
+		LocalDateTime finalDate = LocalDateTime.now();
+
+		// Do test
+		try {
+			service.findByClientAndCreatedBetween(client, initialDate, finalDate);
+
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
+
+		// Assertions
+		verifyNoMoreInteractions(repository);
+	}
+
+	@Test
+	public void findByClientAndCreatedBetween_NullFinalDateGiven_ShouldThrowException() {
+		// Set up
+		Client client = ClientTestBuilder.buildModel();
+		LocalDateTime initialDate = LocalDateTime.now();
+		LocalDateTime finalDate = null;
+
+		// Do test
+		try {
+			service.findByClientAndCreatedBetween(client, initialDate, finalDate);
+
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
+
+		// Assertions
+		verifyNoMoreInteractions(repository);
+	}
+
+	@Test
+	public void findByClientAndCreatedBetween_NotFoundMessagesGiven_ShouldEmptyContent() {
+		// Set up
+		Client client = ClientTestBuilder.buildModel();
+		LocalDateTime initialDate = LocalDateTime.now();
+		LocalDateTime finalDate = LocalDateTime.now();
+
+		// Expectations
+		when(repository.findByClientAndCreatedBetween(client, initialDate, finalDate))
+				.thenReturn(Collections.emptySet());
+
+		// Do test
+		Set<Message> result = service.findByClientAndCreatedBetween(client, initialDate, finalDate);
+
+		// Assertions
+		verify(repository).findByClientAndCreatedBetween(client, initialDate, finalDate);
+
+		assertNotNull(result);
+		assertThat(result.isEmpty(), is(true));
+	}
+
+	public void findByClientAndCreatedBetween_FounddMessagesGiven_ShouldContent() {
+		// Set up
+		Client client = ClientTestBuilder.buildModel();
+		LocalDateTime initialDate = LocalDateTime.now();
+		LocalDateTime finalDate = LocalDateTime.now();
+		Message message = MessageTestBuilder.buildModel();
+
+		// Expectations
+		when(repository.findByClientAndCreatedBetween(client, initialDate, finalDate))
+				.thenReturn(Collections.singleton(message));
+
+		// Do test
+		Set<Message> result = service.findByClientAndCreatedBetween(client, initialDate, finalDate);
+
+		// Assertions
+		verify(repository).findByClientAndCreatedBetween(client, initialDate, finalDate);
+
+		assertNotNull(result);
+		assertThat(result.isEmpty(), is(false));
+		assertThat(result.contains(message), is(true));
+	}
 }

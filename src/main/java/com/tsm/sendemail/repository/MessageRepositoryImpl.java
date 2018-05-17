@@ -12,16 +12,15 @@ import java.util.List;
  */
 public class MessageRepositoryImpl implements IBaseSearchRepositoryCustom<Message> {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    public List<Message> search(List<SearchCriteria> params) {
-        return search(params, Message.class);
-    }
+	public List<Message> search(List<SearchCriteria> params) {
+		return search(params, Message.class);
+	}
 
-
-    @Override
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
+	@Override
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
 }

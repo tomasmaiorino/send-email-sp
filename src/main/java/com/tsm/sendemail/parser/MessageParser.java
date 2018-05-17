@@ -1,15 +1,17 @@
 package com.tsm.sendemail.parser;
 
-import com.tsm.sendemail.model.Client;
-import com.tsm.sendemail.model.Message;
-import com.tsm.sendemail.resources.MessageResource;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.Set;
+import com.tsm.sendemail.model.Client;
+import com.tsm.sendemail.model.Message;
+import com.tsm.sendemail.resources.MessageResource;
 
 @Component
-public class MessageParser implements  IParser<MessageResource, Message> {
+public class MessageParser implements IParser<MessageResource, Message> {
 
 	public Message toModel(final MessageResource resource, final Client client) {
 		Assert.notNull(resource, "The resource must not be null!");
@@ -44,8 +46,9 @@ public class MessageParser implements  IParser<MessageResource, Message> {
 	}
 
 	@Override
-	public Set<MessageResource> toResources(Set<Message> models) {
-		return null;
+	public Set<MessageResource> toResources(final Set<Message> models) {
+		Assert.notEmpty(models, "The models must not be null nor empty!");
+		return models.stream().map(m -> toResource(m)).collect(Collectors.toSet());
 	}
 
 }

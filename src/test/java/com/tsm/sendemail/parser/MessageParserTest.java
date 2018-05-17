@@ -7,6 +7,10 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -71,6 +75,42 @@ public class MessageParserTest {
 
 		// Do test
 		parser.toResource(client);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void toResources_NullMessagesGiven_ShouldThrowException() {
+		// Set up
+		Set<Message> messages = null;
+
+		// Do test
+		parser.toResources(messages);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void toResources_EmptyMessagesGiven_ShouldThrowException() {
+		// Set up
+		Set<Message> messages = Collections.emptySet();
+
+		// Do test
+		parser.toResources(messages);
+	}
+
+	@Test
+	public void toResources_ValidMessagesGiven_ShouldContent() {
+		// Set up
+		Set<Message> messages = new HashSet<>();
+		Message message = MessageTestBuilder.buildModel();
+		Message message2 = MessageTestBuilder.buildModel();
+		messages.add(message);
+		messages.add(message2);
+		Set<MessageResource> results = null;
+
+		// Do test
+		results = parser.toResources(messages);
+
+		assertNotNull(results);
+		assertThat(results.isEmpty(), is(false));
+		assertThat(results.size(), is(messages.size()));
 	}
 
 	@Test
