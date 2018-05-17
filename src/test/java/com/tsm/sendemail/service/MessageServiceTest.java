@@ -41,7 +41,7 @@ public class MessageServiceTest {
     private MessageService service;
 
     @Mock
-    private MessageRepositoryImpl repository;
+    private MessageRepository repository;
 
     @Before
     public void setUp() {
