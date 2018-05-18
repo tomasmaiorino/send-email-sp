@@ -1,111 +1,141 @@
 package com.tsm.sendemail.controller;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import com.tsm.sendemail.exceptions.BadRequestException;
+import com.tsm.sendemail.model.BaseModel;
+import com.tsm.sendemail.model.SearchCriteria;
+import com.tsm.sendemail.parser.IParser;
+import com.tsm.sendemail.service.BaseService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import static com.tsm.sendemail.util.ErrorCodes.INVALID_SEARCH_PARAMS;
 
-import com.tsm.sendemail.model.BaseModel;
-import com.tsm.sendemail.parser.IParser;
-import com.tsm.sendemail.service.BaseService;
-
-import lombok.extern.slf4j.Slf4j;
-
-@SuppressWarnings(value = { "rawtypes", "unchecked" })
+@SuppressWarnings(value = {"rawtypes", "unchecked"})
 @Slf4j
 public abstract class RestBaseController<R, M extends BaseModel, I extends Serializable> extends BaseController {
 
-	@Autowired
-	private Validator validator;
+    @Autowired
+    private Validator validator;
 
-	protected <T> void validate(final T object, Class clazz) {
-		Set<ConstraintViolation<T>> violations = validator.validate(object, clazz);
-		if (!violations.isEmpty()) {
-			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-		}
-	}
+    protected <T> void validate(final T object, Class clazz) {
+        Set<ConstraintViolation<T>> violations = validator.validate(object, clazz);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+        }
+    }
 
-	public abstract BaseService<M, I> getService();
+    public abstract BaseService<M, I> getService();
 
-	public abstract IParser<R, M> getParser();
+    public abstract IParser<R, M> getParser();
 
-	public R save(final R resource) {
-		log.debug("Recieved a request to create a resource  [{}].", resource);
+    public R save(final R resource) {
+        log.debug("Recieved a request to create a resource  [{}].", resource);
 
-		validate(resource, Default.class);
+        validate(resource, Default.class);
 
-		M model = getParser().toModel(resource);
+        M model = getParser().toModel(resource);
 
-		model = getService().save(model);
+        model = getService().save(model);
 
-		R result = getParser().toResource(model);
+        R result = getParser().toResource(model);
 
-		log.debug("returning resource [{}].", result);
+        log.debug("returning resource [{}].", result);
 
-		return result;
-	}
+        return result;
+    }
 
-	public R update(final Integer id, final R resource) {
-		log.debug("Recieved a request to update a resource  [{}].", resource);
+    public R update(final Integer id, final R resource) {
+        log.debug("Recieved a request to update a resource  [{}].", resource);
 
-		validate(resource, Default.class);
+        validate(resource, Default.class);
 
-		M model = getParser().toModel(resource);
+        M model = getParser().toModel(resource);
 
-		M origin = getService().findById((I) id);
+        M origin = getService().findById((I) id);
 
-		model = getService().update(origin, model);
+        model = getService().update(origin, model);
 
-		R result = getParser().toResource(model);
+        R result = getParser().toResource(model);
 
-		log.debug("returning resource [{}].", result);
+        log.debug("returning resource [{}].", result);
 
-		return result;
-	}
+        return result;
+    }
 
-	public R findById(final Integer id) {
+    public R findById(final Integer id) {
 
-		log.info("Recieved a request to find an model by id [{}].", id);
+        log.info("Recieved a request to find an model by id [{}].", id);
 
-		M model = getService().findById((I) id);
+        M model = getService().findById((I) id);
 
-		R result = getParser().toResource(model);
+        R result = getParser().toResource(model);
 
-		log.info("returning resource: [{}].", result);
+        log.info("returning resource: [{}].", result);
 
-		return result;
-	}
+        return result;
+    }
 
-	public void delete(final Integer id) {
-		log.debug("Recieved a request to delete [{}].", id);
+    public void delete(final Integer id) {
+        log.debug("Recieved a request to delete [{}].", id);
 
-		M model = getService().findById((I) id);
+        M model = getService().findById((I) id);
 
-		getService().delete(model);
+        getService().delete(model);
 
-		log.debug("model deleted.");
-	}
+        log.debug("model deleted.");
+    }
 
-	public Set<R> findAll(final String q) {
+    public Set<R> findAll(final String q) {
 
-		log.debug("Recieved a request to find all models.");
+        log.debug("Recieved a request to find all models.");
 
-		Set<M> models = getService().findAll();
+        Set<M> models = getService().findAll();
 
-		Set<R> resources = new HashSet<>();
-		if (!models.isEmpty()) {
-			resources = getParser().toResources(models);
-		}
+        Set<R> resources = new HashSet<>();
+        if (!models.isEmpty()) {
+            resources = getParser().toResources(models);
+        }
 
-		log.debug("returning resources: [{}].", resources.size());
+        log.debug("returning resources: [{}].", resources.size());
 
-		return resources;
-	}
+        return resources;
+    }
+
+    public Set<R> findAllSearch(final String search, final List<String> searchParamsAllowed,
+                                Function<List<SearchCriteria>, List<M>> searchFunction) {
+
+        log.debug("Recieved a request to find all with search param [{}].", search);
+
+        List<SearchCriteria> params =  new ArrayList<>();
+
+        if (search != null) {
+            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+            Matcher matcher = pattern.matcher(search + ",");
+            while (matcher.find()) {
+                if (!searchParamsAllowed.contains(matcher.group(1))) {
+                    throw new BadRequestException(INVALID_SEARCH_PARAMS);
+                }
+                params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+            }
+        }
+        List<M> searchResults = searchFunction.apply(params);
+
+        if (!CollectionUtils.isEmpty(searchResults)) {
+            return getParser().toResources(new HashSet<>(searchResults));
+        }
+        log.info("None result was found. Returning empty set.");
+        return Collections.emptySet();
+    }
 
 }

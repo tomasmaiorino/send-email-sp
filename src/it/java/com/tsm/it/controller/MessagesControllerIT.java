@@ -1,11 +1,13 @@
 package com.tsm.it.controller;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
-
-import java.util.HashSet;
-import java.util.Set;
-
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.http.ContentType;
+import com.tsm.it.resource.ClientResource;
+import com.tsm.it.resource.MessageResource;
+import com.tsm.sendemail.SendEmailApplication;
+import com.tsm.sendemail.model.Message.MessageStatus;
+import com.tsm.sendemail.util.ClientTestBuilder;
+import com.tsm.sendemail.util.MessageTestBuilder;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -20,14 +22,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
-import com.tsm.it.resource.ClientResource;
-import com.tsm.it.resource.MessageResource;
-import com.tsm.sendemail.SendEmailApplication;
-import com.tsm.sendemail.model.Message.MessageStatus;
-import com.tsm.sendemail.util.ClientTestBuilder;
-import com.tsm.sendemail.util.MessageTestBuilder;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SendEmailApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,6 +42,8 @@ public class MessagesControllerIT extends BaseTestIT {
 	private static final String INVALID_SENDER_NAME_SIZE_MESSAGE = "The sender name must be between 2 and 20 characters.";
 
 	public static final String MESSAGE_POST_URL = "/api/v1/messages/{clientToken}";
+
+	public static final String MESSAGE_GET_URL = "/api/v1/messages?";
 
 	@LocalServerPort
 	private int port;
@@ -336,5 +338,22 @@ public class MessagesControllerIT extends BaseTestIT {
 				.body("status", is(MessageStatus.SENT.name())).body("senderName", is(resource.getSenderName()))
 				.body("senderEmail", is(resource.getSenderEmail())).body("subject", is(resource.getSubject()));
 	}
+
+	@Test
+	public void findAll_InvalidSearchParamGiven_ShouldReturnError() {
+		// Set Up
+		Set<String> hosts = new HashSet<>();
+		hosts.add(host);
+		header.putAll(getTokenHeader());
+		ClientResource client = ClientResource.build().emailRecipient(itTestEmail).headers(header)
+				.hosts(hosts).create();
+		MessageResource resource = MessageResource.build().headers(header).assertFields().create(client.getToken());
+
+		// Do Test
+		given().headers(header).body(resource).contentType(ContentType.JSON).when()
+				.get(MESSAGE_GET_URL + "search=name:user").then().statusCode(HttpStatus.BAD_REQUEST.value())
+				.body(MESSAGE_CHECK_KEY, is("The search params are invalid."), MESSAGE_FIELD_KEY, is("message"));
+	}
+
 
 }

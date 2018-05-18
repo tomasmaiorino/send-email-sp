@@ -1,6 +1,7 @@
 package com.tsm.sendemail.security;
 
 import static com.tsm.sendemail.security.SecurityConstants.CREATE_MESSAGE_URL;
+import static com.tsm.sendemail.security.SecurityConstants.SEARCH_MESSAGE_URL;
 import static com.tsm.sendemail.security.SecurityConstants.SIGN_UP_URL;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class)
 				.authorizeRequests().antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+				.antMatchers(HttpMethod.GET, SEARCH_MESSAGE_URL).permitAll()
 				.antMatchers(HttpMethod.OPTIONS, CREATE_MESSAGE_URL).permitAll()
 				.antMatchers(HttpMethod.POST, CREATE_MESSAGE_URL).permitAll().anyRequest().authenticated().and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
