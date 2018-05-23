@@ -43,7 +43,7 @@ public class MessagesControllerIT extends BaseTestIT {
 
 	public static final String MESSAGE_POST_URL = "/api/v1/messages/{clientToken}";
 
-	public static final String MESSAGE_GET_URL = "/api/v1/messages?";
+	public static final String MESSAGE_GET_URL = "/api/v1/messages/{clientToken}";
 
 	@LocalServerPort
 	private int port;
@@ -342,11 +342,8 @@ public class MessagesControllerIT extends BaseTestIT {
 	@Test
 	public void findAll_InvalidSearchParamGiven_ShouldReturnError() {
 		// Set Up
-		Set<String> hosts = new HashSet<>();
-		hosts.add(host);
 		header.putAll(getTokenHeader());
-		ClientResource client = ClientResource.build().emailRecipient(itTestEmail).headers(header)
-				.hosts(hosts).create();
+		ClientResource client = ClientResource.build().emailRecipient(itTestEmail).headers(getTokenHeader()).create();
 		MessageResource resource = MessageResource.build().headers(header).assertFields().create(client.getToken());
 
 		// Do Test
@@ -354,6 +351,4 @@ public class MessagesControllerIT extends BaseTestIT {
 				.get(MESSAGE_GET_URL + "search=name:user").then().statusCode(HttpStatus.BAD_REQUEST.value())
 				.body(MESSAGE_CHECK_KEY, is("The search params are invalid."), MESSAGE_FIELD_KEY, is("message"));
 	}
-
-
 }

@@ -91,7 +91,7 @@ public class MessagesController extends RestBaseController<MessageResource, Mess
 		return result;
 	}
 
-	@RequestMapping(method = GET, produces = JSON_VALUE)
+	@RequestMapping(method = GET, produces = JSON_VALUE, path = "/find")
 	@ResponseStatus(OK)
 	public Set<MessageResource> findAll(@RequestParam(value = "search", required = false) String search) {
 		return findAllSearch(search, searchParamsAllowed, (p) -> service.search(p));
