@@ -114,8 +114,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     }
 
     private boolean validateHost(final String requestUri) {
-        urlSkipHostValidation.forEach(u -> log.info("url [{}]."));
-        log.debug("Request uri [{}].", requestUri);
+        urlSkipHostValidation.forEach(u -> log.info("url [{}].", u));
+        log.info("Request uri [{}].", requestUri);
         //return urlSkipHostValidation.stream().filter(u -> requestUri.contains(u)).count() == 0l;
         return urlSkipHostValidation.stream().filter(u -> Pattern.matches(u, requestUri)).count() == 0l;
     }

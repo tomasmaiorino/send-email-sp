@@ -40,7 +40,7 @@ public abstract class RestBaseController<R, M extends BaseModel, I extends Seria
     public abstract IParser<R, M> getParser();
 
     public R save(final R resource) {
-        log.debug("Recieved a request to create a resource  [{}].", resource);
+        log.debug("Received a request to create a resource  [{}].", resource);
 
         validate(resource, Default.class);
 
@@ -56,7 +56,7 @@ public abstract class RestBaseController<R, M extends BaseModel, I extends Seria
     }
 
     public R update(final Integer id, final R resource) {
-        log.debug("Recieved a request to update a resource  [{}].", resource);
+        log.debug("Received a request to update a resource  [{}].", resource);
 
         validate(resource, Default.class);
 
@@ -75,7 +75,7 @@ public abstract class RestBaseController<R, M extends BaseModel, I extends Seria
 
     public R findById(final Integer id) {
 
-        log.info("Recieved a request to find an model by id [{}].", id);
+        log.info("Received a request to find an model by id [{}].", id);
 
         M model = getService().findById((I) id);
 
@@ -87,7 +87,7 @@ public abstract class RestBaseController<R, M extends BaseModel, I extends Seria
     }
 
     public void delete(final Integer id) {
-        log.debug("Recieved a request to delete [{}].", id);
+        log.debug("Received a request to delete [{}].", id);
 
         M model = getService().findById((I) id);
 
@@ -98,7 +98,7 @@ public abstract class RestBaseController<R, M extends BaseModel, I extends Seria
 
     public Set<R> findAll(final String q) {
 
-        log.debug("Recieved a request to find all models.");
+        log.debug("Received a request to find all models.");
 
         Set<M> models = getService().findAll();
 
@@ -115,7 +115,7 @@ public abstract class RestBaseController<R, M extends BaseModel, I extends Seria
     public Set<R> findAllSearch(final String search, final List<String> searchParamsAllowed,
                                 Function<List<SearchCriteria>, List<M>> searchFunction) {
 
-        log.debug("Recieved a request to find all with search param [{}].", search);
+        log.info("Received a request to find all with search param [{}].", search);
 
         List<SearchCriteria> params =  new ArrayList<>();
 

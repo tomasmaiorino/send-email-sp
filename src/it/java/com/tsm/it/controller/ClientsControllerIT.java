@@ -307,10 +307,11 @@ public class ClientsControllerIT extends BaseTestIT {
 	@Test
 	public void generateReport_ValidClientGiven_ShouldSendReport() {
 		// Set Up
-		ClientResource.build().headers(getTokenHeader()).emailRecipient(itTestEmail).isAdmin(true).create();
+		Map<String , String> tokenHeader = getTokenHeader();
+		ClientResource.build().headers(tokenHeader).emailRecipient(itTestEmail).isAdmin(true).create();
 
 		// Do Test
-		given().headers(getTokenHeader()).when().get(CLIENTS_REPORT_URL).then().statusCode(HttpStatus.OK.value());
+		given().headers(tokenHeader).when().get(CLIENTS_REPORT_URL).then().statusCode(HttpStatus.OK.value());
 	}
 
 	@Test
@@ -320,7 +321,5 @@ public class ClientsControllerIT extends BaseTestIT {
 		// Do Test
 		given().headers(getTokenHeader()).when().get(CLIENTS_REPORT_URL).then()
 				.statusCode(HttpStatus.BAD_REQUEST.value()).body(MESSAGE_CHECK_KEY, is("Report not sent."));
-
 	}
-
 }

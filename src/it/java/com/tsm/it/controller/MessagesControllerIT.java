@@ -43,7 +43,7 @@ public class MessagesControllerIT extends BaseTestIT {
 
 	public static final String MESSAGE_POST_URL = "/api/v1/messages/{clientToken}";
 
-	public static final String MESSAGE_GET_URL = "/api/v1/messages/{clientToken}";
+	public static final String MESSAGE_GET_URL = "/api/v1/messages/{clientToken}/find";
 
 	@LocalServerPort
 	private int port;
@@ -344,11 +344,10 @@ public class MessagesControllerIT extends BaseTestIT {
 		// Set Up
 		header.putAll(getTokenHeader());
 		ClientResource client = ClientResource.build().emailRecipient(itTestEmail).headers(getTokenHeader()).create();
-		MessageResource resource = MessageResource.build().headers(header).assertFields().create(client.getToken());
 
 		// Do Test
-		given().headers(header).body(resource).contentType(ContentType.JSON).when()
-				.get(MESSAGE_GET_URL + "search=name:user").then().statusCode(HttpStatus.BAD_REQUEST.value())
+		given().headers(header).contentType(ContentType.JSON).when().queryParam("search", "name:user")
+				.get(MESSAGE_GET_URL, client.getToken()).then().statusCode(HttpStatus.BAD_REQUEST.value())
 				.body(MESSAGE_CHECK_KEY, is("The search params are invalid."), MESSAGE_FIELD_KEY, is("message"));
 	}
 }
