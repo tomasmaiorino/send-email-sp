@@ -15,12 +15,26 @@ public class SearchCriteria {
 		this.value = value;
 	}
 
+	public SearchCriteria(final String key, final String operation, final Object value, Class convertClass, final boolean isEnum) {
+		this.key = key;
+		this.operation = operation;
+		this.value = value;
+		this.isEnum = isEnum;
+		this.convertClass = convertClass;
+	}
+
 	@Getter
 	private String key;
 	@Getter
 	private String operation;
 	@Getter
 	private Object value;
+
+	@Getter
+	private Class convertClass;
+
+	@Getter
+	private boolean isEnum = false;
 
 	/** {@inheritDoc} */
 	@Override

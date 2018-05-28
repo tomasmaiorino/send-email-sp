@@ -123,6 +123,7 @@ public abstract class RestBaseController<R, M extends BaseModel, I extends Seria
             Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
             Matcher matcher = pattern.matcher(search + ",");
             while (matcher.find()) {
+                log.debug("matcher.group one [{}].", matcher.group(1));
                 if (!searchParamsAllowed.contains(matcher.group(1))) {
                     throw new BadRequestException(INVALID_SEARCH_PARAMS);
                 }

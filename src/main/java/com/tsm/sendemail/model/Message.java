@@ -132,4 +132,9 @@ public class Message extends BaseModel {
         this.responseCode = responseCode;
     }
 
+    public Class<MessageStatus> getStatusEnum(){
+        return MessageStatus.class;
+
+    }
+
 }

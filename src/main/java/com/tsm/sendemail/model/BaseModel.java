@@ -33,4 +33,9 @@ public class BaseModel {
     public void setLastUpdated() {
     	lastUpdated= LocalDateTime.now(); 
     }
+
+    public Class getStatusEnum() {
+        return null;
+    }
+
 }

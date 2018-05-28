@@ -30,7 +30,7 @@ import lombok.Setter;
 @Table(name = "client")
 public class Client extends BaseModel {
 
-	private Client() {
+	public Client() {
 
 	}
 
