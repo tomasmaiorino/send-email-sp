@@ -25,6 +25,8 @@ import static com.tsm.sendemail.util.ErrorCodes.INVALID_SEARCH_PARAMS;
 @Slf4j
 public abstract class RestBaseController<R, M extends BaseModel, I extends Serializable> extends BaseController {
 
+    private static final String STATUS_KEY = "status";
+
     @Autowired
     private Validator validator;
 
@@ -113,7 +115,7 @@ public abstract class RestBaseController<R, M extends BaseModel, I extends Seria
     }
 
     public Set<R> findAllSearch(final String search, final List<String> searchParamsAllowed,
-                                Function<List<SearchCriteria>, List<M>> searchFunction) {
+                                Function<List<SearchCriteria>, List<M>> searchFunction, Class convertEnumClass) {
 
         log.info("Received a request to find all with search param [{}].", search);
 
@@ -127,7 +129,11 @@ public abstract class RestBaseController<R, M extends BaseModel, I extends Seria
                 if (!searchParamsAllowed.contains(matcher.group(1))) {
                     throw new BadRequestException(INVALID_SEARCH_PARAMS);
                 }
-                params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+                if (matcher.group(1).equalsIgnoreCase(STATUS_KEY)) {
+                    params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3), convertEnumClass));
+                } else  {
+                    params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+                }
             }
         }
         List<M> searchResults = searchFunction.apply(params);

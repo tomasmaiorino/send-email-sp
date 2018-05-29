@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import lombok.Getter;
 
+import java.util.function.Supplier;
+
 /**
  * Created by tomas on 5/15/18.
  */
@@ -15,12 +17,11 @@ public class SearchCriteria {
 		this.value = value;
 	}
 
-	public SearchCriteria(final String key, final String operation, final Object value, Class convertClass, final boolean isEnum) {
+	public SearchCriteria(final String key, final String operation, final Object value, Class pConvertEnumClass) {
 		this.key = key;
 		this.operation = operation;
 		this.value = value;
-		this.isEnum = isEnum;
-		this.convertClass = convertClass;
+		this.convertEnumClass = pConvertEnumClass;
 	}
 
 	@Getter
@@ -31,7 +32,7 @@ public class SearchCriteria {
 	private Object value;
 
 	@Getter
-	private Class convertClass;
+	public Class convertEnumClass;
 
 	@Getter
 	private boolean isEnum = false;

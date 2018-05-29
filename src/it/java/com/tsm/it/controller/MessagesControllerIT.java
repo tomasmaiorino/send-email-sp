@@ -30,6 +30,7 @@ import java.util.Set;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SendEmailApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -382,8 +383,23 @@ public class MessagesControllerIT extends BaseTestIT {
     }
 
     @Test
-    @Ignore
     public void findAll_EqualStatusGiven_ShouldReturnMessage() {
+        // Set Up
+        Map<String, String> tokenMap = getTokenHeader();
+        header.putAll(tokenMap);
+        Set<String> hosts = new HashSet<>();
+        hosts.add(host);
+        ClientResource client = ClientResource.build().emailRecipient(itTestEmail).headers(tokenMap).hosts(hosts).create();
+        MessageResource resource = MessageResource.build().headers(tokenMap).create(client.getToken());
+
+        // Do Test
+        given().headers(header).contentType(ContentType.JSON).when().queryParam("search", "status:" + MessageStatus.SENT)
+                .get(MESSAGE_GET_URL, client.getToken()).then().statusCode(HttpStatus.OK.value())
+                .body("size()", is(greaterThan(0)));
+    }
+
+    @Test
+    public void findAll_EqualStatusNotFoundGiven_ShouldReturnEmptyContent() {
         // Set Up
         Map<String, String> tokenMap = getTokenHeader();
         header.putAll(tokenMap);
@@ -395,7 +411,7 @@ public class MessagesControllerIT extends BaseTestIT {
         // Do Test
         given().headers(header).contentType(ContentType.JSON).when().queryParam("search", "status:" + MessageStatus.NOT_SENT)
                 .get(MESSAGE_GET_URL, client.getToken()).then().statusCode(HttpStatus.OK.value())
-                .body("size()", is(1), "[0].id", is(resource.getId().intValue()));
+                .body("size()", is(0));
     }
 
 }
