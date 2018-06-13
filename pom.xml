@@ -32,6 +32,19 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-netflix-eureka-client -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+			<version>1.4.3.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+			<version>1.4.3.RELEASE</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -166,7 +179,7 @@
 				<executions>
 					<execution>
 						<id>add-test-source</id>
-						<!-- This will help m2eclipse to recognize the folder as source folder 
+						<!-- This will help m2eclipse to recognize the folder as source folder
 							after update project configuration. -->
 						<!-- <phase>process-resources</phase> -->
 						<phase>generate-test-sources</phase>

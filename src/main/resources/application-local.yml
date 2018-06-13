@@ -1,7 +1,22 @@
+# configure eureka client
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    healthcheck:
+      enabled: true
+
+# custom attribute for the actuator info endpoint
+info:
+  app:
+    name: send-email-service
+
 server:
   port: 40585
 
 spring:
+  application:
+    name: send-email-service
   datasource:
     url: jdbc:postgresql://localhost:5432/send_email
     username: postgres
