@@ -3,7 +3,9 @@
 # All Rights Reserved.
 #
 # Usage:
-#   docker build -t <image_name> --build-arg branch_name=<branch_name> .
+#   docker build --force-rm -t <image_name> --build-arg branch_name=<branch_name> .
+# Container:
+#	docker create -p 40585:40585 -e profile=<profile> -e port=40585 -v /c/Users/tomas.maiorino/.m2:/root/.m2 --name <container_name> <image_name>
 # **********************************************************************************************************************
 FROM maven:3-jdk-8-slim
 ARG branch_name
@@ -11,6 +13,9 @@ MAINTAINER Maiorino Tomas <tomasmaiorino@gmail.com>
 
 #APPLICATION CONFIGURATION
 ENV APPLICATION_REPO https://github.com/tomasmaiorino/send-email-sp
+ENV branch_name master
+ENV profile dev
+ENV port 40585
 
 # this is a non-interactive automated build - avoid some warning messages
 ENV DEBIAN_FRONTEND noninteractive
@@ -29,9 +34,9 @@ WORKDIR /app
 RUN git clone https://github.com/tomasmaiorino/send-email-sp
 WORKDIR /app/send-email-sp
 RUN git checkout $branch_name
-RUN git pull origin $branch_name
-RUN mvn clean install
 
-EXPOSE 8080
+#EXPOSE 40585
 
-CMD [""]
+CMD ["git", "pull", "origin", $branch_name]
+CMD ["mvn", "clean", "install"]
+CMD ["mvn", "spring-boot:run", "-Dspring.profiles.active=${profile}", "-Dserver.port=${port}"]
