@@ -1,4 +1,6 @@
 #!/bin/bash
+echo checkout branch $1 ->
+git checkout $1
 echo pulling repository $1 ->
 git pull origin $1
 echo cleaning and installing ->

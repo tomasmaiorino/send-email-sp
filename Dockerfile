@@ -3,7 +3,7 @@
 # All Rights Reserved.
 #
 # Usage:
-#   docker build --force-rm -t <image_name> --build-arg branch_name=<branch_name> .
+#   docker build --force-rm -t <image_name> --build-arg branch_image_name=<branch_image_name> .
 # Container:
 #	docker create -p 40585:40585 -e profile=<profile> -e port=40585 -v /c/Users/tomas.maiorino/.m2:/root/.m2 --name <container_name> <image_name>
 # **********************************************************************************************************************
@@ -33,10 +33,8 @@ RUN mkdir /app
 WORKDIR /app
 RUN git clone https://github.com/tomasmaiorino/send-email-sp
 WORKDIR /app/send-email-sp
-RUN git checkout $branch_name
+#RUN git checkout $branch_image_name
 
 #EXPOSE 40585
 
-CMD ["git", "pull", "origin", $branch_name]
-CMD ["mvn", "clean", "install"]
-CMD ["mvn", "spring-boot:run", "-Dspring.profiles.active=${profile}", "-Dserver.port=${port}"]
+CMD ["/bin/bash", "/app/send-email-sp/./starting_container.sh ${branch_name} ${profile} ${port}"]
