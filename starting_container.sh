@@ -1,6 +1,6 @@
 #!/bin/bash
 echo ######################################################
-echo parameters branch: $1 profile: $2 port: $3 custom: $4
+echo parameters branch: $1 profile: $2 port: $3 custom: $*
 echo ######################################################
 echo
 echo ------------------------
