@@ -4,28 +4,28 @@ echo parameters branch: $1 profile: $2 port: $3 custom: $*
 echo ######################################################
 echo
 echo ------------------------
-echo checkout branch $1
+echo checkout: git checkout $1
 echo ------------------------
 echo
 git checkout $1
 
 echo
 echo ------------------------
-echo pulling repository $1
+echo pulling: git pull origin $1
 echo ------------------------
 echo
 git pull origin $1
 
 echo
 echo ------------------------
-echo cleaning and installing
+echo cleaning and installing: mvn clean install
 echo ------------------------
 echo
 mvn clean install
 
 echo
 echo ------------------------
-echo starting app to profile $2 port $3 custom $4
+echo mvn start: mvn spring-boot:run -Dspring.profiles.active=$2 -Dserver.port=$3 $*
 echo ------------------------
 echo
 mvn spring-boot:run -Dspring.profiles.active=$2 -Dserver.port=$3 $*
