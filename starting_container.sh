@@ -1,6 +1,6 @@
 #!/bin/bash
 echo ######################################################
-echo parameters branch: $1 profile: $2 port: $3 custom: $4
+echo parameters branch: $1 profile: $2 port: $3 custom: $4 $5
 echo ######################################################
 echo
 echo ------------------------
@@ -25,7 +25,7 @@ mvn clean install
 
 echo
 echo ------------------------
-echo mvn start: mvn spring-boot:run -Dspring.profiles.active=$2 -Dserver.port=$3 $4
+echo mvn start: mvn spring-boot:run -Dspring.profiles.active=$2 -Dserver.port=$3 $4 $5
 echo ------------------------
 echo
-mvn spring-boot:run -Dspring.profiles.active=$2 -Dserver.port=$3 $4
+mvn spring-boot:run -Dspring.profiles.active=$2 -Dserver.port=$3 $4 $5
