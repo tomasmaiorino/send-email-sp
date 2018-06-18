@@ -6,7 +6,7 @@
 #   docker build --force-rm -t <image_name> --build-arg branch_image_name=<branch_image_name> .
 # Container:
 # 1 - docker create -p 40585:40585 -e profile=<profile> -e port=40585 -v /c/Users/tomas.maiorino/.m2:/root/.m2 --name <container_name> <image_name>
-# 2 - docker create --link postgres --link eureka -e profile=local -e port=40666 -e custom_mvn_parameters=-Dspring.datasource.url=jdbc:postgresql://postgres:5432/send_email\ -Deureka.client.serviceUrl=http://eureka:8761/eureka -e branch_name=eureka -p 40666:40566 -v /c/Users/tomas.maiorino/.m2:/root/.m2 --name send-eureka send-eureka
+# 2 - docker create --link postgres --link eureka -e profile=local -e port=40666 -e custom_mvn_parameters_2=<custom-param> -e custom_mvn_parameters=-Dspring.datasource.url=jdbc:postgresql://postgres:5432/send_email\ -Deureka.client.serviceUrl=http://eureka:8761/eureka -e branch_name=eureka -p 40666:40566 -v /c/Users/tomas.maiorino/.m2:/root/.m2 --name send-eureka send-eureka
 # **********************************************************************************************************************
 FROM maven:3-jdk-8-slim
 ARG branch_image_name
@@ -18,6 +18,7 @@ ENV branch_name master
 ENV profile dev
 ENV port 40585
 ENV custom_mvn_parameters -V
+ENV custom_mvn_parameters_2 -V
 
 # this is a non-interactive automated build - avoid some warning messages
 ENV DEBIAN_FRONTEND noninteractive
@@ -50,4 +51,4 @@ RUN chmod +x starting_container.sh
 
 #EXPOSE 40585
 
-ENTRYPOINT ["/bin/bash", "-c", "/app/send-email-sp/./starting_container.sh ${branch_name} ${profile} ${port} ${custom_mvn_parameters}"]
+ENTRYPOINT ["/bin/bash", "-c", "/app/send-email-sp/./starting_container.sh ${branch_name} ${profile} ${port} ${custom_mvn_parameters} ${custom_mvn_parameters_2}"]
