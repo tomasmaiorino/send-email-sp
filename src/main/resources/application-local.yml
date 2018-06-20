@@ -17,7 +17,7 @@ server:
 spring:
   cloud:
     config:
-      url: http://config-server:8888
+      uri: http://config-server:8888
       failFast: true
   application:
     name: send-email-service
