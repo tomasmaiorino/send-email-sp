@@ -2,13 +2,14 @@ package com.tsm.it.controller;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
+import com.tsm.example.SendEmailApplication;
+import com.tsm.example.model.Message;
+import com.tsm.example.model.Message.MessageStatus;
+import com.tsm.example.util.ClientTestBuilder;
+import com.tsm.example.util.MessageTestBuilder;
 import com.tsm.it.resource.ClientResource;
 import com.tsm.it.resource.MessageResource;
-import com.tsm.sendemail.SendEmailApplication;
-import com.tsm.sendemail.model.Message;
-import com.tsm.sendemail.model.Message.MessageStatus;
-import com.tsm.sendemail.util.ClientTestBuilder;
-import com.tsm.sendemail.util.MessageTestBuilder;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Before;

@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.RandomUtils;
 
-import com.tsm.sendemail.model.Client.ClientStatus;
-import com.tsm.sendemail.util.ClientAttributeTestBuilder;
+import com.tsm.example.model.Client.ClientStatus;
+import com.tsm.example.util.ClientAttributeTestBuilder;
 
 import lombok.Getter;
 import lombok.Setter;

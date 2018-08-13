@@ -1,11 +1,11 @@
 package com.tsm.it.controller;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.tsm.sendemail.util.ClientTestBuilder.LARGE_NAME;
-import static com.tsm.sendemail.util.ClientTestBuilder.LARGE_TOKEN;
-import static com.tsm.sendemail.util.ClientTestBuilder.RESOURCE_INVALID_EMAIL;
-import static com.tsm.sendemail.util.ClientTestBuilder.SMALL_NAME;
-import static com.tsm.sendemail.util.ClientTestBuilder.SMALL_TOKEN;
+import static com.tsm.example.util.ClientTestBuilder.LARGE_NAME;
+import static com.tsm.example.util.ClientTestBuilder.LARGE_TOKEN;
+import static com.tsm.example.util.ClientTestBuilder.RESOURCE_INVALID_EMAIL;
+import static com.tsm.example.util.ClientTestBuilder.SMALL_NAME;
+import static com.tsm.example.util.ClientTestBuilder.SMALL_TOKEN;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -27,9 +27,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
+import com.tsm.example.SendEmailApplication;
+import com.tsm.example.util.ClientTestBuilder;
 import com.tsm.it.resource.ClientResource;
-import com.tsm.sendemail.SendEmailApplication;
-import com.tsm.sendemail.util.ClientTestBuilder;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SendEmailApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

@@ -1,7 +1,7 @@
 package com.tsm.it.controller;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.tsm.sendemail.util.ClientTestBuilder.RESOURCE_INVALID_EMAIL;
+import static com.tsm.example.util.ClientTestBuilder.RESOURCE_INVALID_EMAIL;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -21,8 +21,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
+import com.tsm.example.SendEmailApplication;
 import com.tsm.it.resource.UserResource;
-import com.tsm.sendemail.SendEmailApplication;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SendEmailApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

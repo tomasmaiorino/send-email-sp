@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tsm.example.util.UserTestBuilder;
 import com.tsm.it.controller.BaseTestIT;
-import com.tsm.sendemail.util.UserTestBuilder;
 
 import lombok.Getter;
 import lombok.Setter;
