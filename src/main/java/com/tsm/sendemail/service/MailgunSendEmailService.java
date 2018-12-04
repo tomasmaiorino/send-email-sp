@@ -1,21 +1,15 @@
 package com.tsm.sendemail.service;
 
-import static com.tsm.sendemail.util.ErrorCodes.ERROR_SENDING_EMAIL;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-
+import com.tsm.sendemail.exceptions.MessageException;
+import com.tsm.sendemail.model.Client;
+import com.tsm.sendemail.model.Message;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.auth.BasicScheme;
@@ -28,13 +22,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import com.tsm.sendemail.exceptions.MessageException;
-import com.tsm.sendemail.model.Client;
-import com.tsm.sendemail.model.Message;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import static com.tsm.sendemail.util.ErrorCodes.ERROR_SENDING_EMAIL;
 
 @Component
 @Slf4j
@@ -65,7 +57,7 @@ public class MailgunSendEmailService extends BaseSendEmailService {
     private String mailgunDomain;
 
     @Override
-    public Message sendTextEmail(final Message message) throws MessageException {
+    public Message sendTextEmail(final Message message) {
         Assert.notNull(message, "The message must not be null!");
         log.debug("sending text email -> [{}]", message);
 
@@ -95,22 +87,27 @@ public class MailgunSendEmailService extends BaseSendEmailService {
 
     @SuppressWarnings("deprecation")
     private HttpResponse doesPostRequest(final Message message)
-        throws AuthenticationException, UnsupportedEncodingException, IOException, ClientProtocolException {
+            throws AuthenticationException, IOException {
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(MAILGUN_USER, getMailgunKey(message.getClient()));
-        HttpPost httpPost = new HttpPost(getUrl(message.getClient()));
+        HttpPost httpPost = null;
+        try {
+            UsernamePasswordCredentials creds = new UsernamePasswordCredentials(MAILGUN_USER, getMailgunKey(message.getClient()));
+            httpPost = new HttpPost(getUrl(message.getClient()));
 
-        httpPost.addHeader(new BasicScheme().authenticate(creds, httpPost));
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+            httpPost.addHeader(new BasicScheme().authenticate(creds, httpPost));
+            List<NameValuePair> nvps = new ArrayList<>();
 
-        Map<String, String> params = buildMailgunTextMessage(message);
+            Map<String, String> params = buildMailgunTextMessage(message);
 
-        params.forEach((k, v) -> {
-            nvps.add(new BasicNameValuePair(k, v));
-        });
+            params.forEach((k, v) -> {
+                nvps.add(new BasicNameValuePair(k, v));
+            });
 
-        httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+        } finally {
+            httpclient.close();
+        }
 
         return httpclient.execute(httpPost);
     }
@@ -123,7 +120,7 @@ public class MailgunSendEmailService extends BaseSendEmailService {
 
     private Map<String, String> buildMailgunTextMessage(final Message message) {
         MailgunTextMessage mailgunTextMessage = new MailgunTextMessage(message.getSenderEmail(), message.getSubject(),
-            message.getClient().getEmailRecipient(), message.getMessage());
+                message.getClient().getEmailRecipient(), message.getMessage());
         return mailgunTextMessage.getParams();
     }
 
@@ -143,23 +140,7 @@ public class MailgunSendEmailService extends BaseSendEmailService {
 
     private class MailgunTextMessage {
 
-        public MailgunTextMessage(final String from, final String subject, final String to, final String text) {
-            this.from = from;
-            this.subject = subject;
-            this.text = text;
-            this.to = to;
-        }
-
         private Map<String, String> params = new HashMap<>();
-
-        public Map<String, String> getParams() {
-            params.put("from", from);
-            params.put("subject", subject);
-            params.put("text", text);
-            params.put("to", to);
-            return params;
-        }
-
         @Getter
         private String from;
         @Getter
@@ -168,6 +149,20 @@ public class MailgunSendEmailService extends BaseSendEmailService {
         private String subject;
         @Getter
         private String text;
+        public MailgunTextMessage(final String from, final String subject, final String to, final String text) {
+            this.from = from;
+            this.subject = subject;
+            this.text = text;
+            this.to = to;
+        }
+
+        public Map<String, String> getParams() {
+            params.put("from", from);
+            params.put("subject", subject);
+            params.put("text", text);
+            params.put("to", to);
+            return params;
+        }
     }
 
 }

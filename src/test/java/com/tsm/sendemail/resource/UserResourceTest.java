@@ -2,7 +2,7 @@ package com.tsm.sendemail.resource;
 
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_LOGIN_EMAIL;
 import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_EMAIL;
-import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_PASSWORD;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_PASS;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
@@ -38,7 +38,7 @@ public class UserResourceTest extends BaseResourceTest {
 	@Test
 	public void build_NullPasswordGiven_ShouldThrowException() {
 		// Set up
-		checkResource(buildResourceFunction, "password", null, REQUIRED_LOGIN_PASSWORD);
+		checkResource(buildResourceFunction, "password", null, REQUIRED_LOGIN_PASS);
 	}
 
 	//

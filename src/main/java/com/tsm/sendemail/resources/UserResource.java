@@ -2,7 +2,7 @@ package com.tsm.sendemail.resources;
 
 import static com.tsm.sendemail.util.ErrorCodes.INVALID_LOGIN_EMAIL;
 import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_EMAIL;
-import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_PASSWORD;
+import static com.tsm.sendemail.util.ErrorCodes.REQUIRED_LOGIN_PASS;
 
 import javax.validation.constraints.NotNull;
 
@@ -24,7 +24,7 @@ public class UserResource implements BaseResource {
 
 	@Getter
 	@Setter
-	@NotNull(message = REQUIRED_LOGIN_PASSWORD)
+	@NotNull(message = REQUIRED_LOGIN_PASS)
 	private String password;
 
 	@Override

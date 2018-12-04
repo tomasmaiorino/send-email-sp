@@ -22,8 +22,4 @@ public class ResourceNotFoundException extends RuntimeException {
         this.setErrorCode(errorCode);
     }
 
-    public ResourceNotFoundException(final String errorCode, String message) {
-        super(message);
-    }
-
 }
